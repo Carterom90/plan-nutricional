@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Única cuenta autorizada. Sustituye __ALLOWED_EMAIL__ por tu correo real
+    // antes de publicar. Esta es la barrera REAL: aunque alguien se salte la
+    // comprobación del navegador, Firestore no le devuelve ni un byte.
+    function isOwner(userId) {
+      return request.auth != null
+          && request.auth.uid == userId
+          && request.auth.token.email == '__ALLOWED_EMAIL__'
+          && request.auth.token.email_verified == true;
+    }
+
+    // Límite de tamaño: evita que una sesión secuestrada infle la base de datos.
+    function payloadOk() {
+      return request.resource.data.value is string
+          && request.resource.data.value.size() < 200000;
+    }
+
+    match /users/{userId}/appdata/{docId} {
+      allow read:           if isOwner(userId);
+      allow create, update: if isOwner(userId) && payloadOk();
+      allow delete:         if isOwner(userId);
+    }
+
+    // Todo lo demás, denegado por defecto.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
