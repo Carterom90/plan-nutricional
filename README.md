@@ -4,7 +4,7 @@ App personal (un solo `index.html`, sin build) para seguir el plan nutricional.
 
 **Plan actual:** ~1800 kcal · 133 g proteína · 191 g hidrato · 57 g grasa. Déficit de 313 kcal/día (~1,2 kg al mes). Plantilla única: no hay ciclado de carbohidratos, los macros son iguales todos los días.
 
-Incluye checklist diario, recetas dinámicas según la rotación de proteínas, guarniciones de verdura, **44 recetas propias** con macros calculados y todas las cantidades pesadas, el **menú de 6 semanas del nutricionista adaptado** (48 platos, estructura de cocinar cada dos días) y lista de la compra editable.
+Incluye checklist diario, recetas dinámicas según la rotación de proteínas, guarniciones de verdura, **54 recetas propias** con macros calculados, corte de carne o pescado especificado y todas las cantidades en peso de compra (proteína y verdura en crudo, hidratos en seco, patata cruda pelada, legumbres de bote), el **menú de 6 semanas del nutricionista adaptado** (48 platos, estructura de cocinar cada dos días) y lista de la compra editable.
 
 Acceso con **Google Sign-In**, restringido a una única cuenta. Los datos (checklist, lista de la compra, semana de rotación) viven en **Firestore**, privados y sincronizados entre dispositivos.
 
@@ -71,6 +71,35 @@ Sin esa restricción por correo, *cualquier persona con una cuenta de Google* po
 Si el repo es **público**, el contenido del plan (recetas, macros, objetivos calóricos) es visible para quien encuentre la URL o el repo. Lo que queda tras el login son tus **datos de seguimiento**, no el plan en sí. Si el plan tampoco debe verse, el repo debe ser privado — y entonces GitHub Pages requiere plan Pro.
 
 ---
+
+## Pestaña Hoy
+
+Checklist del día con el plato concreto del recetario para almuerzo y cena, elegido automáticamente.
+
+**Cocina cada dos días.** Los bloques son lunes-miércoles, martes-jueves, viernes-sábado y domingo suelto: se cocina lunes, martes, viernes y domingo. La cabecera indica si hoy toca cocinar o recalentar y para qué día es la otra mitad. El aviso de descongelado solo aparece cuando al día siguiente toca cocinar, e incluye recordatorio de poner garbanzos en remojo cuando el plato del día siguiente los lleva (se detecta en la receta real, no solo en la rotación).
+
+El plato lo marca la proteína del día de cocción y rota entre semanas. Los revueltos, tortillas y platos a la plancha se descartan para los bloques cuando hay alternativa, porque no aguantan dos días. Si la proteína no tiene plato propio, se busca dentro de su grupo (ternera/cerdo, pollo/pavo, pescados, marisco) antes de caer en la plantilla base. Flechas para moverse al día anterior o siguiente (cada día guarda su propio checklist) y aviso fijo de qué proteína sacar del congelador para el día siguiente, distinguiendo si los garbanzos necesitan remojo.
+
+## Pestaña Compra
+
+Ventana móvil: se elige el día de la compra y cuántos días cubre (7, 10 o 14), y la lista suma exactamente esos días a partir de esa fecha. Si la ventana cruza el domingo, los días siguientes usan la rotación de la semana siguiente.
+
+La proteína que no aguanta toda la ventana en nevera sale en un bloque aparte, **Fresco · congelar al llegar**, con los días concretos en que se usa y cuánto aguanta cada tipo (pescado y ave 2 días, carne roja 4). Los nombres se normalizan: "Pollo al curry" suma con "Pollo" en vez de comprarse aparte.
+
+Las cantidades editadas a mano se respetan al regenerar.
+
+## Entrenamiento
+
+Cada día de gimnasio tiene un tipo de sesión asignado en Ajustes (empuje, tracción, pierna o full body). En la pestaña Hoy aparece la rutina de cinta correspondiente: intervalos de trote los días de tracción, caminata con inclinación en empuje, y sin impacto los días de pierna. Las notas de progresión y los pendientes de la rutina están en Progreso.
+
+## Pestaña Progreso
+
+Registro semanal de peso, grasa, masa magra, gasto y calorías activas (Garmin), pasos, sesiones y volumen (Hevy), sueño y frecuencia cardiaca en reposo.
+
+- Las gráficas son SVG dibujado a mano: sin librerías externas y sin tocar la CSP.
+- **Proyección**: calcula el ritmo de las últimas semanas y proyecta hasta el 18% y el 15% de grasa. Los pesos objetivo se derivan de la masa magra registrada, no están fijados en el código.
+- **Avisos automáticos**: si la FC en reposo sube 4+ pulsaciones sobre la media, o si hay tres semanas seguidas por debajo de 7 h de sueño.
+- Los datos van por usuario en Firestore, bajo la clave `progress`.
 
 ## Actualizar la dieta sin tocar el código
 
