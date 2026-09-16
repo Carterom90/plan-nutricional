@@ -96,7 +96,11 @@ Cada día de gimnasio tiene un tipo de sesión asignado en Ajustes (empuje, trac
 
 Registro semanal de peso, grasa, masa magra, gasto y calorías activas (Garmin), pasos, sesiones y volumen (Hevy), sueño y frecuencia cardiaca en reposo.
 
+**De dónde salen los datos.** La adherencia se calcula sola a partir de las casillas marcadas en Hoy, sin que haya que introducir nada. El CSV de Hevy se pega tal cual en la caja de importación y la app lo parsea: saca sesiones y volumen de todas las semanas de golpe, descartando las series de calentamiento. El resto (peso, grasa, gasto, pasos, sueño, FC) se importa como bloque JSON, o se teclea a mano en el formulario. Las importaciones se fusionan por fecha, así que el CSV y el JSON pueden llegar por separado sin pisarse.
+
 - Las gráficas son SVG dibujado a mano: sin librerías externas y sin tocar la CSP.
+- Cada gráfica usa solo las semanas que tienen su propio dato. Al importar el CSV de Hevy entran semanas con sesiones y volumen pero sin peso ni Garmin; la de peso no las pinta en el eje en vez de mostrar puntos sueltos al final. Si una gráfica no tiene ningún dato, avisa en lugar de dibujarse vacía.
+- Selector de periodo: últimas 8, 12 o 26 semanas, o todo el histórico.
 - **Proyección**: calcula el ritmo de las últimas semanas y proyecta hasta el 18% y el 15% de grasa. Los pesos objetivo se derivan de la masa magra registrada, no están fijados en el código.
 - **Avisos automáticos**: si la FC en reposo sube 4+ pulsaciones sobre la media, o si hay tres semanas seguidas por debajo de 7 h de sueño.
 - Los datos van por usuario en Firestore, bajo la clave `progress`.

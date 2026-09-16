@@ -1246,6 +1246,7 @@ async function loadAll(){
   try{ const r = await store.get('shopping-list'); if(r) shoppingList = JSON.parse(r.value); }catch(e){}
   try{ const r = await store.get('progress'); if(r) progreso = JSON.parse(r.value); }catch(e){}
   try{ const r = await store.get('dishes'); if(r) platos = JSON.parse(r.value); }catch(e){}
+  try{ const r = await store.get('adherence'); if(r) adherencia = JSON.parse(r.value); }catch(e){}
   semanaSelected = settings.currentWeek || 1;
   if(!compraDesde) compraDesde = todayKey();
   renderAll();
@@ -1459,6 +1460,7 @@ function toggleCheck(id){
   if(!checklist[key]) checklist[key] = {};
   checklist[key][id] = !checklist[key][id];
   saveChecklist();
+  actualizarAdherencia();
   renderHoy();
 }
 
@@ -1900,6 +1902,8 @@ function renderSemana(){
 // Cada entrada es una semana. Todos los campos son opcionales salvo la fecha:
 // si una semana no tiene sueño o pasos, esa gráfica simplemente se salta el punto.
 let progreso = [];
+let progPeriodo = 12;   // semanas mostradas en las gráficas (0 = todas)
+function setProgPeriodo(v){ progPeriodo = parseInt(v,10); renderProgreso(); }
 
 const PROG_CAMPOS = [
   {k:'peso',       lbl:'Peso',            un:'kg',  paso:'0.1'},
@@ -1933,6 +1937,136 @@ function fechaCorta(iso){
 }
 function num(v){ return (v===null || v===undefined || v==='') ? null : Number(v); }
 function red(v, d){ return v===null ? null : Number(v).toFixed(d===undefined?1:d); }
+
+/* ---------- Adherencia: sale de los propios checklists de la app ---------- */
+
+let adherencia = {};   // { 'YYYY-MM-DD': {hechas:n, total:m} }
+async function saveAdherencia(){ try{ await store.set('adherence', JSON.stringify(adherencia)); }catch(e){} }
+
+// Cuántas casillas tiene un día concreto (las fijas + comidas + extras).
+function totalCasillas(info){
+  return fixedMeals.length + 2 + 1 + (info.isGym ? 1 : 0);
+}
+// Se recalcula cada vez que se marca algo, así queda un resumen compacto por día.
+async function actualizarAdherencia(){
+  const info = getTodayInfo();
+  const marcas = checklist[info.key] || {};
+  const hechas = Object.values(marcas).filter(Boolean).length;
+  adherencia[info.key] = {hechas, total: totalCasillas(info)};
+  await saveAdherencia();
+}
+
+// Suma la adherencia de los 7 días que arrancan en una fecha (lunes de esa semana).
+function adherenciaSemana(fechaIso){
+  const base = new Date(fechaIso + 'T00:00:00');
+  let h = 0, t = 0, dias = 0;
+  for(let i = 0; i < 7; i++){
+    const d = new Date(base); d.setDate(d.getDate() + i);
+    const a = adherencia[claveFecha(d)];
+    if(a){ h += a.hechas; t += a.total; dias++; }
+  }
+  if(!dias || !t) return null;
+  return Math.round((h / t) * 100);
+}
+
+/* ---------- Importar: CSV de Hevy o bloque JSON ---------- */
+
+const MESES_ES = {ene:1, feb:2, mar:3, abr:4, may:5, jun:6, jul:7, ago:8, sept:9, sep:9, oct:10, nov:11, dic:12};
+
+function parseFechaHevy(txt){
+  const m = String(txt).match(/(\d+)\s+(\w+)\.?\s+(\d{4}),\s*(\d+):(\d+)/);
+  if(!m) return null;
+  const mes = MESES_ES[m[2].toLowerCase().replace('.','')];
+  if(!mes) return null;
+  return new Date(+m[3], mes - 1, +m[1]);
+}
+
+// Lunes de la semana a la que pertenece una fecha.
+function lunesDe(d){
+  const x = new Date(d);
+  x.setDate(x.getDate() - mondayFirstIdx(x.getDay()));
+  return claveFecha(x);
+}
+
+// Divide una línea CSV respetando las comillas.
+function csvLinea(l){
+  const out = []; let cur = '', dentro = false;
+  for(let i = 0; i < l.length; i++){
+    const c = l[i];
+    if(c === '"'){ if(dentro && l[i+1] === '"'){ cur += '"'; i++; } else dentro = !dentro; }
+    else if(c === ',' && !dentro){ out.push(cur); cur = ''; }
+    else cur += c;
+  }
+  out.push(cur);
+  return out;
+}
+
+// Del CSV de Hevy saca sesiones y volumen por semana.
+function parseHevy(texto){
+  const lineas = texto.trim().split(/\r?\n/);
+  if(lineas.length < 2) return null;
+  const cab = csvLinea(lineas[0]).map(x => x.trim().toLowerCase());
+  const iF = cab.indexOf('start_time'), iP = cab.indexOf('weight_kg'),
+        iR = cab.indexOf('reps'), iT = cab.indexOf('set_type');
+  if(iF < 0 || iP < 0 || iR < 0) return null;
+
+  const semanas = {};
+  for(let i = 1; i < lineas.length; i++){
+    const c = csvLinea(lineas[i]);
+    const f = parseFechaHevy(c[iF]);
+    if(!f) continue;
+    if(iT >= 0 && /warmup/i.test(c[iT] || '')) continue;   // el calentamiento no cuenta
+    const kg = parseFloat(c[iP]), reps = parseFloat(c[iR]);
+    const k = lunesDe(f);
+    if(!semanas[k]) semanas[k] = {volumen: 0, dias: new Set()};
+    semanas[k].dias.add(claveFecha(f));
+    if(!isNaN(kg) && !isNaN(reps) && kg > 0) semanas[k].volumen += kg * reps;
+  }
+  return Object.entries(semanas).map(([fecha, v]) => ({
+    fecha, sesiones: v.dias.size, volumen: Math.round(v.volumen)
+  }));
+}
+
+function fusionaSemanas(entradas){
+  let nuevas = 0, actualizadas = 0;
+  entradas.forEach(e => {
+    if(!e.fecha) return;
+    const i = progreso.findIndex(x => x.fecha === e.fecha);
+    if(i >= 0){ progreso[i] = Object.assign({}, progreso[i], e); actualizadas++; }
+    else { progreso.push(e); nuevas++; }
+  });
+  return {nuevas, actualizadas};
+}
+
+async function importarProgreso(){
+  const raw = document.getElementById('pg-import').value.trim();
+  if(!raw){ pgMsg('Pega primero el CSV de Hevy o el bloque de datos.', false); return; }
+
+  let entradas = null, origen = '';
+
+  // ¿Es el CSV de Hevy?
+  if(/start_time/i.test(raw.split(/\r?\n/)[0] || '')){
+    entradas = parseHevy(raw);
+    origen = 'CSV de Hevy';
+    if(!entradas || !entradas.length){ pgMsg('El CSV no tiene el formato esperado o no contiene series válidas.', false); return; }
+  } else {
+    try{
+      const p = JSON.parse(raw);
+      entradas = Array.isArray(p) ? p : [p];
+      origen = 'bloque de datos';
+    }catch(e){
+      pgMsg('Eso no es ni un CSV de Hevy ni JSON válido: ' + e.message, false);
+      return;
+    }
+    const malas = entradas.filter(e => !e.fecha || !/^\d{4}-\d{2}-\d{2}$/.test(e.fecha));
+    if(malas.length){ pgMsg('Cada semana necesita una "fecha" con formato AAAA-MM-DD.', false); return; }
+  }
+
+  const r = fusionaSemanas(entradas);
+  await saveProgreso();
+  renderProgreso();
+  pgMsg(`Importado el ${origen}: ${r.nuevas} semanas nuevas y ${r.actualizadas} actualizadas.`, true);
+}
 
 /* ---------- Motor de gráficas en SVG ---------- */
 // series: [{tipo:'linea'|'barra', datos:[], color, guion, eje:'izq'|'der', nombre}]
@@ -2044,6 +2178,18 @@ function bloqueGrafica(titulo, sub, cfg){
     </div>`;
 }
 
+// Filtra a las semanas que tienen al menos uno de los campos pedidos.
+// Evita ejes con 14 etiquetas y dos puntos sueltos al final.
+function subserie(d, campos){
+  const filas = d.filter(e => campos.some(k => num(e[k]) !== null));
+  return {
+    filas,
+    etq: filas.map(e => fechaCorta(e.fecha)),
+    col: k => filas.map(e => num(e[k])),
+    hay: filas.length > 0
+  };
+}
+
 /* ---------- Proyección ---------- */
 function calcProyeccion(){
   const d = progOrdenado().filter(e=>num(e.peso)!==null);
@@ -2123,7 +2269,8 @@ function tarjeta(lbl, valor, un, delta, mejorBajando){
 /* ---------- Render ---------- */
 function renderProgreso(){
   const el = document.getElementById('screen-progreso');
-  const d = progOrdenado();
+  const todas = progOrdenado();
+  const d = progPeriodo > 0 ? todas.slice(-progPeriodo) : todas;
 
   if(!d.length){
     el.innerHTML = `
@@ -2139,36 +2286,50 @@ function renderProgreso(){
   const ult = d[d.length-1], pen = d.length>1 ? d[d.length-2] : null;
   const dl = k => (pen && num(ult[k])!==null && num(pen[k])!==null) ? num(ult[k])-num(pen[k]) : null;
 
-  const gPeso = {etiquetas:etq, decIzq:1, decDer:1, ejeDer:true, alto:200,
+  const sPeso  = subserie(d, ['peso','grasa']);
+  const sGasto = subserie(d, ['gasto','activas']);
+  const sPasos = subserie(d, ['pasos']);
+  const sGym   = subserie(d, ['sesiones','volumen']);
+  const sRec   = subserie(d, ['sueno','fc']);
+  const sAdh   = (()=>{ const filas = d.filter(e => adherenciaSemana(e.fecha) !== null);
+                        return {etq: filas.map(e=>fechaCorta(e.fecha)),
+                                datos: filas.map(e=>adherenciaSemana(e.fecha)),
+                                hay: filas.length > 0}; })();
+
+  const gPeso = {etiquetas:sPeso.etq, decIzq:1, decDer:1, ejeDer:true, alto:200,
     aria:'Peso y grasa corporal por semana',
     series:[
-      {tipo:'linea', datos:col('peso'),  color:'#2a78d6', nombre:'Peso (kg)'},
-      {tipo:'linea', datos:col('grasa'), color:'#eb6834', guion:'5 4', eje:'der', nombre:'Grasa (%)'},
+      {tipo:'linea', datos:sPeso.col('peso'),  color:'#2a78d6', nombre:'Peso (kg)'},
+      {tipo:'linea', datos:sPeso.col('grasa'), color:'#eb6834', guion:'5 4', eje:'der', nombre:'Grasa (%)'},
     ]};
 
-  const gGasto = {etiquetas:etq, decIzq:0, desdeCero:true, alto:190,
+  const gGasto = {etiquetas:sGasto.etq, decIzq:0, desdeCero:true, alto:190,
     aria:'Gasto total y calorías activas por semana',
     series:[
-      {tipo:'barra', datos:col('gasto'),   color:'#2a78d6', nombre:'Gasto total (kcal)'},
-      {tipo:'barra', datos:col('activas'), color:'#1baf7a', nombre:'Activas (kcal)'},
+      {tipo:'barra', datos:sGasto.col('gasto'),   color:'#2a78d6', nombre:'Gasto total (kcal)'},
+      {tipo:'barra', datos:sGasto.col('activas'), color:'#1baf7a', nombre:'Activas (kcal)'},
     ]};
 
-  const gPasos = {etiquetas:etq, decIzq:0, desdeCero:true, alto:170,
+  const gPasos = {etiquetas:sPasos.etq, decIzq:0, desdeCero:true, alto:170,
     aria:'Pasos diarios medios por semana',
-    series:[{tipo:'barra', datos:col('pasos'), color:'#eda100', nombre:'Pasos/día'}]};
+    series:[{tipo:'barra', datos:sPasos.col('pasos'), color:'#eda100', nombre:'Pasos/día'}]};
 
-  const gGym = {etiquetas:etq, decIzq:0, decDer:0, ejeDer:true, desdeCero:true, alto:190,
+  const gGym = {etiquetas:sGym.etq, decIzq:0, decDer:0, ejeDer:true, desdeCero:true, alto:190,
     aria:'Sesiones de gimnasio y volumen total por semana',
     series:[
-      {tipo:'barra', datos:col('sesiones'), color:'#6250d6', nombre:'Sesiones'},
-      {tipo:'linea', datos:col('volumen'),  color:'#e87ba4', eje:'der', nombre:'Volumen (kg)'},
+      {tipo:'barra', datos:sGym.col('sesiones'), color:'#6250d6', nombre:'Sesiones'},
+      {tipo:'linea', datos:sGym.col('volumen'),  color:'#e87ba4', eje:'der', nombre:'Volumen (kg)'},
     ]};
 
-  const gRec = {etiquetas:etq, decIzq:1, decDer:0, ejeDer:true, alto:190,
+  const gAdh = {etiquetas:sAdh.etq, decIzq:0, desdeCero:true, alto:170,
+    aria:'Porcentaje de casillas del plan completadas cada semana',
+    series:[{tipo:'barra', datos:sAdh.datos, color:'#1baf7a', nombre:'Adherencia (%)'}]};
+
+  const gRec = {etiquetas:sRec.etq, decIzq:1, decDer:0, ejeDer:true, alto:190,
     aria:'Sueño medio y frecuencia cardiaca en reposo por semana',
     series:[
-      {tipo:'linea', datos:col('sueno'), color:'#6250d6', nombre:'Sueño (h)'},
-      {tipo:'linea', datos:col('fc'),    color:'#e34948', guion:'5 4', eje:'der', nombre:'FC reposo (ppm)'},
+      {tipo:'linea', datos:sRec.col('sueno'), color:'#6250d6', nombre:'Sueño (h)'},
+      {tipo:'linea', datos:sRec.col('fc'),    color:'#e34948', guion:'5 4', eje:'der', nombre:'FC reposo (ppm)'},
     ]};
 
   const fcAvisos = [];
@@ -2185,11 +2346,21 @@ function renderProgreso(){
   }
 
   el.innerHTML = `
+    <div class="compra-cfg" style="margin-bottom:14px;">
+      <select onchange="setProgPeriodo(this.value)" aria-label="Periodo mostrado">
+        <option value="8" ${progPeriodo===8?'selected':''}>Últimas 8 semanas</option>
+        <option value="12" ${progPeriodo===12?'selected':''}>Últimas 12 semanas</option>
+        <option value="26" ${progPeriodo===26?'selected':''}>Últimas 26 semanas</option>
+        <option value="0" ${progPeriodo===0?'selected':''}>Todo (${todas.length})</option>
+      </select>
+    </div>
+
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:16px;">
       ${tarjeta('Peso', num(ult.peso)!==null?red(ult.peso,1):'—', 'kg', dl('peso'), true)}
       ${tarjeta('Grasa', num(ult.grasa)!==null?red(ult.grasa,1):'—', '%', dl('grasa'), true)}
       ${tarjeta('Masa magra', num(ult.magra)!==null?red(ult.magra,1):'—', 'kg', dl('magra'), false)}
       ${tarjeta('Sesiones', num(ult.sesiones)!==null?String(ult.sesiones):'—', '', dl('sesiones'), false)}
+      ${(()=>{ const a = adherenciaSemana(ult.fecha); return tarjeta('Adherencia', a===null?'—':String(a), '%', null, false); })()}
     </div>
 
     ${fcAvisos.map(a=>`<div class="info-note" style="border-style:solid;border-color:var(--entreno);"><b>Atención:</b> ${esc(a)}</div>`).join('')}
@@ -2198,6 +2369,7 @@ function renderProgreso(){
     ${bloqueGrafica('Gasto diario medio', 'Garmin · total y calorías activas', gGasto)}
     ${bloqueGrafica('Pasos diarios', 'Garmin · media de la semana', gPasos)}
     ${bloqueGrafica('Entrenos y volumen', 'Hevy · sesiones y kilos totales movidos', gGym)}
+    ${bloqueGrafica('Adherencia al plan', 'Calculada sola a partir de las casillas que marcas en Hoy', gAdh)}
     ${bloqueGrafica('Recuperación', 'Garmin · sueño y frecuencia cardiaca en reposo', gRec)}
     ${bloqueProyeccion()}
 
@@ -2226,7 +2398,20 @@ function renderProgreso(){
 function formSemana(){
   const hoy = todayKey();
   return `
-    <div class="section-title">Añadir o actualizar una semana</div>
+    <div class="section-title">Importar datos</div>
+    <div class="card card-pad">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">
+        Pega aquí el <b>CSV de Hevy</b> tal cual lo exportas (rellena sesiones y volumen de todas las semanas de golpe)
+        o el <b>bloque de datos</b> que te paso los lunes con lo de Garmin y la báscula.
+      </div>
+      <textarea id="pg-import" placeholder="Pega aquí el CSV de Hevy o el bloque JSON..." style="width:100%;min-height:110px;border:1px solid var(--border);border-radius:12px;padding:11px;font-family:ui-monospace,monospace;font-size:12px;background:var(--bg);color:var(--ink);resize:vertical;"></textarea>
+      <div class="plan-btn-row">
+        <button class="plan-btn primary" onclick="importarProgreso()">Importar</button>
+        <button class="plan-btn" onclick="exportarProgreso()">Exportar datos</button>
+      </div>
+    </div>
+
+    <div class="section-title">Añadir o actualizar una semana a mano</div>
     <div class="card card-pad">
       <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">Deja en blanco lo que no tengas. Si repites una fecha, se sobrescribe esa semana.</div>
       <label style="display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px;">Fecha (lunes)</label>
@@ -2240,7 +2425,6 @@ function formSemana(){
       </div>
       <div class="plan-btn-row">
         <button class="plan-btn primary" onclick="guardarSemana()">Guardar semana</button>
-        <button class="plan-btn" onclick="exportarProgreso()">Exportar datos</button>
       </div>
       <div class="plan-msg" id="pg-msg"></div>
     </div>`;
