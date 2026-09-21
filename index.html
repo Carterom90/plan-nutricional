@@ -400,8 +400,6 @@ table.rot .rtag.D{background:var(--descanso-soft); color:var(--descanso);}
   <!-- MENU 6 SEMANAS -->
   <section id="screen-menu" class="screen"></section>
 
-  <!-- SEMANA -->
-  <section id="screen-semana" class="screen"></section>
 
   <!-- PROGRESO -->
   <section id="screen-progreso" class="screen"></section>
@@ -415,7 +413,6 @@ table.rot .rtag.D{background:var(--descanso-soft); color:var(--descanso);}
   <button class="tab-btn active" data-tab="hoy" onclick="switchTab('hoy')"><span class="ic">🍽️</span><span class="lb">Hoy</span></button>
   <button class="tab-btn" data-tab="recetas" onclick="switchTab('recetas')"><span class="ic">📖</span><span class="lb">Recetas</span></button>
   <button class="tab-btn" data-tab="menu" onclick="switchTab('menu')"><span class="ic">📅</span><span class="lb">Menú</span></button>
-  <button class="tab-btn" data-tab="semana" onclick="switchTab('semana')"><span class="ic">🗓️</span><span class="lb">Rotación</span></button>
   <button class="tab-btn" data-tab="progreso" onclick="switchTab('progreso')"><span class="ic">📈</span><span class="lb">Progreso</span></button>
   <button class="tab-btn" data-tab="compra" onclick="switchTab('compra')"><span class="ic">🛒</span><span class="lb">Compra</span></button>
 </div>
@@ -795,7 +792,7 @@ let recetario = {
 
 // Menú de 6 semanas del nutricionista, adaptado. Estructura: cocinas días 1, 3, 5 y 7.
 let menuVitasane = {
-  intro: 'Recetas del menú de tu nutricionista, adaptadas a tus macros y a tus gustos. Cocinas el día 1 (comes días 1 y 2), el día 3 (días 3 y 4), el día 5 (días 5 y 6) y el día 7: cuatro sesiones de cocina por semana en vez de siete.',
+  intro: 'Tu menú de 6 semanas: es el que sigue la pestaña Hoy y del que sale la lista de la compra. Recetas del menú de tu nutricionista, adaptadas a tus macros y a tus gustos.',
   cambios: [
     'Raciones de proteína al alza. El menú original usa 80-130 g por plato (20-30 g de proteína) y tu almuerzo necesita 45, así que suben a 150-200 g. Ese menú está hecho para pérdida de peso general, no para alguien que entrena fuerza tres veces por semana: las recetas son buenas, las cantidades no.',
     'Fuera las verduras de tu lista: brócoli, coliflor, alcachofa, judías verdes, espárragos y col. La pizza de coliflor pasa a base de calabacín y los rollitos de brócoli a rollitos de calabacín.',
@@ -866,7 +863,7 @@ let menuVitasane = {
     ]},
   ],
   notas: [
-    'Cuatro sesiones de cocina por semana: días 1, 3, 5 y 7. Cocinas el doble y guardas la mitad.',
+    'Cuatro sesiones de cocina por semana: lunes, martes, viernes y domingo. El lunes cocinas también para el miércoles, el martes para el jueves y el viernes para el sábado. El domingo va suelto.',
     'Lo que mejor aguanta dos días: guisos, estofados, pisto, salmorejo, ensaladilla, puchero. Todos mejoran de un día para otro.',
     'Lo que peor aguanta: los revueltos y las tortillas (hazlas al momento, son 5 minutos) y el pescado a la plancha. En esos casos, cocina la guarnición para dos días y la proteína al momento.',
     'El pescado de los guisos (merluza, rosada) añádelo al final del primer día y, al recalentar, hazlo a fuego muy suave. Es lo que más se pasa.',
@@ -1094,7 +1091,7 @@ function validatePlan(p){
 
 /* ============== ESTADO / STORAGE ============== */
 
-let settings = { trainingDays:[1,3,5], currentWeek:1, tiposSesion:{1:'push',3:'pull',5:'legs'} }; // 0=Dom,1=Lun...6=Sab
+let settings = { trainingDays:[1,3,5], currentWeek:1, tiposSesion:{1:'push',3:'pull',5:'legs'}, semanaMenu:1, anclaMenu:null }; // 0=Dom,1=Lun...6=Sab
 let checklist = {};      // { 'YYYY-MM-DD': {itemId:true} }
 let overrides = {};      // { 'YYYY-MM-DD': 'E'|'D' }
 let shoppingList = [];   // [{id,name,category,qty,qtyRecommended,checked,auto,custom}]
@@ -1265,6 +1262,9 @@ async function loadAll(){
   try{ const r = await store.get('plan'); if(r) applyPlan(JSON.parse(r.value)); }catch(e){}
   try{ const r = await store.get('settings'); if(r) settings = Object.assign({tiposSesion:{}}, JSON.parse(r.value)); }catch(e){}
   if(!settings.tiposSesion) settings.tiposSesion = {};
+  // Ancla del ciclo de 6 semanas: la semana del menú avanza sola cada lunes.
+  if(!settings.semanaMenu) settings.semanaMenu = 1;
+  if(!settings.anclaMenu){ settings.anclaMenu = lunesDe(new Date()); saveSettings(); }
   try{ const r = await store.get('checklist:'+todayKey()); if(r) checklist[todayKey()] = JSON.parse(r.value); }catch(e){}
   try{ const r = await store.get('overrides'); if(r) overrides = JSON.parse(r.value); }catch(e){}
   try{ const r = await store.get('shopping-list'); if(r) shoppingList = JSON.parse(r.value); }catch(e){}
@@ -1289,6 +1289,15 @@ async function saveShopping(){ try{ await store.set('shopping-list', JSON.string
 /* ============== HELPERS DE DÍA ============== */
 
 function mondayFirstIdx(jsDay){ return (jsDay+6)%7; } // JS: 0=Dom
+// Semana del menú (1-6) que corresponde a una fecha, contando desde el ancla.
+function semanaMenuDe(fecha){
+  const anc = new Date((settings.anclaMenu || lunesDe(new Date())) + 'T00:00:00');
+  const lun = new Date(lunesDe(fecha) + 'T00:00:00');
+  const diff = Math.round((lun - anc) / (7 * 86400000));
+  const N = menuVitasane.semanas.length;
+  return ((((settings.semanaMenu || 1) - 1 + diff) % N) + N) % N + 1;
+}
+
 function getTodayInfo(){
   const d = fechaVista();
   const jsDay = d.getDay();
@@ -1297,7 +1306,8 @@ function getTodayInfo(){
   const isGym = settings.trainingDays.includes(jsDay);
   const rot = rotation[settings.currentWeek][idx];
   const tipo = isGym ? (settings.tiposSesion[jsDay] || 'full') : null;
-  return {d, jsDay, idx, key, isGym, rot, tipo};
+  const semana = semanaMenuDe(d);
+  return {d, jsDay, idx, key, isGym, rot, tipo, semana};
 }
 
 /* ============== RECETAS DINÁMICAS (plantilla única) ============== */
@@ -1378,30 +1388,17 @@ function idxParejaDe(idx){ return PAREJA_DE[idx]; }
 
 // La proteína y el plato los marca el día en que se cocina, no el día que se ve.
 function rotDelBloque(info){
-  return rotation[settings.currentWeek][idxDiaDeCocina(info.idx)];
+  return rotation[info.semana || settings.currentWeek][idxDiaDeCocina(info.idx)];
 }
 
 // Devuelve el plato concreto del recetario para ese día, o null si toca la plantilla base.
 function platoDelDia(slot, info){
-  const lista = slot === 'alm' ? recetario.alm : recetario.cena;
-  const guardado = platos[info.key] && platos[info.key][slot];
-  if(guardado){
-    if(guardado === '__base__') return null;
-    const f = lista.find(r => r.title === guardado);
-    if(f) return f;
-  }
-  const rotB = rotDelBloque(info);
-  const prot = slot === 'alm' ? rotB.alm : rotB.cena;
-  if(slot === 'alm' && /lentejas|garbanzos/i.test(prot)) return null;
-  const cand = candidatosPlato(lista, prot);
-  if(!cand.length) return null;
-  // Los revueltos, las tortillas y lo que va a la plancha al momento no aguantan
-  // dos días: se evitan cuando hay alternativa, ya que cada plato cubre una pareja.
-  const NO_AGUANTA = /revuelto|tortilla|templada|a la plancha/i;
-  const aguantan = cand.filter(r => !NO_AGUANTA.test(r.title));
-  const pool = aguantan.length ? aguantan : cand;
-  // Determinista por bloque: los dos días de la pareja dan el mismo plato.
-  return pool[(settings.currentWeek * 4 + bloqueDeDia(info.idx)) % pool.length];
+  const semana = info.semana || semanaMenuDe(info.d || new Date());
+  const w = menuVitasane.semanas.find(x => x.n === semana) || menuVitasane.semanas[0];
+  const b = w.bloques[bloqueDeDia(info.idx)];
+  if(!b) return null;
+  const d = slot === 'alm' ? b.alm : b.cena;
+  return {title: d.t, macros: d.m, ing: d.i, tip: d.p ? [d.p] : [], bloque: b.dias, semana};
 }
 
 async function setPlato(slot, titulo){
@@ -1515,32 +1512,27 @@ function prepManana(){
   const idx = mondayFirstIdx(d.getDay());
   if(!esDiaDeCocina(idx)) return {dia: dayNames[idx], piezas: null, remojo: null};
 
-  const rot = rotation[settings.currentWeek][idx];
-  const esLegumbre = /lentejas|garbanzos/i.test(rot.alm);
+  // Los días de cocina que tienen pareja preparan dos raciones
+  const raciones = idxParejaDe(idx) === null ? 1 : 2;
+  const infoMan = {d, idx, key: claveFecha(d), semana: semanaMenuDe(d)};
   const piezas = [];
-  if(esLegumbre){
-    piezas.push(/garbanzos/i.test(rot.alm) ? '100 g de garbanzos' : '100 g de lentejas (no necesitan remojo)');
-  } else {
-    piezas.push('170 g de ' + rot.alm.toLowerCase() + ' para el almuerzo');
-  }
-  piezas.push('140 g de ' + rot.cena.toLowerCase() + ' para la cena');
-
-  // Remojo: hay que detectarlo mirando el plato real, no solo la rotación —
-  // varias recetas del recetario llevan garbanzos sin que la rotación lo diga.
-  const infoMan = {idx, key: claveFecha(d), rot};
   let remojo = null;
-  if(/garbanzos/i.test(rot.alm)){
-    remojo = '100 g de garbanzos';
-  } else {
-    const pAlm = platoDelDia('alm', infoMan);
-    const pCena = platoDelDia('cena', infoMan);
-    [pAlm, pCena].forEach(p => {
-      if(!p) return;
-      const m = p.ing.match(/(\d+)\s*g de garbanzos en seco/i);
-      if(m) remojo = m[1] + ' g de garbanzos (para ' + p.title + ')';
+
+  ['alm','cena'].forEach(slot=>{
+    const p = platoDelDia(slot, infoMan);
+    if(!p) return;
+    parseIngredientes(p.ing).forEach(x=>{
+      if((x.cat === 'Carnes' || x.cat === 'Pescados') && !/lata|fiambre|jamón|pulpo cocido/i.test(x.n) && x.un === 'g'){
+        const [base, corte] = x.n.split(' — ');
+        const nombre = base.toLowerCase() + (corte ? ' (' + corte + ')' : '');
+        piezas.push(`${Math.round(x.cant*raciones)} g de ${nombre} · ${p.title}${raciones>1?' · 2 raciones':''}`);
+      }
     });
-  }
-  return {dia: dayNames[idx], piezas, remojo};
+    const m = p.ing.match(/(\d+)\s*g de garbanzos en seco/i);
+    if(m) remojo = `${Math.round(+m[1]*raciones)} g de garbanzos (para ${p.title})`;
+  });
+
+  return {dia: dayNames[idx], piezas: piezas.length ? piezas : ['Nada que descongelar: mañana va de huevo, conservas o marisco ya cocido.'], remojo};
 }
 
 function renderHoy(){
@@ -1559,13 +1551,7 @@ function renderHoy(){
 
   const mealBlock = (id, tpl, protein, detail, openKey, slot) => {
     const plato = platoDelDia(slot, info);
-    const lista = slot === 'alm' ? recetario.alm : recetario.cena;
-    const rotB = rotDelBloque(info);
-    const protBloque = slot === 'alm' ? rotB.alm : rotB.cena;
-    const esLegumbre = slot === 'alm' && /lentejas|garbanzos/i.test(protBloque);
-    const titulo = plato ? plato.title
-                 : esLegumbre ? (/garbanzos/i.test(info.rot.alm) ? 'Garbanzos guisados' : 'Lentejas guisadas')
-                 : 'Plato base de la plantilla';
+    const titulo = plato ? plato.title : 'Sin plato asignado';
     const macros = plato ? plato.macros : tpl.macros;
     const ing = plato ? plato.ing : detail.ing;
     const pasos = plato ? plato.tip : detail.steps;
@@ -1574,7 +1560,7 @@ function renderHoy(){
       <div class="meal-head ${openMeal[openKey]?'open':''}">
         <input type="checkbox" ${done[id]?'checked':''} onchange="event.stopPropagation(); toggleCheck('${id}')" onclick="event.stopPropagation()">
         <div class="txt" onclick="toggleMeal('${openKey}')">
-          <div class="label">${tpl.label} · ${esc(protBloque)}${cocinaHoy?'':' · cocinado ' + esc(diaAnteriorLbl)}</div>
+          <div class="label">${tpl.label}${cocinaHoy?'':' · cocinado ' + esc(diaAnteriorLbl)}</div>
           <div class="protein">${esc(titulo)}</div>
         </div>
         <div class="chev" onclick="toggleMeal('${openKey}')">▸</div>
@@ -1582,7 +1568,7 @@ function renderHoy(){
       <div class="meal-detail ${openMeal[openKey]?'open':''}">
         <div class="macropill">${esc(macros)}</div>
         <div class="ing">${esc(ing)}</div>
-        <ol>${pasos.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>
+        ${pasos.length ? `<ol>${pasos.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>` : ''}
         ${cocinaHoy
           ? (idxPareja === null
               ? `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">Hoy se cocina solo para hoy.</div>`
@@ -1607,7 +1593,7 @@ function renderHoy(){
         <div class="ticket-top">
           <div>
             <div class="ticket-day">${dayNames[info.idx]}</div>
-            <div class="ticket-date">${etiquetaDia()} · ${dateStr} · Semana ${settings.currentWeek}</div>
+            <div class="ticket-date">${etiquetaDia()} · ${dateStr} · Semana ${info.semana} del menú</div>
           </div>
           ${info.isGym ? `<div class="type-badge E">${esc((TIPOS_SESION[info.tipo]||TIPOS_SESION.full).lbl)}</div>` : '<div class="type-badge D">Sin gym</div>'}
         </div>
@@ -1832,11 +1818,19 @@ function renderRecetas(){
 
 /* ============== RENDER: MENÚ 6 SEMANAS ============== */
 
-let menuSemanaSel = 1;
+let menuSemanaSel = null;
 function selectMenuSemana(n){ menuSemanaSel = n; renderMenu(); }
+async function fijarSemanaMenu(n){
+  settings.semanaMenu = n;
+  settings.anclaMenu = lunesDe(new Date());
+  await saveSettings();
+  renderAll();
+}
 
 function renderMenu(){
   const el = document.getElementById('screen-menu');
+  const actual = semanaMenuDe(new Date());
+  if(menuSemanaSel === null) menuSemanaSel = actual;
   const wk = menuVitasane.semanas.find(w => w.n === menuSemanaSel);
 
   const dish = (label, d) => `
@@ -1859,11 +1853,14 @@ function renderMenu(){
     <div class="info-note" style="margin-bottom:14px;"><b>Cantidades:</b> ${esc(pesosNota)}</div>
 
     <div class="week-tabs">
-      ${menuVitasane.semanas.map(w=>`<div class="week-tab ${w.n===menuSemanaSel?'active':''}" onclick="selectMenuSemana(${w.n})">Sem. ${w.n}</div>`).join('')}
+      ${menuVitasane.semanas.map(w=>`<div class="week-tab ${w.n===menuSemanaSel?'active':''}" onclick="selectMenuSemana(${w.n})">Sem. ${w.n}${w.n===actual?' ·':''}</div>`).join('')}
     </div>
+    ${menuSemanaSel === actual
+      ? `<div class="info-note">Esta es la semana en curso. Es la que siguen Hoy y la lista de la compra, y avanza sola cada lunes.</div>`
+      : `<button class="gen-btn" onclick="fijarSemanaMenu(${menuSemanaSel})">Hacer de la semana ${menuSemanaSel} la semana en curso</button>`}
 
-    ${wk.bloques.map(b => `
-      <div class="section-title">${esc(b.dias)}</div>
+    ${wk.bloques.map((b,bi) => `
+      <div class="section-title">${esc(['Lunes y miércoles','Martes y jueves','Viernes y sábado','Domingo'][bi] || b.dias)}</div>
       ${dish('Almuerzo', b.alm)}
       ${dish('Cena', b.cena)}
     `).join('')}
@@ -1881,7 +1878,6 @@ function renderMenu(){
 
 function selectSemana(w){
   semanaSelected = w;
-  renderSemana();
 }
 function useAsCurrentWeek(w){
   settings.currentWeek = w;
@@ -2531,110 +2527,229 @@ function aguanta(nombre){
 function diasVentana(desde, n){
   const out = [];
   const base = new Date(desde + 'T00:00:00');
-  // Al cruzar el domingo, los días siguientes pasan a la semana de rotación siguiente.
-  let semana = settings.currentWeek;
-  let idxPrev = null;
   for(let i=0; i<n; i++){
     const d = new Date(base);
     d.setDate(d.getDate() + i);
     const idx = mondayFirstIdx(d.getDay());
-    if(idxPrev !== null && idx < idxPrev) semana = (semana % 4) + 1;  // ha cambiado de semana
-    idxPrev = idx;
-    out.push({fecha:d, idx, semana, rot: rotation[semana][idx]});
+    out.push({fecha:d, idx, semana: semanaMenuDe(d), rot: rotation[settings.currentWeek][idx]});
   }
+  return out;
+}
+
+/* ---------- Lista de la compra: suma lo que se come de verdad en la ventana ---------- */
+
+// Nombre canónico, categoría y unidad de cada ingrediente. El orden importa:
+// los patrones más específicos van antes que los genéricos.
+const INGREDIENTES = [
+  // Carne
+  [/contramuslo/i,                       'Pollo — contramuslo con piel', 'Carnes'],
+  [/pollo picado|carne picada de pollo|hamburguesa de pollo/i, 'Pollo picado', 'Carnes'],
+  [/pechuga de pollo|pollo/i,            'Pollo — pechuga',              'Carnes'],
+  [/fiambre de pavo/i,                   'Fiambre de pavo',              'Carnes'],
+  [/pavo picado|carne picada de pavo/i,  'Pavo picado',                  'Carnes'],
+  [/pavo/i,                              'Pavo — pechuga',               'Carnes'],
+  [/ternera picada/i,                    'Ternera picada magra',         'Carnes'],
+  [/ternera/i,                           'Ternera — tapa, babilla o contra', 'Carnes'],
+  [/cerdo|lomo/i,                        'Cerdo — lomo',                 'Carnes'],
+  [/jamón/i,                             'Jamón serrano',                'Carnes'],
+  // Pescado y marisco
+  [/salmón|salmon/i,                     'Salmón',                       'Pescados'],
+  [/dorada/i,                            'Dorada',                       'Pescados'],
+  [/atún al natural|atún escurrido/i,    'Atún al natural (lata)',       'Conservas'],
+  [/atún/i,                              'Atún fresco',                  'Pescados'],
+  [/merluza,? rosada o lenguado|merluza o rosada|rosada o merluza|merluza o pescado blanco/i, 'Pescado blanco (merluza, rosada o lenguado)', 'Pescados'],
+  [/rosada/i,                            'Rosada',                       'Pescados'],
+  [/lenguado/i,                          'Lenguado',                     'Pescados'],
+  [/corvina|lubina/i,                    'Corvina o lubina',             'Pescados'],
+  [/merluza|pescado blanco/i,            'Merluza',                      'Pescados'],
+  [/pulpo/i,                             'Patas de pulpo cocido',        'Pescados'],
+  [/gambas|langostinos/i,                'Gambas peladas',               'Pescados'],
+  [/almejas/i,                           'Almejas',                      'Pescados'],
+  // Huevos y lácteos
+  [/claras/i,                            'Claras pasteurizadas',         'Lácteos y huevos'],
+  [/yema|huevo/i,                        'Huevos',                       'Lácteos y huevos'],
+  [/leche evaporada/i,                   'Leche evaporada semi',         'Lácteos y huevos'],
+  [/queso de untar/i,                    'Queso de untar light',         'Lácteos y huevos'],
+  [/queso rallado/i,                     'Queso rallado light',          'Lácteos y huevos'],
+  [/queso fresco/i,                      'Queso fresco',                 'Lácteos y huevos'],
+  [/mozzarella/i,                        'Mozzarella light',             'Lácteos y huevos'],
+  [/parmesano/i,                         'Parmesano',                    'Lácteos y huevos'],
+  [/provolone/i,                         'Provolone',                    'Lácteos y huevos'],
+  [/requesón/i,                          'Requesón',                     'Lácteos y huevos'],
+  [/yogur de proteína/i,                 'Yogur de proteína',            'Lácteos y huevos'],
+  // Hidratos y legumbres
+  [/arroz/i,                             'Arroz (en seco)',              'Legumbres y cereales'],
+  [/tirabuzones/i,                       'Tirabuzones de lentejas',      'Legumbres y cereales'],
+  [/macarrones|espagueti|pasta integral/i,'Pasta integral',              'Legumbres y cereales'],
+  [/noodles/i,                           'Noodles frescos',              'Legumbres y cereales'],
+  [/fideos de arroz/i,                   'Fideos de arroz',              'Legumbres y cereales'],
+  [/fideos/i,                            'Fideos',                       'Legumbres y cereales'],
+  [/cuscús/i,                            'Cuscús',                       'Legumbres y cereales'],
+  [/ñoquis/i,                            'Ñoquis',                       'Legumbres y cereales'],
+  [/garbanzos/i,                         'Garbanzos (en seco)',          'Legumbres y cereales'],
+  [/lenteja/i,                           'Lentejas (en seco)',           'Legumbres y cereales'],
+  [/pan/i,                               'Pan integral',                 'Legumbres y cereales'],
+  [/patata/i,                            'Patatas',                      'Verduras y fruta'],
+  // Verdura
+  [/tomate triturado|tomate tamizado|tomate pelado/i, 'Tomate triturado', 'Conservas'],
+  [/tomate cherry/i,                     'Tomate cherry',                'Verduras y fruta'],
+  [/tomate/i,                            'Tomate',                       'Verduras y fruta'],
+  [/pimiento verde/i,                    'Pimiento verde',               'Verduras y fruta'],
+  [/pimiento/i,                          'Pimiento rojo',                'Verduras y fruta'],
+  [/cebolla morada/i,                    'Cebolla morada',               'Verduras y fruta'],
+  [/cebolleta/i,                         'Cebolleta',                    'Verduras y fruta'],
+  [/cebolla/i,                           'Cebolla',                      'Verduras y fruta'],
+  [/calabacín/i,                         'Calabacín',                    'Verduras y fruta'],
+  [/berenjena/i,                         'Berenjena',                    'Verduras y fruta'],
+  [/zanahoria/i,                         'Zanahoria',                    'Verduras y fruta'],
+  [/puerro/i,                            'Puerro',                       'Verduras y fruta'],
+  [/champiñon/i,                         'Champiñones',                  'Verduras y fruta'],
+  [/calabaza/i,                          'Calabaza',                     'Verduras y fruta'],
+  [/apio/i,                              'Apio',                         'Verduras y fruta'],
+  [/guisantes/i,                         'Guisantes (congelados)',       'Verduras y fruta'],
+  [/edamame/i,                           'Edamame (congelado)',          'Verduras y fruta'],
+  [/lechuga/i,                           'Lechuga',                      'Verduras y fruta'],
+  [/canónigos|brotes/i,                  'Canónigos o brotes',           'Verduras y fruta'],
+  [/rúcula/i,                            'Rúcula',                       'Verduras y fruta'],
+  [/aguacate/i,                          'Aguacate',                     'Verduras y fruta'],
+  [/maíz/i,                              'Maíz',                         'Conservas'],
+  [/ajo/i,                               'Ajo',                          'Verduras y fruta'],
+  [/jengibre/i,                          'Jengibre fresco',              'Verduras y fruta'],
+  [/naranja/i,                           'Naranjas',                     'Verduras y fruta'],
+  [/fresas/i,                            'Fresas',                       'Verduras y fruta'],
+  [/frambuesa/i,                         'Frambuesas',                   'Verduras y fruta'],
+  [/piña/i,                              'Piña',                         'Verduras y fruta'],
+  [/kiwi/i,                              'Kiwi',                         'Verduras y fruta'],
+  // Despensa
+  [/aove|aceite/i,                       'AOVE',                         'Otros / despensa'],
+  [/salsa de soja/i,                     'Salsa de soja baja en sodio',  'Otros / despensa'],
+  [/mostaza/i,                           'Mostaza',                      'Otros / despensa'],
+  [/vinagre/i,                           'Vinagre',                      'Otros / despensa'],
+  [/zumo de limón/i,                     'Limón',                        'Verduras y fruta'],
+  [/vino/i,                              'Vino blanco o tinto',          'Otros / despensa'],
+  [/cerveza/i,                           'Cerveza',                      'Otros / despensa'],
+  [/caldo|agua o caldo/i,                'Caldo bajo en sal',            'Conservas'],
+  [/nueces/i,                            'Nueces',                       'Otros / despensa'],
+  [/pistachos/i,                         'Pistachos sin sal',            'Otros / despensa'],
+  [/almendras/i,                         'Almendras',                    'Otros / despensa'],
+  [/piñones/i,                           'Piñones',                      'Otros / despensa'],
+  [/sésamo/i,                            'Sésamo',                       'Otros / despensa'],
+  [/curry/i,                             'Curry en polvo',               'Otros / despensa'],
+  [/pimentón/i,                          'Pimentón',                     'Otros / despensa'],
+];
+
+function canonico(nombre){
+  for(const [re, n, cat] of INGREDIENTES){ if(re.test(nombre)) return {n, cat}; }
+  return null;
+}
+
+// Convierte "170 g de pollo · 1 huevo + 150 ml de claras · 1 diente de ajo (5 g)"
+// en una lista de {n, cat, cant, un}. Lo que va "al gusto" o sin cantidad se ignora.
+function parseIngredientes(texto){
+  const out = [];
+  const trozos = String(texto).split(/·|\+/).map(t => t.trim()).filter(Boolean);
+  trozos.forEach(t0 => {
+    if(/al gusto|unas gotas|unas hebras|sin aceite|^sal$/i.test(t0)) return;
+    let t = t0, etiqueta = '';
+    const lab = t.match(/^([A-Za-zÁÉÍÓÚáéíóúñÑ ]+):\s*(.*)$/);
+    if(lab){ etiqueta = lab[1]; t = lab[2]; }
+
+    let cant = null, un = null, nombre = '';
+    const par = t.match(/\((?:unos |unas )?(\d+)\s*(g|ml)\)/i);
+    const pesado = t.match(/^(\d+(?:[.,]\d+)?)\s*(kg|g|ml|l)\b\s*(?:de\s+)?(.*)$/i);
+    const contado = t.match(/^(\d+)\s+(.*)$/);
+
+    if(pesado){
+      cant = parseFloat(pesado[1].replace(',','.'));
+      un = pesado[2].toLowerCase();
+      nombre = pesado[3] || etiqueta;
+      if(un === 'kg'){ cant *= 1000; un = 'g'; }
+      if(un === 'l'){ cant *= 1000; un = 'ml'; }
+    } else if(par){
+      cant = parseFloat(par[1]); un = par[2].toLowerCase(); nombre = t;
+    } else if(contado){
+      cant = parseInt(contado[1], 10); un = 'ud'; nombre = contado[2];
+    } else return;
+
+    const c = canonico(nombre) || canonico(etiqueta);
+    if(!c) return;
+    // Huevos y yemas se cuentan en unidades aunque vengan con gramos entre paréntesis
+    if(c.n === 'Huevos' && un !== 'ud'){ return; }
+    out.push({n:c.n, cat:c.cat, cant, un});
+  });
   return out;
 }
 
 function generarLista(desde, n){
   const dias = diasVentana(desde, n);
   const tally = {};
-  function add(name, grams, category, dia){
-    const key = category+'|'+name.toLowerCase();
-    if(!tally[key]) tally[key] = {name, grams:0, category, dias:[]};
-    tally[key].grams += grams;
-    if(dia) tally[key].dias.push(dia);
+  function add(nombre, cat, cant, un, dia){
+    const k = nombre + '|' + un;
+    if(!tally[k]) tally[k] = {nombre, cat, cant:0, un, dias:new Set()};
+    tally[k].cant += cant;
+    if(dia) tally[k].dias.add(dia);
   }
 
-  let almSlots = 0, cenaSlots = 0, lechugaSlots = 0;
-  const vegTally = {};
-
-  dias.forEach(({rot, idx, fecha})=>{
+  const platosVentana = [];
+  dias.forEach(({fecha, idx, semana, rot})=>{
+    const info = {idx, key: claveFecha(fecha), rot, semana};
     const etiqueta = dayNames[idx].slice(0,3) + ' ' + fecha.getDate();
 
-    if(/lentejas|garbanzos/i.test(rot.alm)){
-      add(normalizaProteina(rot.alm), 100, 'Legumbres y cereales');
-    } else {
-      add(normalizaProteina(rot.alm.split('+')[0]), 170, 'Carnes', etiqueta);
-      almSlots++;
-    }
-    const cena = normalizaProteina(rot.cena);
-    add(cena, 140, /pollo|pavo/i.test(cena) ? 'Carnes' : 'Pescados', etiqueta);
-    cenaSlots++;
-
-    // Guarnición del día, según la rotación fija de verduras
     ['alm','cena'].forEach(slot=>{
-      const code = weeklyGarnish[idx][slot];
-      if(!code) return;
-      lechugaSlots++;
-      coreGarnishes[code].comp.split('+').forEach(part=>{
-        const m = part.trim().match(/^(\d+)\s*g\s+(.+)$/);
-        if(m){ const nm = m[2].trim(); vegTally[nm] = (vegTally[nm]||0) + parseInt(m[1],10); }
-      });
+      let ing = null, titulo = null;
+      const p = platoDelDia(slot, info);
+      if(p){ ing = p.ing; titulo = p.title; }
+      else if(slot === 'alm' && /lentejas|garbanzos/i.test(rotDelBloque(info).alm)){
+        const leg = rotDelBloque(info).alm;
+        ing = `100 g de ${leg.toLowerCase()} en seco · 80 g de zanahoria · 100 g de patata · 60 g de pimiento · 50 g de cebolla · 1 diente de ajo (5 g) · 600 ml de caldo`;
+        titulo = /lentejas/i.test(leg) ? 'Lentejas guisadas' : 'Garbanzos guisados';
+      } else {
+        const r = slot === 'alm' ? almuerzoRecipe(rotDelBloque(info).alm, idx) : cenaRecipe(rotDelBloque(info).cena, idx);
+        ing = r.ing; titulo = 'Plantilla base';
+      }
+      platosVentana.push({dia: etiqueta, slot, titulo});
+      parseIngredientes(ing).forEach(x => add(x.n, x.cat, x.cant, x.un, etiqueta));
     });
   });
+
+  // Tomas fijas: iguales todos los días
+  add('Avena en copos', 'Otros / despensa', 70*n, 'g');
+  add('Proteína whey', 'Otros / despensa', 30*n, 'g');
+  add('Leche semidesnatada sin lactosa', 'Lácteos y huevos', 450*n, 'ml');
+  add('Manzanas (o mandarinas en temporada)', 'Verduras y fruta', 2*n, 'ud');
+  add('Yogur natural', 'Lácteos y huevos', 2*n, 'ud');
+  add('Chocolate negro 99%', 'Otros / despensa', 20*n, 'g');
+  add('Café', 'Otros / despensa', 2*n, 'ud');
+  add('Creatina', 'Otros / despensa', n, 'ud');
+
+  const coma = x => String(x).replace('.', ',');
+  const fmt = (c, un) => {
+    if(un === 'ud') return Math.ceil(c) + (c === 1 ? ' ud' : ' uds');
+    if(un === 'ml') return c >= 1000 ? coma((c/1000).toFixed(1).replace(/\.0$/,'')) + ' L' : Math.round(c) + ' ml';
+    return c >= 1000 ? coma((c/1000).toFixed(2).replace(/0$/,'').replace(/\.0$/,'')) + ' kg' : Math.round(c) + ' g';
+  };
+  // Nombres de unidad más claros para las cosas que se cuentan
+  const udLbl = {'Café':'cafés', 'Creatina':'dosis', 'Huevos':'huevos'};
 
   const items = [];
-  const fmt = g => g>=1000 ? (g/1000).toFixed(1).replace('.0','')+' kg' : g+' g';
-
-  // Proteína: se marca la que no aguanta toda la ventana
   Object.values(tally).forEach(t=>{
-    const cInfo = CORTES[claveCorte(t.name)];
-    if(cInfo) t.name = t.name + ' — ' + cInfo.corte.toLowerCase();
-    const info = aguanta(t.name);
-    const ultimoDia = t.dias.length;   // en cuántos días distintos se usa
-    const congelar = info.dias < n && t.dias.length > 0;
+    let qty = fmt(t.cant, t.un);
+    if(t.un === 'ud' && udLbl[t.nombre]) qty = Math.ceil(t.cant) + ' ' + udLbl[t.nombre];
+    if(t.nombre === 'Ajo' && t.un === 'g') qty += ` (unos ${Math.max(1, Math.round(t.cant/5))} dientes)`;
+
+    // Lo fresco que no aguanta toda la ventana va aparte, con los días en que se usa
+    const info = aguanta(t.nombre);
+    const esFresco = (t.cat === 'Carnes' || t.cat === 'Pescados') && !/lata|fiambre|jamón/i.test(t.nombre);
+    const congelar = esFresco && info.dias < n && t.dias.size > 0;
     items.push({
-      name: t.name,
-      qty: fmt(t.grams),
-      category: congelar ? 'Fresco · congelar al llegar' : t.category,
-      nota: congelar ? `Para ${t.dias.join(', ')} · aguanta ${info.dias} días en nevera` : null
+      name: t.nombre,
+      qty,
+      category: congelar ? 'Fresco · congelar al llegar' : t.cat,
+      nota: congelar ? `Para ${[...t.dias].join(', ')} · aguanta ${info.dias} días en nevera` : null
     });
   });
 
-  // Verdura de guarnición
-  Object.entries(vegTally).forEach(([nm,g])=>{
-    items.push({name: nm.charAt(0).toUpperCase()+nm.slice(1), qty: fmt(g), category:'Verduras y fruta'});
-  });
-  items.push({name:'Lechuga', qty: fmt(lechugaSlots*70)+' (o 2-3 unidades)', category:'Verduras y fruta'});
-
-  // Hidratos y complementos, proporcionales a los días
-  const porDia = (x) => Math.round(x * n);
-  items.push({name:'Arroz', qty: fmt(porDia(50))+' en seco', category:'Legumbres y cereales'});
-  items.push({name:'Patatas', qty: fmt(porDia(220)), category:'Verduras y fruta'});
-  items.push({name:'Aguacate', qty: Math.ceil(almSlots/4)+' uds (35 g por almuerzo)', category:'Verduras y fruta'});
-  items.push({name:'Queso fresco', qty: fmt(cenaSlots*20), category:'Lácteos y huevos'});
-
-  // Tomas fijas
-  items.push({name:'Avena en copos', qty: fmt(porDia(70)), category:'Otros / despensa'});
-  items.push({name:'Proteína whey', qty: fmt(porDia(30))+` (${n} dosis)`, category:'Otros / despensa'});
-  items.push({name:'Leche semidesnatada sin lactosa', qty: (porDia(450)/1000).toFixed(1)+' L', category:'Lácteos y huevos'});
-  items.push({name:'Manzanas o mandarinas', qty: (n*2)+' uds (2/día)', category:'Verduras y fruta'});
-  items.push({name:'Yogur natural', qty: (n*2)+' uds', category:'Lácteos y huevos'});
-  items.push({name:'Chocolate negro 99%', qty: fmt(porDia(20)), category:'Otros / despensa'});
-  items.push({name:'Café', qty:`para ${n*2} cafés`, category:'Otros / despensa'});
-  items.push({name:'AOVE', qty: fmt(porDia(12))+' aprox.', category:'Otros / despensa'});
-
-  // Despensa que dura y solo se repone de vez en cuando
-  items.push({name:'Salsa de soja baja en sodio', qty:'si se acaba', category:'Otros / despensa'});
-  items.push({name:'Pistachos sin sal', qty:'si se acaban', category:'Otros / despensa'});
-  items.push({name:'Noodles frescos (bolsa al vacío)', qty:'si toca receta asiática', category:'Legumbres y cereales'});
-  items.push({name:'Cuscús', qty:'si se acaba', category:'Legumbres y cereales'});
-  items.push({name:'Requesón', qty:'si toca esa cena', category:'Lácteos y huevos'});
-  items.push({name:'Pan integral', qty:'si toca tostada o salmorejo', category:'Otros / despensa'});
-  items.push({name:'Claras pasteurizadas', qty:'1 brik', category:'Lácteos y huevos'});
-  items.push({name:'Leche evaporada semi', qty:'1 lata', category:'Otros / despensa'});
-  items.push({name:'Creatina', qty:'si se acaba', category:'Otros / despensa'});
-
+  generarLista.ultimosPlatos = platosVentana;
   return items;
 }
 
@@ -2643,15 +2758,18 @@ function textoVentana(){
   const dias = diasVentana(compraDesde || todayKey(), n);
   const a = dias[0].fecha, b = dias[n-1].fecha;
   const f = d => d.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'short'});
-  return `Cubre ${n} días: de ${f(a)} a ${f(b)}. Lo que no aguanta en nevera sale marcado aparte para que lo congeles al llegar.`;
+  return `Cubre ${n} días: de ${f(a)} a ${f(b)}. Suma los ingredientes de los platos que te tocan esos días más las tomas fijas. Lo que no aguanta en nevera sale aparte para congelarlo al llegar.`;
 }
 function setCompraDesde(v){ if(v){ compraDesde = v; renderCompra(); } }
 function setCompraDias(v){ compraDias = parseInt(v,10)||7; renderCompra(); }
 
 async function generarListaSemana(){
   const generated = generarLista(compraDesde || todayKey(), compraDias);
+  // Lo que se generó en otra ventana y ya no toca, fuera (salvo si lo editaste a mano)
+  const nombres = new Set(generated.map(g => g.name.toLowerCase()));
+  shoppingList = shoppingList.filter(it => !it.auto || it.custom || nombres.has(it.name.toLowerCase()));
   generated.forEach(g=>{
-    const existing = shoppingList.find(it=>it.auto && it.name.toLowerCase()===g.name.toLowerCase() && it.category===g.category);
+    const existing = shoppingList.find(it=>it.auto && it.name.toLowerCase()===g.name.toLowerCase());
     if(existing){
       existing.qtyRecommended = g.qty;
       existing.nota = g.nota || null;
@@ -2695,7 +2813,7 @@ async function deleteItem(id){
   renderCompra();
 }
 
-const CAT_ORDER = ['Fresco · congelar al llegar','Carnes','Pescados','Verduras y fruta','Lácteos y huevos','Legumbres y cereales','Otros / despensa'];
+const CAT_ORDER = ['Fresco · congelar al llegar','Carnes','Pescados','Verduras y fruta','Lácteos y huevos','Legumbres y cereales','Conservas','Otros / despensa'];
 
 function renderCompra(){
   const el = document.getElementById('screen-compra');
@@ -2866,7 +2984,6 @@ async function toggleTrainingDay(i){
   await saveSettings();
   renderDayToggles();
   renderHoy();
-  renderSemana();
 }
 
 function renderAll(){
@@ -2874,7 +2991,6 @@ function renderAll(){
   renderRecetas();
   renderMenu();
   renderProgreso();
-  renderSemana();
   renderCompra();
 }
 

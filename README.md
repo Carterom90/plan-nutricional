@@ -72,25 +72,33 @@ Si el repo es **público**, el contenido del plan (recetas, macros, objetivos ca
 
 ---
 
+## Una sola fuente: el Menú
+
+El menú de 6 semanas (pestaña **Menú**) es lo único que decide qué se come. **Hoy** muestra el plato del menú para ese día y la **lista de la compra** suma los ingredientes de esos mismos platos, así que las tres cosas siempre coinciden.
+
+La semana del menú se calcula por calendario y avanza sola cada lunes: 1 → 2 → … → 6 → 1. Desde la pestaña Menú se puede fijar cuál es la semana en curso si alguna vez hay que resincronizar.
+
+Los cuatro bloques de cada semana del menú se asignan a los días así: lunes y miércoles, martes y jueves, viernes y sábado, y domingo suelto. Se cocina lunes, martes, viernes y domingo.
+
+El recetario de la pestaña Recetas queda como consulta: técnicas, alternativas y platos para cuando se quiera cambiar algo a mano.
+
 ## Pestaña Hoy
 
-Checklist del día con el plato concreto del recetario para almuerzo y cena, elegido automáticamente.
+Checklist del día con el plato del menú para almuerzo y cena, ingredientes y preparación. La cabecera indica la semana del menú, si hoy toca cocinar o recalentar, y para qué día es la otra mitad.
 
-**Cocina cada dos días.** Los bloques son lunes-miércoles, martes-jueves, viernes-sábado y domingo suelto: se cocina lunes, martes, viernes y domingo. La cabecera indica si hoy toca cocinar o recalentar y para qué día es la otra mitad. El aviso de descongelado solo aparece cuando al día siguiente toca cocinar, e incluye recordatorio de poner garbanzos en remojo cuando el plato del día siguiente los lleva (se detecta en la receta real, no solo en la rotación).
-
-El plato lo marca la proteína del día de cocción y rota entre semanas. Los revueltos, tortillas y platos a la plancha se descartan para los bloques cuando hay alternativa, porque no aguantan dos días. Si la proteína no tiene plato propio, se busca dentro de su grupo (ternera/cerdo, pollo/pavo, pescados, marisco) antes de caer en la plantilla base. Flechas para moverse al día anterior o siguiente (cada día guarda su propio checklist) y aviso fijo de qué proteína sacar del congelador para el día siguiente, distinguiendo si los garbanzos necesitan remojo.
+El aviso de descongelado sale del plato real del día siguiente: indica cada pieza de carne o pescado con su gramaje, duplicado cuando ese día se cocina para dos, y avisa de poner garbanzos en remojo cuando el plato los lleva.
 
 ## Pestaña Compra
 
-Ventana móvil: se elige el día de la compra y cuántos días cubre (7, 10 o 14), y la lista suma exactamente esos días a partir de esa fecha. Si la ventana cruza el domingo, los días siguientes usan la rotación de la semana siguiente.
+Ventana móvil: se elige el día de la compra y cuántos días cubre (7, 10 o 14).
 
-La proteína que no aguanta toda la ventana en nevera sale en un bloque aparte, **Fresco · congelar al llegar**, con los días concretos en que se usa y cuánto aguanta cada tipo (pescado y ave 2 días, carne roja 4). Los nombres se normalizan: "Pollo al curry" suma con "Pollo" en vez de comprarse aparte.
+**La lista suma lo que se come de verdad en esa ventana.** Para cada día toma el plato del menú que le toca (el mismo que aparece en Hoy y en Menú, con la semana del menú que corresponda a cada día aunque la ventana cruce el domingo), lee sus ingredientes y los agrega, más las tomas fijas multiplicadas por los días. No hay cantidades genéricas: cada producto sale con los gramos, mililitros o unidades que se consumen en ese periodo.
 
-Las cantidades editadas a mano se respetan al regenerar.
+Los ingredientes se normalizan a un nombre de compra ("170 g de pollo en taquitos" y "pechuga de pollo" suman como "Pollo — pechuga"), y las alternativas se respetan ("merluza o rosada" sale como pescado blanco). Lo que va al gusto no entra.
 
-## Entrenamiento
+La carne y el pescado que no aguantan toda la ventana en nevera salen en un bloque aparte, **Fresco · congelar al llegar**, con los días en que se usa cada uno.
 
-Cada día de gimnasio tiene un tipo de sesión asignado en Ajustes (empuje, tracción, pierna o full body). En la pestaña Hoy aparece la rutina de cinta correspondiente: intervalos de trote los días de tracción, caminata con inclinación en empuje, y sin impacto los días de pierna. Las notas de progresión y los pendientes de la rutina están en Progreso.
+Al regenerar, los productos automáticos que ya no se usan en la nueva ventana desaparecen, pero las cantidades editadas a mano se conservan.
 
 ## Pestaña Progreso
 
