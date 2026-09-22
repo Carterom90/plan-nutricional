@@ -4,7 +4,7 @@ App personal (un solo `index.html`, sin build) para seguir el plan nutricional.
 
 **Plan actual:** ~1800 kcal · 133 g proteína · 191 g hidrato · 57 g grasa. Déficit de 313 kcal/día (~1,2 kg al mes). Plantilla única: no hay ciclado de carbohidratos, los macros son iguales todos los días.
 
-Incluye checklist diario, recetas dinámicas según la rotación de proteínas, guarniciones de verdura, **62 recetas propias** con macros calculados, corte de carne o pescado especificado y todas las cantidades en peso de compra (proteína y verdura en crudo, hidratos en seco, patata cruda pelada, legumbres de bote), el **menú de 6 semanas del nutricionista adaptado** (48 platos, estructura de cocinar cada dos días) y lista de la compra editable.
+Incluye checklist diario, recetas dinámicas según la rotación de proteínas, guarniciones de verdura, **70 recetas propias** con macros calculados, corte de carne o pescado especificado y todas las cantidades en peso de compra (proteína y verdura en crudo, hidratos en seco, patata cruda pelada, legumbres de bote), el **menú de 6 semanas del nutricionista adaptado** (48 platos, estructura de cocinar cada dos días) y lista de la compra editable.
 
 Acceso con **Google Sign-In**, restringido a una única cuenta. Los datos (checklist, lista de la compra, semana de rotación) viven en **Firestore**, privados y sincronizados entre dispositivos.
 
@@ -90,7 +90,7 @@ El aviso de descongelado sale del plato real del día siguiente: indica cada pie
 
 ## Pestaña Compra
 
-Ventana móvil: se elige el día de la compra y cuántos días cubre (7, 10 o 14).
+Se elige el día de la compra y cuánto cubre, con dos modos: **Una semana** (7 días, el habitual) o **Elegir días**, con un selector de 1 a 21 días y accesos rápidos a 2, 3, 4, 5, 10 y 14. La app recuerda el modo y los días elegidos.
 
 **La lista suma lo que se come de verdad en esa ventana.** Para cada día toma el plato del menú que le toca (el mismo que aparece en Hoy y en Menú, con la semana del menú que corresponda a cada día aunque la ventana cruce el domingo), lee sus ingredientes y los agrega, más las tomas fijas multiplicadas por los días. No hay cantidades genéricas: cada producto sale con los gramos, mililitros o unidades que se consumen en ese periodo.
 

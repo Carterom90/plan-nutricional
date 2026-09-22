@@ -337,6 +337,17 @@ table.rot .rtag.D{background:var(--descanso-soft); color:var(--descanso);}
   font:inherit; font-size:14px; background:var(--card); color:var(--ink);
 }
 .item-nota{font-size:11.5px; color:var(--entreno); margin-top:2px;}
+.seg{display:flex; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:3px; margin-bottom:10px;}
+.seg button{flex:1; border:none; background:transparent; padding:10px 6px; border-radius:9px; font:inherit; font-size:14px; font-weight:600; color:var(--muted); cursor:pointer;}
+.seg button.on{background:var(--ink); color:var(--card);}
+.dias-box{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:10px;}
+.stepper{display:flex; align-items:center; gap:10px;}
+.stepper button{flex:0 0 46px; height:46px; border:1px solid var(--border); background:var(--bg); border-radius:12px; font-size:22px; line-height:1; cursor:pointer; color:var(--ink);}
+.stepper-val{flex:1; text-align:center; font-size:15px;}
+.stepper-val b{font-size:24px; font-family:'Bricolage Grotesque',sans-serif;}
+.chips{display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;}
+.chips button{flex:1 1 40px; border:1px solid var(--border); background:var(--bg); border-radius:999px; padding:7px 0; font:inherit; font-size:13px; font-weight:600; cursor:pointer; color:var(--muted);}
+.chips button.on{background:var(--accent); border-color:var(--accent); color:#3A2C0E;}
 .cat-title.fresco{color:var(--entreno);}
 .plan-box{margin-top:4px;}
 .plan-box textarea{
@@ -488,7 +499,7 @@ let cookingMethod = 'Carne y pescado siempre a la plancha. Air fryer para guarni
 let planchaTimes = [
   {n:'Pechuga de pollo (filete)', t:'4-5 min por lado'},
   {n:'Pechuga de pollo (taquitos)', t:'6-7 min total, removiendo'},
-  {n:'Pavo (filete)', t:'3-4 min por lado'},
+  {n:'Pollo (filete)', t:'3-4 min por lado'},
   {n:'Ternera magra (filete)', t:'2-3 min por lado'},
   {n:'Ternera (tiras)', t:'2-3 min total, fuego fuerte'},
   {n:'Lomo de cerdo (filete)', t:'3-4 min por lado'},
@@ -525,7 +536,7 @@ let rotation = {
     {alm:'Ternera', cena:'Salmón'},
     {alm:'Cerdo', cena:'Pollo'},
     {alm:'Pollo', cena:'Lenguado'},
-    {alm:'Garbanzos', cena:'Pavo'},
+    {alm:'Garbanzos', cena:'Pollo'},
   ],
   3: [
     {alm:'Ternera', cena:'Merluza'},
@@ -543,7 +554,7 @@ let rotation = {
     {alm:'Pollo', cena:'Salmón'},
     {alm:'Cerdo', cena:'Pescado blanco'},
     {alm:'Cerdo', cena:'Rosada'},
-    {alm:'Garbanzos', cena:'Pavo'},
+    {alm:'Garbanzos', cena:'Pollo'},
   ],
 };
 
@@ -586,7 +597,7 @@ let excludedFoods = 'brócoli, miel, acelgas, judías verdes, encurtidos, pepino
 
 let recetasRef = [
   {id:'r5', tag:'legumbre', title:'Lentejas o garbanzos guisados', sub:'Domingos · olla express',
-   ing:'100 g de lentejas o garbanzos en seco · 80 g de zanahoria · 100 g de patata · 60 g de pimiento · 50 g de cebolla · 1 diente de ajo (5 g) · 600 ml de agua o caldo · 3 g de pimentón · comino y laurel al gusto',
+   ing:'100 g de lentejas o garbanzos en seco · 80 g de zanahoria · 105 g de patata cruda pelada · 60 g de pimiento · 50 g de cebolla · 1 diente de ajo (5 g) · 600 ml de agua o caldo · 3 g de pimentón · comino y laurel al gusto',
    steps:[
      'Sofríe cebolla, ajo y pimiento en la propia olla express.',
      'Añade la legumbre y las verduras en dados, cubre con 3 volúmenes de agua o caldo, especias y laurel.',
@@ -600,7 +611,7 @@ let recetasRef = [
 let recetario = {
   alm: [
     {title:'Carbonara con macarrones integrales 🥫🍝', macros:'P 49 · C 46 · G 11 · 481 kcal',
-     ing:'50 g macarrones integrales (seco) · 90 ml leche evaporada semi · 140 g pollo o pavo en taquitos · 1 yema de huevo · 40 g cebolla · 60 g champiñones · pimienta negra y perejil al gusto',
+     ing:'50 g macarrones integrales (seco) · 90 ml leche evaporada semi · 140 g pollo o pollo en taquitos · 1 yema de huevo · 40 g cebolla · 60 g champiñones · pimienta negra y perejil al gusto',
      tip:['Cuece la pasta al dente. El pollo a la plancha hasta dorarlo, y pásalo a la sartén con cebolla y champiñones.','Incorpora la leche evaporada y deja reducir 2-3 min. Retira del fuego antes de echar la yema y remueve rápido, o se cuaja y se corta la salsa.']},
     {title:'Carbonara con tirabuzones de lentejas 🥫🔴', macros:'P 48 · C 47 · G 11 · 477 kcal',
      ing:'65 g tirabuzones de lentejas (seco) · 90 ml leche evaporada · 90 g pollo · 1 yema · 40 g cebolla · 60 g champiñones',
@@ -636,10 +647,10 @@ let recetario = {
      ing:'40 g arroz en seco · 2 huevos · 110 g pollo en taquitos · 150 g tomate triturado · 40 g cebolla · 2 g AOVE · 1 diente de ajo (5 g) · orégano y pimienta al gusto',
      tip:['Sofríe cebolla y ajo, añade el tomate y deja reducir 15 min a fuego lento: es lo que concentra el sabor.','Variante más ligera 🥚 (P 46 · C 42 · G 8 · 424 kcal): 1 huevo entero + 100 ml de claras pasteurizadas y el pollo a 130 g. La clara cuaja igual a la plancha, solo tarda un poco menos.','Sin el pollo el plato se queda en 22 g de proteína. Alternativa: 80 g de atún.']},
     {title:'Pollo asado con patata', macros:'P 48 · C 41 · G 8 · 426 kcal',
-     ing:'190 g de pechuga entera (sin filetear) · 160 g de patata en gajos · 60 g zanahoria · 40 g cebolla · 5 g AOVE · 1 diente de ajo (5 g) · 3 g de pimentón · tomillo · unas gotas de limón',
+     ing:'190 g de pechuga entera (sin filetear) · 170 g de patata cruda pelada en gajos · 60 g zanahoria · 40 g cebolla · 5 g AOVE · 1 diente de ajo (5 g) · 3 g de pimentón · tomillo · unas gotas de limón',
      tip:['Patata, zanahoria y cebolla primero: air fryer 200°C, 15 min. Aparta a un lado, coloca la pechuga adobada encima y baja a 180°C, 18-20 min.','Esta es la excepción a hacer la carne a la plancha: una pechuga entera necesita calor envolvente para hacerse por dentro sin quemarse por fuera.','Deja reposar 5 min tapada con aluminio antes de cortarla. Si la abres recién sacada pierde todo el jugo en la tabla.']},
     {title:'Pollo asado tradicional (contramuslo)', macros:'P 37 · C 38 · G 21 · 493 kcal',
-     ing:'190 g de contramuslo con piel · 100 g pimiento rojo · 60 g cebolla · 50 g zanahoria · 110 g patata · 30 ml de vino blanco · 1 diente de ajo (5 g) · 3 g de pimentón · orégano al gusto · sin aceite añadido (la piel ya suelta grasa)',
+     ing:'190 g de contramuslo con piel · 100 g pimiento rojo · 60 g cebolla · 50 g zanahoria · 115 g patata cruda pelada · 30 ml de vino blanco · 1 diente de ajo (5 g) · 3 g de pimentón · orégano al gusto · sin aceite añadido (la piel ya suelta grasa)',
      tip:['Air fryer 190°C, 22-25 min, con la piel hacia arriba los últimos 10 min para que quede crujiente. Las verduras debajo, recogiendo el jugo.','Por cada 200 g: pechuga 2 g de grasa, contramuslo sin piel 12 g, con piel 22 g. Por eso este plato va sin aceite añadido.']},
     {title:'Ensalada de pasta de lentejas con pollo 🔴', macros:'P 45 · C 44 · G 11 · 451 kcal',
      ing:'65 g tirabuzones de lentejas (seco) · 110 g pollo a la plancha en tiras · 100 g tomate · 60 g pimiento rojo · 30 g cebolla morada · 10 g pistachos picados · 3 g AOVE · 10 g de vinagre · albahaca fresca',
@@ -651,22 +662,22 @@ let recetario = {
      ing:'70 g de garbanzos en seco (puestos a remojo la noche antes) · 120 g atún al natural escurrido · 1 huevo duro · 80 g puerro en rodajas finas · 5 g AOVE + vinagre + pimienta negra + sal',
      tip:['Cuece el huevo 10 min y enfríalo en agua fría: pela mejor y la yema no se pone verde.','Usa la parte blanca del puerro, que es la más suave en crudo. Deja reposar 20-30 min en nevera: el puerro pierde el picor y se integra.','Si el puerro crudo te resulta fuerte, pásalo 3-4 min por air fryer a 180°C y déjalo enfriar.']},
     {title:'Lasaña de calabacín 🥫', macros:'P 44 · C 41 · G 16 · 480 kcal',
-     ing:'250 g calabacín en láminas · 140 g ternera picada magra · 100 g tomate triturado · 40 g cebolla · 50 ml leche evaporada · 11 g parmesano rallado · 100 g patata al lado · 2 g AOVE · orégano, sal y pimienta al gusto',
+     ing:'250 g calabacín en láminas · 140 g ternera picada magra · 100 g tomate triturado · 40 g cebolla · 50 ml leche evaporada · 11 g parmesano rallado · 105 g patata cruda pelada al lado · 2 g AOVE · orégano, sal y pimienta al gusto',
      tip:['Sala las láminas de calabacín y déjalas 15 min soltando agua sobre papel antes de montar, o la lasaña queda aguada.','Sofríe cebolla y carne, añade tomate y reduce. Monta capas, cubre con leche evaporada y parmesano. Air fryer 180°C, 15-18 min.']},
     {title:'Berenjenas rellenas de ternera', macros:'P 42 · C 46 · G 15 · 488 kcal',
-     ing:'250 g berenjena (2 pequeñas) · 150 g ternera picada magra · 80 g tomate triturado · 40 g cebolla · 11 g parmesano rallado · 120 g patata al lado · 3 g AOVE',
+     ing:'250 g berenjena (2 pequeñas) · 150 g ternera picada magra · 80 g tomate triturado · 40 g cebolla · 11 g parmesano rallado · 125 g patata cruda pelada al lado · 3 g AOVE',
      tip:['Vacía las berenjenas y hornéalas 15 min en air fryer a 180°C. La carne picada a la plancha 6-8 min con la cebolla y el tomate. Rellena, cubre con el parmesano y gratina 5 min más.']},
-    {title:'Pimientos rellenos de pavo', macros:'P 48 · C 41 · G 10 · 444 kcal',
-     ing:'220 g pimiento rojo (2 grandes) · 170 g pavo picado · 60 g tomate triturado · 30 g cebolla · 11 g parmesano rallado · 110 g patata al lado · 3 g AOVE · comino y orégano al gusto',
-     tip:['El pavo picado, primero a la plancha 6-8 min. Rellena y luego air fryer 180°C, 18-20 min — los grandes tardan más de lo que parece.']},
+    {title:'Pimientos rellenos de pollo', macros:'P 48 · C 41 · G 10 · 444 kcal',
+     ing:'220 g pimiento rojo (2 grandes) · 170 g pollo picado · 60 g tomate triturado · 30 g cebolla · 11 g parmesano rallado · 115 g patata cruda pelada al lado · 3 g AOVE · comino y orégano al gusto',
+     tip:['El pollo picado, primero a la plancha 6-8 min. Rellena y luego air fryer 180°C, 18-20 min — los grandes tardan más de lo que parece.']},
     {title:'Wok de ternera con noodles', macros:'P 49 · C 50 · G 15 · 538 kcal',
      ing:'140 g de noodles frescos · 170 g de ternera magra en tiras · 120 g de calabacín · 80 g de pimiento rojo · 70 g de champiñones · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g)',
      tip:['Fuego muy fuerte y por tandas: primero el pimiento y el calabacín (4-5 min), luego los champiñones (2 min), después la ternera (2-3 min y ni uno más).','Incorpora los noodles, la soja y el ajo, y saltea todo junto 1-2 min.','Los noodles frescos van directos de la bolsa al wok, sin cocer ni enjuagar: solo necesitan ese minuto o dos finales para calentarse y coger la salsa.','Antes llevaba arroz. Los noodles le pegan más al wok, absorben la salsa de soja y aportan 7,7 g de proteína frente a los 2,5 que daría el arroz en esa cantidad.']},
-    {title:'Revuelto de champiñones con pavo 🥚', macros:'P 50 · C 37 · G 12 · 455 kcal',
-     ing:'1 huevo entero + 80 ml de claras pasteurizadas · 120 g pavo en taquitos · 120 g champiñones · 40 g cebolla · 140 g patata al lado · 4 g AOVE',
+    {title:'Revuelto de champiñones con pollo 🥚', macros:'P 50 · C 37 · G 12 · 455 kcal',
+     ing:'1 huevo entero + 80 ml de claras pasteurizadas · 120 g pollo en taquitos · 120 g champiñones · 40 g cebolla · 145 g patata cruda pelada al lado · 4 g AOVE',
      tip:['Fuego bajo y remover constante: el revuelto se termina fuera del fuego con el calor residual. Sácalo cuando aún parezca poco hecho.','El huevo entero que dejas es el que da color y cremosidad; solo con claras queda blanco y algo insípido.','No aguanta de un día para otro: hazlo al momento y cocina solo la patata por adelantado.']},
-    {title:'Ensalada de brotes con pavo, queso fresco y pistachos', macros:'P 46 · C 32 · G 15 · 446 kcal',
-     ing:'80 g brotes o canónigos · 100 g tomate · 160 g pavo a la plancha · 40 g queso fresco · 12 g pistachos · 120 g patata cruda pelada · 3 g AOVE · 10 g de vinagre de Módena',
+    {title:'Ensalada de brotes con pollo, queso fresco y pistachos', macros:'P 46 · C 32 · G 15 · 446 kcal',
+     ing:'80 g brotes o canónigos · 100 g tomate · 160 g pollo a la plancha · 40 g queso fresco · 12 g pistachos · 120 g patata cruda pelada · 3 g AOVE · 10 g de vinagre de Módena',
      tip:['Es la ensalada del menú de tu nutricionista, con queso fresco en lugar de mozzarella.','Si te apetece, 30 g de burrata en su lugar también cuadra, quitando los pistachos.']},
     {title:'Ensalada de pollo, aguacate y pistachos', macros:'P 47 · C 37 · G 14 · 462 kcal',
      ing:'80 g lechuga · 100 g tomate · 30 g cebolla morada · 170 g pollo a la plancha · 35 g aguacate · 10 g pistachos · 135 g patata cruda pelada · 2 g AOVE · unas gotas de limón',
@@ -678,10 +689,10 @@ let recetario = {
      ing:'80 g lechuga · 120 g tomate · 50 g pimiento rojo · 130 g atún al natural · 1 huevo duro · 10 g pistachos · 135 g patata cruda pelada · 2 g AOVE',
      tip:['Los huevos duros, enfriados en agua fría al sacarlos: pelan mejor.']},
     {title:'Dorada con pisto', macros:'P 54 · C 43 · G 12 · 497 kcal',
-     ing:'180 g dorada · 60 g gambas · 120 g calabacín · 80 g pimiento rojo · 80 g tomate triturado · 140 g patata · 40 g cebolla · 3 g AOVE',
+     ing:'180 g dorada · 60 g gambas · 120 g calabacín · 80 g pimiento rojo · 80 g tomate triturado · 145 g patata cruda pelada · 40 g cebolla · 3 g AOVE',
      tip:['La dorada a la plancha, 3-4 min piel abajo y 1-2 min el otro lado.','El pisto aguanta 4 días en nevera y mejora de un día para otro: hazlo en cantidad.','Antes era caballa. La dorada tiene 4 g de grasa por 100 g frente a los 14 de la caballa, así que el plato cuadra sin compensar nada.']},
     {title:'Salmón con champiñones y nueces ⚠️', macros:'P 44 · C 38 · G 21 · 513 kcal',
-     ing:'130 g salmón · 50 g gambas · 120 g champiñones · 40 g cebolla · 150 g patata · 6 g nueces · sin aceite añadido',
+     ing:'130 g salmón · 50 g gambas · 120 g champiñones · 40 g cebolla · 160 g patata cruda pelada · 6 g nueces · sin aceite añadido',
      tip:['Salmón a la plancha: piel abajo 3-4 min, vuelta y 1-2 min más. Las nueces, tostadas 2 min en seco antes de añadirlas.','AJUSTE OBLIGATORIO: el salmón tiene 12 g de grasa por 100 g y el plato llega a 21, con 16 de presupuesto. Son 5 g de más (45 kcal). Esa noche cena sin aceite añadido y quita también el queso fresco si la cena lo lleva.','Por eso el plato va sin AOVE y con solo 6 g de nueces: el salmón ya aporta toda la grasa.']},
     {title:'Noodles salteados con ternera', macros:'P 48 · C 54 · G 14 · 535 kcal',
      ing:'150 g de noodles frescos (bolsa al vacío, ya cocidos) · 170 g de ternera magra en tiras · 50 g de zanahoria en juliana · 70 g de pimiento rojo · 60 g de champiñones laminados · 15 g de salsa de soja · 3 g de AOVE · 1 diente de ajo (5 g)',
@@ -713,9 +724,9 @@ let recetario = {
     {title:'Ñoquis salteados con gambas y pulpo', macros:'P 51 · C 48 · G 11 · 494 kcal',
      ing:'140 g de ñoquis · 120 g de gambas peladas · 130 g de patas de pulpo cocido · 70 g de pimiento rojo · 40 g de cebolla · 60 g de tomate · 6 g de AOVE · 1 diente de ajo (5 g) · perejil',
      tip:['Aquí los ñoquis no se cuecen: se saltean directamente en la sartén con un poco de aceite hasta dorarse, 5-6 min. Quedan crujientes por fuera y tiernos dentro, bastante mejor que hervidos.','El pulpo, lo último y solo 1-2 min.']},
-    {title:'Ñoquis gratinados con pavo', macros:'P 50 · C 46 · G 12 · 490 kcal',
-     ing:'140 g de ñoquis · 170 g de pavo picado · 100 g de tomate triturado · 12 g de parmesano rallado · 40 g de cebolla · 3 g de AOVE · orégano',
-     tip:['Cuece los ñoquis, mézclalos con el pavo y el tomate ya sofritos, cubre con el parmesano y gratina en air fryer 180°C, 8-10 min.']},
+    {title:'Ñoquis gratinados con pollo', macros:'P 50 · C 46 · G 12 · 490 kcal',
+     ing:'140 g de ñoquis · 170 g de pollo picado · 100 g de tomate triturado · 12 g de parmesano rallado · 40 g de cebolla · 3 g de AOVE · orégano',
+     tip:['Cuece los ñoquis, mézclalos con el pollo y el tomate ya sofritos, cubre con el parmesano y gratina en air fryer 180°C, 8-10 min.']},
     {title:'Cuscús con pollo y verduras', macros:'P 49 · C 50 · G 8 · 467 kcal',
      ing:'50 g de cuscús (seco) · 180 g de pollo en dados · 60 g de zanahoria · 70 g de pimiento rojo · 40 g de cebolla · 5 g de AOVE · 1 diente de ajo (5 g) · comino, cúrcuma, canela, pimentón',
      tip:['El cuscús no se cuece: ponlo en un bol, cúbrelo con el mismo volumen de agua o caldo hirviendo, tápalo y déjalo reposar 5 min. Luego sepáralo con un tenedor.','Es lo más rápido del recetario: mientras reposa, haces el pollo a la plancha y salteas las verduras.']},
@@ -728,6 +739,18 @@ let recetario = {
     {title:'Cuscús con gambas y pulpo', macros:'P 52 · C 49 · G 9 · 488 kcal',
      ing:'50 g de cuscús (seco) · 110 g de gambas peladas · 150 g de patas de pulpo cocido · 70 g de pimiento rojo · 40 g de cebolla · 50 g de zanahoria · 6 g de AOVE · 1 diente de ajo (5 g) · perejil, pimentón',
      tip:['Hidrata el cuscús con caldo de pescado en vez de agua: cambia bastante el resultado.','El pulpo, al final y 1-2 min.']},
+    {title:'Wok de pescado blanco con noodles y wakame', macros:'P 53 · C 46 · G 10 · 482 kcal',
+     ing:'110 g de noodles frescos · 180 g de rosada o corvina en dados · 60 g de gambas peladas · 6 g de wakame deshidratado (unos 60 g ya hidratado) · 50 g de zanahoria en juliana · 70 g de pimiento rojo · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g) · sésamo',
+     tip:['Hidrata el wakame 5 min en agua fría, escúrrelo y SÉCALO CON PAPEL: si va empapado suelta agua en el wok y te lo estropea.','Saltea zanahoria y pimiento a fuego fuerte 4-5 min, añade el pescado en dados y las gambas 2-3 min, y por último los noodles, la soja, el ajo y el wakame, 1-2 min.','Con pescado en el wok, muévelo lo mínimo: córtalo en dados grandes y dale una sola vuelta. Si lo remueves como la carne, se deshace en hebras.']},
+    {title:'Wok de gambas y maíz con arroz', macros:'P 55 · C 51 · G 9 · 504 kcal',
+     ing:'40 g de arroz en seco · 150 g de gambas peladas · 80 g de pollo en tiras · 60 g de maíz dulce escurrido · 70 g de pimiento rojo · 40 g de cebolla · 15 g de salsa de soja · 5 g de AOVE · 1 diente de ajo (5 g) · cebollino',
+     tip:['El arroz, cocido del día anterior y frío. El recién hecho suelta almidón y apelmaza el wok; el frío se suelta en granos.','El maíz al final, solo para calentarlo.']},
+    {title:'Wok de salmón con wakame y noodles ⚠️', macros:'P 47 · C 41 · G 18 · 515 kcal',
+     ing:'100 g de noodles frescos · 130 g de salmón en dados · 50 g de gambas · 6 g de wakame deshidratado · 50 g de zanahoria · 60 g de champiñones · 15 g de salsa de soja · sin aceite añadido · sésamo, lima',
+     tip:['Sin AOVE: el salmón suelta su propia grasa en el wok y ya aporta 16 g.','Aun así se queda en 18 g frente a los 16 de presupuesto, así que esa noche cena sin aceite añadido.','Nada de salsas cremosas con este: solo las de base soja.']},
+    {title:'Wok de pollo con maíz y noodles', macros:'P 49 · C 51 · G 9 · 479 kcal',
+     ing:'110 g de noodles frescos · 170 g de pollo en tiras · 60 g de maíz dulce escurrido · 70 g de pimiento rojo · 40 g de cebolla · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g)',
+     tip:['Fuego fuerte y por tandas: las verduras primero, el pollo después y los noodles al final, 1-2 min.','Es el wok con más margen de grasa, así que admite las salsas cremosas.']},
   ],
   cena: [
     {title:'Merluza en salsa verde con patata', macros:'P 30 · C 25 · G 6 · 270 kcal',
@@ -737,7 +760,7 @@ let recetario = {
      ing:'110 g atún fresco en dados · 115 g patata cruda pelada · 50 g pimiento verde · 30 g cebolla · 300 ml de agua o caldo · 2 g AOVE · 3 g de pimentón',
      tip:['Añade el atún con el fuego ya apagado y deja que se haga con el calor residual 2 min — si lo cueces, se seca.','Otra opción: márcalo a la plancha 1 min por lado y échalo al final.']},
     {title:'Pescado a la plancha con puerro', macros:'P 32 · C 27 · G 5 · 282 kcal',
-     ing:'170 g merluza, rosada o lenguado · 110 g patata en rodajas finas · 80 g puerro · 3 g AOVE · unas gotas de limón',
+     ing:'170 g merluza, rosada o lenguado · 115 g patata cruda pelada en rodajas finas · 80 g puerro · 3 g AOVE · unas gotas de limón',
      tip:['Patata y puerro a la air fryer 180°C, 15 min. Mientras, el pescado a la plancha: 3-4 min por lado empezando por la piel.']},
     {title:'Salmorejo sin pan, con atún 🥫', macros:'P 34 · C 32 · G 6 · 322 kcal',
      ing:'350 g de tomate muy maduro (tipo pera) · 120 g de calabacín pelado · 50 ml de leche evaporada · 110 g de atún al natural escurrido · 50 g de patata cruda pelada · 2 g de AOVE · 1 diente de ajo pequeño (3 g) · 10 g de vinagre de Jerez · sal',
@@ -746,7 +769,7 @@ let recetario = {
      ing:'90 g pulpo cocido · 80 g gambas peladas · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 95 g patata cruda pelada · 3 g AOVE · 10 g de vinagre de Jerez · perejil al gusto',
      tip:['Pica todo en dados del mismo tamaño y deja reposar al menos 30 min en la nevera — es lo que hace que la cebolla y el pimiento suelten sabor.','De un día para otro, mejor.']},
     {title:'Crema de calabaza con tortilla de atún 🥫🥚', macros:'P 35 · C 24 · G 8 · 312 kcal',
-     ing:'160 g calabaza · 40 ml leche evaporada · 1 huevo + 70 ml claras pasteurizadas · 70 g atún · 40 g patata · 1 g AOVE · nuez moscada',
+     ing:'160 g calabaza · 40 ml leche evaporada · 1 huevo + 70 ml claras pasteurizadas · 70 g atún · 40 g patata cruda pelada · 1 g AOVE · nuez moscada',
      tip:['La leche evaporada da a la crema la textura de una hecha con nata, por mucha menos grasa. Calabaza en olla express, 5 min.','La crema aguanta dos días; la tortilla hazla al momento.']},
     {title:'Ensalada de brotes con gambas, queso fresco y pistachos', macros:'P 31 · C 25 · G 10 · 312 kcal',
      ing:'80 g brotes o canónigos · 100 g tomate · 110 g gambas peladas · 30 g queso fresco · 8 g pistachos · 95 g patata cruda pelada · 2 g AOVE · unas gotas de limón · cebollino',
@@ -755,8 +778,11 @@ let recetario = {
      ing:'80 g de noodles frescos · 150 g de merluza o rosada · 60 g de puerro · 60 g de champiñones · 40 g de zanahoria · 400 ml de caldo · 12 g de salsa de soja · 2 g de AOVE',
      tip:['El pescado va al final y con el fuego apagado: 3-4 min con el calor residual bastan para que se haga sin deshacerse.','Los noodles, 1-2 min y fuera.']},
     {title:'Pulpo con patata y pimentón', macros:'P 37 · C 23 · G 6 · 297 kcal',
-     ing:'180 g de patas de pulpo cocido · 40 g de gambas · 100 g de patata · 30 g de cebolla · 4 g de AOVE · 2 g de pimentón',
+     ing:'180 g de patas de pulpo cocido · 40 g de gambas · 105 g de patata cruda pelada · 30 g de cebolla · 4 g de AOVE · 2 g de pimentón',
      tip:['El pimentón al final, fuera del fuego. Un minuto o dos de calor al pulpo es todo lo que necesita.']},
+    {title:'Wok ligero de pescado con wakame', macros:'P 37 · C 29 · G 6 · 318 kcal',
+     ing:'60 g de noodles frescos · 170 g de rosada o merluza en dados · 6 g de wakame deshidratado · 40 g de zanahoria · 60 g de champiñones · 12 g de salsa de soja · 2 g de AOVE',
+     tip:['La versión de cena de los woks: menos noodles y sin aceite apenas.','El pescado en dados grandes y una sola vuelta.']},
     {title:'Ñoquis con pescado y tomate', macros:'P 30 · C 28 · G 6 · 283 kcal',
      ing:'80 g de ñoquis · 150 g de merluza o rosada · 80 g de tomate triturado · 30 g de cebolla · 3 g de AOVE · albahaca',
      tip:['Los ñoquis salen del agua en cuanto flotan, 1-2 min.']},
@@ -766,8 +792,8 @@ let recetario = {
     {title:'Tortilla de patata ligera 🥚', macros:'P 27 · C 27 · G 9 · 298 kcal',
      ing:'1 huevo + 150 ml de claras pasteurizadas · 115 g de patata cruda pelada · 40 g de cebolla · 3 g de AOVE · sal',
      tip:['La patata al microondas o a la air fryer (200°C, 15 min), no frita.','Mézclala con el huevo y las claras y cuájala en sartén antiadherente a fuego bajo. Con tanta clara cuaja más rápido que una tortilla normal, así que vigila.']},
-    {title:'Pavo a la plancha con pisto', macros:'P 35 · C 28 · G 6 · 304 kcal',
-     ing:'140 g de pavo · 100 g de calabacín · 70 g de pimiento rojo · 60 g de tomate triturado · 95 g de patata cruda pelada · 3 g de AOVE · orégano',
+    {title:'Pollo a la plancha con pisto', macros:'P 35 · C 28 · G 6 · 304 kcal',
+     ing:'140 g de pollo · 100 g de calabacín · 70 g de pimiento rojo · 60 g de tomate triturado · 95 g de patata cruda pelada · 3 g de AOVE · orégano',
      tip:['El pisto lo puedes tener hecho de antes: aguanta 4 días y mejora de un día para otro.']},
     {title:'Crema de verduras con pollo', macros:'P 34 · C 31 · G 5 · 306 kcal',
      ing:'130 g de pollo · 150 g de calabaza · 60 g de zanahoria · 50 g de puerro · 65 g de patata cruda pelada · 300 ml de agua · 3 g de AOVE · nuez moscada',
@@ -775,102 +801,442 @@ let recetario = {
     {title:'Tortilla de calabacín con claras 🥚', macros:'P 28 · C 25 · G 8 · 286 kcal',
      ing:'1 huevo + 150 ml de claras pasteurizadas · 200 g de calabacín en rodajas finas · 40 g de cebolla · 75 g de patata cruda pelada · 2 g de AOVE · sal, pimienta',
      tip:['Pocha el calabacín y la cebolla 8-10 min y ESCÚRRELOS BIEN: el calabacín suelta mucha agua y es la razón habitual de que este tipo de tortilla no cuaje.','La patata, al microondas o air fryer. Mezcla todo con el huevo y las claras y cuaja a fuego bajo.']},
-    {title:'Tostada de pavo y tomate', macros:'P 31 · C 25 · G 6 · 277 kcal',
-     ing:'40 g de pan integral · 110 g de pavo a la plancha · 100 g de tomate rallado · 25 g de queso fresco · 1 g de AOVE · orégano',
-     tip:['La cena más rápida del recetario: cinco minutos.','El pavo a la plancha, no fiambre: el fiambre lleva menos proteína y bastante más sal.']},
+    {title:'Tostada de pollo y tomate', macros:'P 31 · C 25 · G 6 · 277 kcal',
+     ing:'40 g de pan integral · 110 g de pollo a la plancha · 100 g de tomate rallado · 25 g de queso fresco · 1 g de AOVE · orégano',
+     tip:['La cena más rápida del recetario: cinco minutos.','El pollo a la plancha, no fiambre: el fiambre lleva menos proteína y bastante más sal.']},
     {title:'Revuelto de gambas y calabacín 🥚', macros:'P 36 · C 19 · G 9 · 295 kcal',
      ing:'1 huevo + 90 ml de claras · 80 g de gambas peladas · 120 g de calabacín · 70 g de patata cruda pelada · 2 g de AOVE · ajo, perejil',
      tip:['Fuego bajo y remover constante. Sácalo cuando aún parezca poco hecho: termina de cuajarse fuera del fuego.']},
     {title:'Hamburguesa de ternera con ensalada', macros:'P 29 · C 27 · G 6 · 283 kcal',
      ing:'120 g de ternera picada magra · 100 g de tomate · 50 g de lechuga · 100 g de patata cruda pelada · 30 g de cebolla · sin aceite añadido',
-     tip:['Patata en gajos a la air fryer, 200°C 20 min. La hamburguesa a la plancha bien caliente, 3-4 min por lado, y sala al final.','Va sin aceite porque la ternera picada ya aporta 6,5 g de grasa por cada 130 g, frente a los 2 g del pavo. Versión con pavo: 130 g de pavo picado + 2 g de AOVE, queda en P 32 · C 26 · G 4 · 273 kcal.']},
-    {title:'Queso fresco con tomate y pavo', macros:'P 33 · C 22 · G 10 · 315 kcal',
-     ing:'90 g de queso fresco · 90 g de pavo a la plancha en tiras · 150 g de tomate en rodajas · 25 g de pan integral · 1 g de AOVE · orégano, sal',
-     tip:['Sin cocinar más allá del pavo. Para las noches que llegas sin ganas de nada.']},
+     tip:['Patata en gajos a la air fryer, 200°C 20 min. La hamburguesa a la plancha bien caliente, 3-4 min por lado, y sala al final.','Va sin aceite porque la ternera picada ya aporta 6,5 g de grasa por cada 130 g, frente a los 2 g del pollo. Versión con pollo: 130 g de pollo picado + 2 g de AOVE, queda en P 32 · C 26 · G 4 · 273 kcal.']},
+    {title:'Queso fresco con tomate y pollo', macros:'P 33 · C 22 · G 10 · 315 kcal',
+     ing:'90 g de queso fresco · 90 g de pollo a la plancha en tiras · 150 g de tomate en rodajas · 25 g de pan integral · 1 g de AOVE · orégano, sal',
+     tip:['Sin cocinar más allá del pollo. Para las noches que llegas sin ganas de nada.']},
+    {title:'Rollitos de calabacín con fiambre de pavo', macros:'P 31 · C 22 · G 12 · 322 kcal',
+     ing:'250 g de calabacín crudo (unos 200 g ya cocido y triturado) · 1 huevo batido · 8 g de almendras molidas (5 unidades) · 100 g de fiambre de pavo · 65 g de patata cruda pelada',
+     tip:['Mezcla el calabacín cocido y bien escurrido con el huevo y las almendras molidas.','Extiende la masa fina sobre papel de horno y hornea 15 min a 180°C.','Coloca el fiambre encima y enrolla con cuidado mientras la masa sigue templada: fría se resquebraja.','Del menú de Vitasane. Escurrir bien el calabacín es lo que decide si la masa se sostiene o no.']},
+    {title:'Pollo a la plancha con patata y verdura · ración de prueba', macros:'P 57 · C 36 · G 8 · 444 kcal',
+     ing:'200 g de pechuga de pollo · 140 g de patata cruda pelada · 160 g de la verdura que toque · 60 g de lechuga · 30 g de queso fresco · 4 g de AOVE',
+     tip:['En el plato son unos 485 g ya cocinado, frente a los 300 de la cena base. Es un 60% más, así que es una prueba de verdad.','Pollo a la plancha 4-5 min por lado (la pieza es más gruesa), patata en gajos a la air fryer 200°C 20-22 min, y la verdura en la misma tanda.','Empieza por el pollo y deja la patata para el final: si te llenas antes de terminar, lo que sobra es hidrato y no proteína.','IMPORTANTE: si notas presión, náuseas o que te cuesta tragar, para. No fuerces el plato. El objetivo es encontrar el techo, no superarlo — y saber dónde está es el resultado de la prueba, tanto si terminas como si no.','Anota hasta dónde llegaste: plato entero, tres cuartos, la mitad. Con eso ajusto el resto de recetas.','Ese día sumas unas 135 kcal de más. En una semana es irrelevante, no hay que compensar nada.']},
+    {title:'Pollo a la cerveza', macros:'P 34 · C 28 · G 6 · 318 kcal',
+     ing:'130 g de pechuga de pollo en dados · 60 g de puerro · 40 g de cebolla · 50 g de zanahoria · 40 g de patata cruda pelada · 200 ml de cerveza · 150 ml de agua · 4 g de AOVE · 10 g de salsa de soja · 1 hoja de laurel',
+     tip:['Sella el pollo en la cazuela bien caliente 3-4 min y resérvalo.','Pocha la cebolla, el puerro y la zanahoria 5 min en la misma cazuela sin lavarla: lo que se ha pegado del pollo es la base del sabor.','Moja con la cerveza, rasca el fondo y deja hervir 2 min para que evapore el alcohol y se vaya el amargor.','Devuelve el pollo con la patata, el agua, la soja y el laurel. 20 min sin tapa hasta que la salsa reduzca a la mitad. En olla express: 6 min desde que coge presión y 3-4 min destapada para espesar.','Aguanta bien dos días y mejora de un día para otro.']},
   ]
 };
 
 // Menú de 6 semanas del nutricionista, adaptado. Estructura: cocinas días 1, 3, 5 y 7.
 let menuVitasane = {
-  intro: 'Tu menú de 6 semanas: es el que sigue la pestaña Hoy y del que sale la lista de la compra. Recetas del menú de tu nutricionista, adaptadas a tus macros y a tus gustos.',
-  cambios: [
-    'Raciones de proteína al alza. El menú original usa 80-130 g por plato (20-30 g de proteína) y tu almuerzo necesita 45, así que suben a 150-200 g. Ese menú está hecho para pérdida de peso general, no para alguien que entrena fuerza tres veces por semana: las recetas son buenas, las cantidades no.',
-    'Fuera las verduras de tu lista: brócoli, coliflor, alcachofa, judías verdes, espárragos y col. La pizza de coliflor pasa a base de calabacín y los rollitos de brócoli a rollitos de calabacín.',
-    'Añadido hidrato (patata o arroz) a varias cenas que iban solo de proteína y verdura.',
-    'Las tortillas pasan a 1 huevo + 100 ml de claras pasteurizadas. Mismo resultado, más proteína.',
-    'El bacalao del estofado pasa a merluza, por la lista de pescados difíciles de encontrar.',
-  ],
-  semanas: [
-    {n:1, bloques:[
-      {dias:'Días 1 y 2', alm:{t:'Lentejas con pollo', m:'P 53 · C 45 · G 8 · 467 kcal', i:'70 g de lenteja roja sin piel (seco) · 150 g de pollo troceado · 50 g de puerro · 50 g de zanahoria · 60 g de tomate · 1 diente de ajo (5 g) · 500 ml de agua o caldo · 30 ml de vino · 5 g de AOVE · 3 g de pimentón dulce · comino, perejil y orégano al gusto', p:'En olla express: rehoga ajo, puerro, zanahoria y tomate con el aceite y el vino. Añade el pollo y sella. Echa las lentejas, las especias y agua. 8-10 min desde que coge presión.'},
-                              cena:{t:'Crema de berenjena + tortilla', m:'P 23 · C 33 · G 10 · 319 kcal', i:'200 g de berenjena pelada · 50 g de zanahoria · 40 g de cebolla · 60 g de patata · 250 ml de agua · 1 huevo + 100 ml de claras · 4 g de AOVE · 1 diente de ajo (5 g)', p:'Saltea berenjena, zanahoria, cebolla y ajo; añade la patata, un vaso de agua y sal. Olla express 5 min y tritura. La tortilla aparte, a la plancha.'}},
-      {dias:'Días 3 y 4', alm:{t:'Calabacín relleno de atún y gambas', m:'P 53 · C 38 · G 13 · 483 kcal', i:'250 g de calabacín (2 medianos) · 120 g de atún al natural · 70 g de gambas picadas · 60 g de tomate · 40 g de cebolla · 12 g de parmesano rallado · 120 g de patata al lado · 6 g de AOVE · orégano al gusto', p:'Corta el calabacín a lo largo, vacíalo y pica la pulpa. Rehógala con el atún, las gambas, el tomate y la cebolla. Rellena, cubre con el parmesano y air fryer 180°C, 18-20 min.'},
-                              cena:{t:'Ensaladilla de huevo y atún', m:'P 36 · C 26 · G 11 · 350 kcal', i:'110 g de atún al natural · 1 huevo duro · 150 g de tomate rallado · 40 g de cebolleta rehogada · 85 g de patata cruda pelada en dados · 4 g de AOVE · orégano al gusto', p:'Sin cocina más allá de cocer el huevo y la patata. Mejor de un día para otro.'}},
-      {dias:'Días 5 y 6', alm:{t:'Calabacín gratinado con pollo picado', m:'P 50 · C 34 · G 14 · 462 kcal', i:'250 g de calabacín · 170 g de carne picada de pollo · 40 g de cebolla · 60 g de tomate · 130 g de patata · 15 g de parmesano rallado · 5 g de AOVE · 1 diente de ajo (5 g) · perejil al gusto', p:'El original era con brócoli. Cuece el calabacín y tritúralo dejando algo de agua. Rehoga con el pollo picado, la cebolla, el ajo y el tomate. A la fuente, cubre con queso y gratina en air fryer 180°C, 10 min.'},
-                              cena:{t:'Hamburguesa de pollo a la plancha', m:'P 37 · C 23 · G 5 · 286 kcal', i:'150 g de pollo picado en hamburguesa · 100 g de tomate · 30 g de cebolla · 80 g de patata · 3 g de AOVE', p:'Plancha bien caliente, 4-5 min por lado.'}},
-      {dias:'Día 7', alm:{t:'Cuscús con pavo y gambas', m:'P 53 · C 40 · G 8 · 444 kcal', i:'50 g de cuscús (seco) · 150 g de pavo en daditos · 60 g de gambas · 50 g de puerro · 50 g de zanahoria · 3 g de AOVE · 1 diente de ajo (5 g)', p:'El cuscús se hidrata con el mismo volumen de caldo hirviendo, 5 min tapado. Sin fuego.'},
-                         cena:{t:'Lenguado al papillote', m:'P 32 · C 24 · G 8 · 296 kcal', i:'170 g de lenguado · 100 g de patata en láminas · 60 g de tomate · 4 g de AOVE · 1 diente de ajo (5 g) · 30 ml de vino blanco · unas gotas de limón', p:'Papillote en air fryer 180°C, 15 min. La patata debajo, que tarda más.'}},
-    ]},
-    {n:2, bloques:[
-      {dias:'Días 1 y 2', alm:{t:'Pollo al curry con arroz', m:'P 49 · C 40 · G 12 · 464 kcal', i:'45 g de arroz en seco · 170 g de pollo troceado · 100 g de calabacín · 40 g de cebolla · 25 ml de leche evaporada · 60 g de tomate pelado · 4 g de AOVE · 30 ml de vino · 5 g de curry en polvo · comino y canela al gusto', p:'Tritura el vino, la leche evaporada y el tomate. Rehoga con el pollo, el calabacín y la cebolla, añade las especias y el arroz ya cocido.'},
-                              cena:{t:'Sopa con tortilla francesa y jamón', m:'P 29 · C 30 · G 12 · 342 kcal', i:'Caldo: 60 g de zanahoria + 50 g de puerro + 40 g de cebolla + 40 g de apio + 500 ml de agua · 1 huevo + 100 ml de claras · 25 g de jamón serrano picado · 80 g de patata · 3 g de AOVE · cúrcuma, comino y hierbabuena al gusto', p:'Haz la tortilla, córtala en cuadritos y añádela al caldo caliente con el jamón.'}},
-      {dias:'Días 3 y 4', alm:{t:'Champiñones rellenos de rosada', m:'P 54 · C 41 · G 13 · 499 kcal', i:'250 g de champiñones grandes · 150 g de rosada · 60 g de gambas · 50 g de puerro · 40 g de zanahoria · 12 g de parmesano rallado · 130 g de patata al lado · 5 g de AOVE · laurel', p:'Separa sombreretes y tallos. Rehoga los tallos con el puerro, la zanahoria, las gambas y el pescado; tritura hasta textura de paté. Rellena, cubre con el parmesano y air fryer 180°C, 10 min.'},
-                              cena:{t:'Pollo a la cerveza', m:'P 33 · C 26 · G 6 · 290 kcal', i:'130 g de pollo troceado · 60 g de puerro · 40 g de cebolla · 50 g de zanahoria · 70 g de patata · 330 ml de cerveza · 4 g de AOVE · 10 g de salsa de soja y laurel al gusto', p:''}},
-      {dias:'Días 5 y 6', alm:{t:'Estofado de merluza con guisantes', m:'P 42 · C 54 · G 8 · 452 kcal', i:'200 g de merluza troceada · 200 g de patata · 60 g de guisantes · 50 g de cebolla · 60 g de tomate · 400 ml de agua · 5 g de AOVE · 100 ml de vino blanco · 3 g de pimentón dulce · comino y laurel al gusto', p:'El original llevaba brócoli y bacalao. Añade la merluza al final, con el guiso ya hecho: 5 min bastan. Si la cueces desde el principio se deshace.'},
-                              cena:{t:'Rosada con salsa', m:'P 32 · C 26 · G 7 · 295 kcal', i:'170 g de rosada · 60 g de zanahoria · 60 g de puerro · 60 g de tomate · 70 g de patata · 40 g de cebolla · 4 g de AOVE · 30 ml de vino blanco · perejil al gusto', p:''}},
-      {dias:'Día 7', alm:{t:'Pollo con arroz y calabacín', m:'P 47 · C 48 · G 7 · 445 kcal', i:'50 g de arroz en seco · 180 g de pollo picado · 100 g de calabacín · 40 g de cebolla · 60 g de tomate · 20 ml de leche evaporada · 4 g de AOVE · orégano y cilantro fresco', p:''},
-                         cena:{t:'Revuelto de champiñones y gambas', m:'P 40 · C 20 · G 11 · 342 kcal', i:'150 g de champiñones · 1 huevo + 100 ml de claras · 80 g de gambas peladas · 40 g de cebolla · 50 g de patata · 4 g de AOVE · 30 ml de vino blanco · comino al gusto', p:'Fuego bajo y remover constante. Sácalo cuando parezca poco hecho.'}},
-    ]},
-    {n:3, bloques:[
-      {dias:'Días 1 y 2', alm:{t:'Merluza con salsa y champiñones', m:'P 53 · C 41 · G 10 · 468 kcal', i:'200 g de merluza troceada · 80 g de champiñones · 80 g de calabacín · 50 g de zanahoria · 50 g de gambas · 25 ml de leche evaporada · 150 g de patata · 40 g de cebolla · 60 g de tomate triturado · 5 g de AOVE · 30 ml de vino blanco', p:'El original llevaba brócoli.'},
-                              cena:{t:'Hamburguesa de pollo con tomate', m:'P 35 · C 25 · G 5 · 285 kcal', i:'150 g de pollo picado en hamburguesa · 150 g de tomate en rodajas · 115 g de patata cruda pelada · 3 g de AOVE · orégano', p:''}},
-      {dias:'Días 3 y 4', alm:{t:'Espagueti al pesto con pavo', m:'P 44 · C 40 · G 16 · 480 kcal', i:'60 g de pasta integral (seco) · 150 g de pavo a la plancha en daditos · 10 g de piñones · 8 g de parmesano rallado · 50 g de tomate · 3 g de AOVE · 30 ml de vino · 20 g de albahaca fresca · ajo en polvo al gusto', p:'Tritura albahaca, piñones, ajo, vino y parmesano para el pesto. No lo calientes: se mezcla con la pasta caliente fuera del fuego.'},
-                              cena:{t:'Tortilla francesa con tomate', m:'P 25 · C 27 · G 9 · 294 kcal', i:'1 huevo + 130 ml de claras · 150 g de tomate aliñado · 105 g de patata cruda pelada · 3 g de AOVE · orégano', p:''}},
-      {dias:'Días 5 y 6', alm:{t:'Sopa de rosada', m:'P 45 · C 44 · G 9 · 437 kcal', i:'180 g de rosada troceada · 150 g de patata · 60 g de puerro · 50 g de cebolla · 60 g de tomate · 400 ml de agua · 5 g de AOVE · 1 ñora · laurel, orégano, azafrán y unas gotas de limón', p:''},
-                              cena:{t:'Pollo con canónigos y patata', m:'P 36 · C 26 · G 5 · 293 kcal', i:'140 g de pollo troceado · 50 g de canónigos · 80 g de tomate · 40 g de cebolla rehogada · 95 g de patata cruda pelada · 3 g de AOVE · 10 g de vinagre · 10 g de salsa de soja', p:''}},
-      {dias:'Día 7', alm:{t:'Poke con arroz', m:'P 46 · C 44 · G 17 · 513 kcal', i:'55 g de arroz en seco · 150 g de salmón (o atún) · 60 g de aguacate · 20 g de edamame · 40 g de rúcula · 40 g de zanahoria rallada · 60 g de tomate cherry · 30 g de cebolleta rehogada · 3 g de sésamo · 15 g de salsa de soja · cilantro fresco', p:'Lleva salmón y aguacate: es de los platos más grasos del menú. Esa noche, cena sin aceite añadido.'},
-                         cena:{t:'Revuelto de champiñones', m:'P 38 · C 19 · G 11 · 327 kcal', i:'150 g de champiñones · 1 huevo + 130 ml de claras · 70 g de gambas · 40 g de cebolla · 50 g de patata · 4 g de AOVE', p:''}},
-    ]},
-    {n:4, bloques:[
-      {dias:'Días 1 y 2', alm:{t:'Puchero de garbanzos con pollo', m:'P 51 · C 45 · G 12 · 488 kcal', i:'70 g de garbanzos en seco (puestos a remojo la noche antes) · 150 g de pollo troceado · 60 g de zanahoria · 50 g de puerro · 40 g de cebolla · 50 g de apio · 600 ml de agua · 5 g de AOVE · 1 diente de ajo (5 g) · perejil, laurel, comino y cúrcuma al gusto', p:'Olla express, 10 min. El original lleva hueso de canilla: si lo usas, da mucho sabor pero suma grasa al caldo — desespúmalo.'},
-                              cena:{t:'Pollo a la plancha con pimientos asados', m:'P 33 · C 27 · G 5 · 286 kcal', i:'130 g de pollo a la plancha · 120 g de pimiento rojo · 105 g de patata cruda pelada · 3 g de AOVE · 1 diente de ajo (5 g)', p:'Pimientos a la air fryer, 200°C 15-18 min, hasta que la piel se tueste.'}},
-      {dias:'Días 3 y 4', alm:{t:'Crema de calabacín + merluza en salsa verde', m:'P 47 · C 38 · G 14 · 466 kcal', i:'Crema: 200 g de calabacín + 50 g de patata + 200 ml de agua + 3 g de AOVE + comino y azafrán · Merluza: 180 g · 120 g de patata · 25 ml de leche evaporada · 4 g de AOVE · 20 g de perejil fresco · 100 ml de vino blanco · 1 diente de ajo (5 g)', p:'El original era crema de alcachofa. La salsa verde se liga moviendo la cazuela en vaivén, sin cuchara.'},
-                              cena:{t:'Rollitos de calabacín con pavo', m:'P 30 · C 20 · G 12 · 308 kcal', i:'250 g de calabacín crudo (unos 200 g ya cocido y triturado) · 1 huevo batido · 5 almendras · 80 g de fiambre de pavo · 60 g de patata', p:'El original era de brócoli. Mezcla el calabacín triturado con el huevo y las almendras molidas. Extiende en bandeja sobre papel de horno, hornea 15 min a 180°C, coloca el pavo y enrolla.'}},
-      {dias:'Días 5 y 6', alm:{t:'Caldo de apio + hamburguesa de pollo', m:'P 44 · C 36 · G 8 · 392 kcal', i:'Caldo: 80 g de apio (2 ramas) + 100 g de cebolla + 500 ml de agua + cúrcuma, comino, hierbabuena, laurel y unas gotas de limón · Hamburguesa: 180 g de pollo picado · 150 g de patata · 4 g de AOVE', p:''},
-                              cena:{t:'Tortilla francesa con tomate', m:'P 26 · C 24 · G 10 · 290 kcal', i:'1 huevo + 130 ml de claras · 150 g de tomate aliñado · 115 g de patata cruda pelada · 4 g de AOVE · orégano', p:''}},
-      {dias:'Día 7', alm:{t:'Gazpachuelo con patata', m:'P 42 · C 40 · G 16 · 472 kcal', i:'160 g de rosada troceada · 200 g de patata nueva · 80 g de almejas · 40 g de cebolla · 40 ml de leche evaporada · 5 g de AOVE · 1 diente de ajo (5 g) · 30 ml de vino blanco', p:'Plato malagueño y de los mejores del menú. La leche evaporada da la cremosidad en lugar de la mayonesa tradicional. Añádela al final, a fuego suave y sin que llegue a hervir, o se corta.'},
-                         cena:{t:'Pollo al curry', m:'P 34 · C 24 · G 9 · 313 kcal', i:'140 g de pollo troceado · 50 g de zanahoria · 40 g de cebolla · 40 g de puerro · 70 g de patata · 25 ml de leche evaporada · 4 g de AOVE · 5 g de curry en polvo · 30 ml de vino blanco', p:''}},
-    ]},
-    {n:5, bloques:[
-      {dias:'Días 1 y 2', alm:{t:'Pizza con base de calabacín', m:'P 48 · C 30 · G 18 · 474 kcal', i:'Base: 250 g de calabacín triturado y bien escurrido · 1 huevo · 8 g de almendras molidas (6 unidades) · 1 diente de ajo (5 g) · Cobertura: 60 g de tomate rallado · 120 g de pavo en lonchas · 15 g de parmesano rallado · Al lado: 100 g de patata', p:'El original era base de coliflor. Extiende la base lo más fina posible sobre papel de horno y hornea 20 min a 180°C antes de poner nada encima. Escurrir bien el calabacín es lo que evita que quede blanda.'},
-                              cena:{t:'Burrata con tomate y pavo', m:'P 30 · C 24 · G 11 · 313 kcal', i:'45 g de burrata · 100 g de pavo a la plancha · 150 g de tomate en rodajas · 50 g de zanahoria en bastones · 65 g de patata cruda pelada · orégano, sal', p:'Sin aceite: la burrata ya aporta la grasa. Sácala de la nevera un rato antes y ponla al final sobre el tomate; fría pierde casi toda la gracia.'}},
-      {dias:'Días 3 y 4', alm:{t:'Pisto + tortilla', m:'P 42 · C 35 · G 16 · 452 kcal', i:'Pisto: 40 g de guisantes + 80 g de pimiento + 100 g de tomate tamizado + 50 g de cebolla + 100 g de berenjena pelada + 50 g de puerro + 30 ml de vino + 5 g de AOVE · Tortilla: 1 huevo + 150 ml de claras · Al lado: 150 g de patata', p:'El pisto aguanta 4 días en nevera y mejora de un día para otro.'},
-                              cena:{t:'Pollo al curry con patata', m:'P 37 · C 27 · G 6 · 312 kcal', i:'140 g de pollo troceado · 25 ml de leche evaporada · 40 g de cebolla · 115 g de patata cruda pelada · 30 ml de vino · 3 g de AOVE · 5 g de curry en polvo', p:''}},
-      {dias:'Días 5 y 6', alm:{t:'Sopa de pollo con fideos', m:'P 44 · C 45 · G 10 · 446 kcal', i:'170 g de pollo troceado · 40 g de fideos · 60 g de zanahoria · 50 g de puerro · 40 g de cebolla · 500 ml de agua o caldo · 5 g de AOVE · hierbabuena y azafrán al gusto', p:''},
-                              cena:{t:'Salmorejo ligero con jamón', m:'P 30 · C 24 · G 9 · 297 kcal', i:'350 g de tomate maduro (3 unidades) · 120 g de calabacín pelado · 35 g de jamón serrano picado · 1 huevo duro · 30 g de pan · 4 g de AOVE · 1 diente de ajo (5 g)', p:'El calabacín en lugar de más pan da cuerpo sin apenas calorías. Buen truco del original.'}},
-      {dias:'Día 7', alm:{t:'Corvina o lubina al horno con patata', m:'P 44 · C 44 · G 13 · 469 kcal', i:'200 g de corvina o lubina · 200 g de patata en láminas · 80 g de tomate en rodajas · 5 g de AOVE · 1 diente de ajo laminado (5 g) · 30 ml de vino blanco · unas gotas de limón · perejil y orégano al gusto', p:'Air fryer 180°C: la patata 15 min primero, luego el pescado encima 10 min más.'},
-                         cena:{t:'Ensalada de queso fresco', m:'P 27 · C 22 · G 11 · 295 kcal', i:'100 g de queso fresco · 120 g de tomate rallado · 50 g de zanahoria rallada · 30 g de maíz · 50 g de canónigos · 70 g de patata · 4 g de AOVE · 10 g de vinagre', p:''}},
-    ]},
-    {n:6, bloques:[
-      {dias:'Días 1 y 2', alm:{t:'Ensalada templada de atún y calabacín', m:'P 45 · C 34 · G 15 · 451 kcal', i:'150 g de atún al natural · 150 g de calabacín pelado y troceado · 60 g de guisantes · 40 g de cebolleta · 80 g de tomate triturado · 1 huevo duro · 150 g de patata · 6 g de AOVE · 10 g de vinagre', p:'El original llevaba judías verdes.'},
-                              cena:{t:'Revuelto de claras con tomate + yogur de proteína', m:'P 34 · C 25 · G 8 · 309 kcal', i:'1 huevo + 120 ml de claras · 120 g de tomate · 75 g de patata cruda pelada · 2 g de AOVE · 1 yogur de proteína de postre', p:''}},
-      {dias:'Días 3 y 4', alm:{t:'Dorada al horno con verduras', m:'P 44 · C 36 · G 16 · 464 kcal', i:'200 g de dorada (o salmón) · 120 g de calabacín en rodajas · 100 g de tomate en rodajas · 80 g de zanahoria en rodajas · 150 g de patata · 5 g de AOVE · 30 ml de vino blanco · eneldo y orégano al gusto', p:'Air fryer 180°C: verduras y patata 15 min, la dorada encima 10 min más.'},
-                              cena:{t:'Pollo con salsa', m:'P 35 · C 22 · G 9 · 309 kcal', i:'150 g de pollo picado o troceado · 60 g de puerro · 100 g de tomate picado · 25 ml de leche evaporada · 70 g de patata · 4 g de AOVE · 1 diente de ajo (5 g) · 5 g de curry · 30 ml de vino', p:''}},
-      {dias:'Días 5 y 6', alm:{t:'Salmorejo + hamburguesa de pollo', m:'P 46 · C 38 · G 14 · 462 kcal', i:'Salmorejo: 350 g de tomate maduro (3 unidades) + 120 g de calabacín pelado + 1 diente de ajo (5 g) + 30 g de pan + 4 g de AOVE · Hamburguesa: 180 g de pollo a la plancha · Al lado: 100 g de patata', p:''},
-                              cena:{t:'Revuelto de gambas y calabacín', m:'P 34 · C 21 · G 9 · 300 kcal', i:'1 huevo + 80 ml de claras · 80 g de gambas peladas · 80 g de calabacín · 95 g de patata cruda pelada · 2 g de AOVE · ajo y perejil al gusto', p:''}},
-      {dias:'Día 7', alm:{t:'Pollo con arroz basmati', m:'P 47 · C 52 · G 8 · 468 kcal', i:'55 g de arroz basmati en seco · 180 g de pollo troceado · 80 g de calabacín · 50 g de zanahoria · 60 g de tomate pelado · 5 g de AOVE · 30 ml de vino · 5 g de curry en polvo · comino y canela al gusto', p:''},
-                         cena:{t:'Ensalada de queso fresco y pavo', m:'P 30 · C 28 · G 10 · 322 kcal', i:'80 g de queso fresco en dados · 80 g de pavo a la plancha · 50 g de canónigos · 100 g de tomate · 40 g de cebolla rehogada · 85 g de patata cruda pelada · 2 g de AOVE · 10 g de vinagre', p:''}},
-    ]},
-  ],
-  notas: [
-    'Cuatro sesiones de cocina por semana: lunes, martes, viernes y domingo. El lunes cocinas también para el miércoles, el martes para el jueves y el viernes para el sábado. El domingo va suelto.',
-    'Lo que mejor aguanta dos días: guisos, estofados, pisto, salmorejo, ensaladilla, puchero. Todos mejoran de un día para otro.',
-    'Lo que peor aguanta: los revueltos y las tortillas (hazlas al momento, son 5 minutos) y el pescado a la plancha. En esos casos, cocina la guarnición para dos días y la proteína al momento.',
-    'El pescado de los guisos (merluza, rosada) añádelo al final del primer día y, al recalentar, hazlo a fuego muy suave. Es lo que más se pasa.',
-    'Sustituciones libres: cualquier pescado blanco vale por otro (merluza, rosada, lenguado, corvina, lubina) y pollo, pavo, ternera y cerdo magro son intercambiables ajustando la grasa.',
-    'Las raciones de patata y arroz son las que cuadran con tus tomas fijas actuales. Si algún día entrenas más fuerte, puedes subirlas 50 g sin problema.',
-    'Adaptado del menú de Vitasane. Las recetas son suyas; las cantidades están recalculadas para tus macros. Si tu nutricionista te ajusta el plan, prevalece lo que te diga.',
-  ]
+ "intro": "Tu menú de 6 semanas: es el que sigue la pestaña Hoy y del que sale la lista de la compra. Recetas del menú de tu nutricionista, adaptadas a tus macros y a tus gustos.",
+ "cambios": [
+  "Raciones de proteína al alza. El menú original usa 80-130 g por plato (20-30 g de proteína) y tu almuerzo necesita 45, así que suben a 150-200 g. Ese menú está hecho para pérdida de peso general, no para alguien que entrena fuerza tres veces por semana: las recetas son buenas, las cantidades no.",
+  "Fuera las verduras de tu lista: brócoli, coliflor, alcachofa, judías verdes, espárragos y col. La pizza de coliflor pasa a base de calabacín y los rollitos de brócoli a rollitos de calabacín.",
+  "Añadido hidrato (patata o arroz) a varias cenas que iban solo de proteína y verdura.",
+  "Las tortillas pasan a 1 huevo + 100 ml de claras pasteurizadas. Mismo resultado, más proteína.",
+  "El bacalao del estofado pasa a merluza, por la lista de pescados difíciles de encontrar."
+ ],
+ "semanas": [
+  {
+   "n": 1,
+   "bloques": [
+    {
+     "dias": "Días 1 y 2",
+     "alm": {
+      "t": "Lentejas con pollo",
+      "m": "P 53 · C 45 · G 8 · 467 kcal",
+      "i": "70 g de lenteja roja sin piel (seco) · 150 g de pollo troceado · 50 g de puerro · 50 g de zanahoria · 60 g de tomate · 1 diente de ajo (5 g) · 500 ml de agua o caldo · 30 ml de vino · 5 g de AOVE · 3 g de pimentón dulce · comino, perejil y orégano al gusto",
+      "p": "En olla express: rehoga ajo, puerro, zanahoria y tomate con el aceite y el vino. Añade el pollo y sella. Echa las lentejas, las especias y agua. 8-10 min desde que coge presión."
+     },
+     "cena": {
+      "t": "Crema de berenjena + tortilla",
+      "m": "P 23 · C 33 · G 10 · 319 kcal",
+      "i": "200 g de berenjena pelada · 50 g de zanahoria · 40 g de cebolla · 65 g de patata cruda pelada · 250 ml de agua · 1 huevo + 100 ml de claras · 4 g de AOVE · 1 diente de ajo (5 g)",
+      "p": "Saltea berenjena, zanahoria, cebolla y ajo; añade la patata, un vaso de agua y sal. Olla express 5 min y tritura. La tortilla aparte, a la plancha."
+     }
+    },
+    {
+     "dias": "Días 3 y 4",
+     "alm": {
+      "t": "Calabacín relleno de atún y gambas",
+      "m": "P 53 · C 38 · G 13 · 483 kcal",
+      "i": "250 g de calabacín (2 medianos) · 120 g de atún al natural · 70 g de gambas picadas · 60 g de tomate · 40 g de cebolla · 12 g de parmesano rallado · 125 g de patata cruda pelada al lado · 6 g de AOVE · orégano al gusto",
+      "p": "Corta el calabacín a lo largo, vacíalo y pica la pulpa. Rehógala con el atún, las gambas, el tomate y la cebolla. Rellena, cubre con el parmesano y air fryer 180°C, 18-20 min."
+     },
+     "cena": {
+      "t": "Ensaladilla de huevo y atún",
+      "m": "P 36 · C 26 · G 11 · 350 kcal",
+      "i": "110 g de atún al natural · 1 huevo duro · 150 g de tomate rallado · 40 g de cebolleta rehogada · 85 g de patata cruda pelada en dados · 4 g de AOVE · orégano al gusto",
+      "p": "Sin cocina más allá de cocer el huevo y la patata. Mejor de un día para otro."
+     }
+    },
+    {
+     "dias": "Días 5 y 6",
+     "alm": {
+      "t": "Calabacín gratinado con pollo picado",
+      "m": "P 50 · C 34 · G 14 · 462 kcal",
+      "i": "250 g de calabacín · 170 g de carne picada de pollo · 40 g de cebolla · 60 g de tomate · 135 g de patata cruda pelada · 15 g de parmesano rallado · 5 g de AOVE · 1 diente de ajo (5 g) · perejil al gusto",
+      "p": "El original era con brócoli. Cuece el calabacín y tritúralo dejando algo de agua. Rehoga con el pollo picado, la cebolla, el ajo y el tomate. A la fuente, cubre con queso y gratina en air fryer 180°C, 10 min."
+     },
+     "cena": {
+      "t": "Hamburguesa de pollo a la plancha",
+      "m": "P 37 · C 23 · G 5 · 286 kcal",
+      "i": "150 g de pollo picado en hamburguesa · 100 g de tomate · 30 g de cebolla · 85 g de patata cruda pelada · 3 g de AOVE",
+      "p": "Plancha bien caliente, 4-5 min por lado."
+     }
+    },
+    {
+     "dias": "Día 7",
+     "alm": {
+      "t": "Cuscús con pollo y gambas",
+      "m": "P 53 · C 40 · G 8 · 444 kcal",
+      "i": "50 g de cuscús (seco) · 150 g de pollo en daditos · 60 g de gambas · 50 g de puerro · 50 g de zanahoria · 3 g de AOVE · 1 diente de ajo (5 g)",
+      "p": "El cuscús se hidrata con el mismo volumen de caldo hirviendo, 5 min tapado. Sin fuego."
+     },
+     "cena": {
+      "t": "Lenguado al papillote",
+      "m": "P 32 · C 24 · G 8 · 296 kcal",
+      "i": "170 g de lenguado · 105 g de patata cruda pelada en láminas · 60 g de tomate · 4 g de AOVE · 1 diente de ajo (5 g) · 30 ml de vino blanco · unas gotas de limón",
+      "p": "Papillote en air fryer 180°C, 15 min. La patata debajo, que tarda más."
+     }
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "bloques": [
+    {
+     "dias": "Días 1 y 2",
+     "alm": {
+      "t": "Pollo al curry con arroz",
+      "m": "P 49 · C 40 · G 12 · 464 kcal",
+      "i": "45 g de arroz en seco · 170 g de pollo troceado · 100 g de calabacín · 40 g de cebolla · 25 ml de leche evaporada · 60 g de tomate pelado · 4 g de AOVE · 30 ml de vino blanco · 5 g de curry en polvo · comino y canela al gusto",
+      "p": "Tritura el vino, la leche evaporada y el tomate. Rehoga con el pollo, el calabacín y la cebolla, añade las especias y el arroz ya cocido."
+     },
+     "cena": {
+      "t": "Sopa con tortilla francesa y jamón",
+      "m": "P 29 · C 30 · G 12 · 342 kcal",
+      "i": "Caldo: 60 g de zanahoria + 50 g de puerro + 40 g de cebolla + 40 g de apio + 500 ml de agua · 1 huevo + 100 ml de claras · 25 g de jamón serrano picado · 85 g de patata cruda pelada · 3 g de AOVE · cúrcuma, comino y hierbabuena al gusto",
+      "p": "Haz la tortilla, córtala en cuadritos y añádela al caldo caliente con el jamón."
+     }
+    },
+    {
+     "dias": "Días 3 y 4",
+     "alm": {
+      "t": "Champiñones rellenos de rosada",
+      "m": "P 54 · C 41 · G 13 · 499 kcal",
+      "i": "250 g de champiñones grandes · 150 g de rosada · 60 g de gambas · 50 g de puerro · 40 g de zanahoria · 12 g de parmesano rallado · 135 g de patata cruda pelada al lado · 5 g de AOVE · laurel",
+      "p": "Separa sombreretes y tallos. Rehoga los tallos con el puerro, la zanahoria, las gambas y el pescado; tritura hasta textura de paté. Rellena, cubre con el parmesano y air fryer 180°C, 10 min."
+     },
+     "cena": {
+      "t": "Merluza en salsa verde con patata",
+      "m": "P 30 · C 25 · G 6 · 270 kcal",
+      "i": "160 g merluza · 115 g patata cruda pelada · 30 g cebolla · 4 g AOVE · 1 diente de ajo (5 g) · 20 g de perejil fresco · 30 ml de vino blanco",
+      "p": "La salsa verde se liga moviendo la cazuela en vaivén, sin cuchara. Cinco minutos y está."
+     }
+    },
+    {
+     "dias": "Días 5 y 6",
+     "alm": {
+      "t": "Estofado de merluza con guisantes",
+      "m": "P 42 · C 54 · G 8 · 452 kcal",
+      "i": "200 g de merluza troceada · 210 g de patata cruda pelada · 60 g de guisantes · 50 g de cebolla · 60 g de tomate · 400 ml de agua · 5 g de AOVE · 100 ml de vino blanco · 3 g de pimentón dulce · comino y laurel al gusto",
+      "p": "El original llevaba brócoli y bacalao. Añade la merluza al final, con el guiso ya hecho: 5 min bastan. Si la cueces desde el principio se deshace."
+     },
+     "cena": {
+      "t": "Pollo a la cerveza",
+      "m": "P 34 · C 28 · G 6 · 318 kcal",
+      "i": "130 g de pechuga de pollo en dados · 60 g de puerro · 40 g de cebolla · 50 g de zanahoria · 40 g de patata cruda pelada · 200 ml de cerveza · 150 ml de agua · 4 g de AOVE · 10 g de salsa de soja · 1 hoja de laurel",
+      "p": "Sella el pollo en la cazuela bien caliente 3-4 min y resérvalo. Pocha cebolla, puerro y zanahoria 5 min en la misma cazuela sin lavarla. Moja con la cerveza, rasca el fondo y deja hervir 2 min. Añade el pollo, la patata, el agua, la soja y el laurel, y 20 min sin tapa hasta que la salsa reduzca a la mitad. En olla express: 6 min desde que coge presión y 3-4 min destapada para espesar."
+     }
+    },
+    {
+     "dias": "Día 7",
+     "alm": {
+      "t": "Pollo con arroz y calabacín",
+      "m": "P 47 · C 48 · G 7 · 445 kcal",
+      "i": "50 g de arroz en seco · 180 g de pollo picado · 100 g de calabacín · 40 g de cebolla · 60 g de tomate · 20 ml de leche evaporada · 4 g de AOVE · orégano y cilantro fresco",
+      "p": ""
+     },
+     "cena": {
+      "t": "Rosada con salsa",
+      "m": "P 32 · C 26 · G 7 · 295 kcal",
+      "i": "170 g de rosada · 60 g de zanahoria · 60 g de puerro · 60 g de tomate · 75 g de patata cruda pelada · 40 g de cebolla · 4 g de AOVE · 30 ml de vino blanco · perejil al gusto",
+      "p": ""
+     }
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "bloques": [
+    {
+     "dias": "Días 1 y 2",
+     "alm": {
+      "t": "Merluza con salsa y champiñones",
+      "m": "P 53 · C 41 · G 10 · 468 kcal",
+      "i": "200 g de merluza troceada · 80 g de champiñones · 80 g de calabacín · 50 g de zanahoria · 50 g de gambas · 25 ml de leche evaporada · 160 g de patata cruda pelada · 40 g de cebolla · 60 g de tomate triturado · 5 g de AOVE · 30 ml de vino blanco",
+      "p": "El original llevaba brócoli."
+     },
+     "cena": {
+      "t": "Hamburguesa de pollo con tomate",
+      "m": "P 35 · C 25 · G 5 · 285 kcal",
+      "i": "150 g de pollo picado en hamburguesa · 150 g de tomate en rodajas · 115 g de patata cruda pelada · 3 g de AOVE · orégano",
+      "p": ""
+     }
+    },
+    {
+     "dias": "Días 3 y 4",
+     "alm": {
+      "t": "Espagueti al pesto con fiambre de pavo",
+      "m": "P 44 · C 43 · G 17 · 502 kcal",
+      "i": "60 g de pasta integral (seco) · 180 g de fiambre de pavo en daditos · 10 g de piñones · 8 g de parmesano rallado · 50 g de tomate · 3 g de AOVE · 30 ml de vino · 20 g de albahaca fresca · ajo en polvo al gusto",
+      "p": "Tritura albahaca, piñones, ajo, vino y parmesano para el pesto. No lo calientes: se mezcla con la pasta caliente fuera del fuego."
+     },
+     "cena": {
+      "t": "Marmitako ligero de atún",
+      "m": "P 28 · C 28 · G 8 · 295 kcal",
+      "i": "110 g atún fresco en dados · 115 g patata cruda pelada · 50 g pimiento verde · 30 g cebolla · 300 ml de agua o caldo · 2 g AOVE · 3 g de pimentón",
+      "p": "Añade el atún con el fuego ya apagado y deja que se haga con el calor residual 2 min — si lo cueces, se seca. Otra opción: márcalo a la plancha 1 min por lado y échalo al final."
+     }
+    },
+    {
+     "dias": "Días 5 y 6",
+     "alm": {
+      "t": "Sopa de rosada",
+      "m": "P 45 · C 44 · G 9 · 437 kcal",
+      "i": "180 g de rosada troceada · 160 g de patata cruda pelada · 60 g de puerro · 50 g de cebolla · 60 g de tomate · 400 ml de agua · 5 g de AOVE · 1 ñora · laurel, orégano, azafrán y unas gotas de limón",
+      "p": ""
+     },
+     "cena": {
+      "t": "Pollo con canónigos y patata",
+      "m": "P 36 · C 26 · G 5 · 293 kcal",
+      "i": "140 g de pollo troceado · 50 g de canónigos · 80 g de tomate · 40 g de cebolla rehogada · 95 g de patata cruda pelada · 3 g de AOVE · 10 g de vinagre · 10 g de salsa de soja",
+      "p": ""
+     }
+    },
+    {
+     "dias": "Día 7",
+     "alm": {
+      "t": "Poke con arroz",
+      "m": "P 46 · C 44 · G 17 · 513 kcal",
+      "i": "55 g de arroz en seco · 150 g de salmón (o atún) · 60 g de aguacate · 20 g de edamame · 40 g de rúcula · 40 g de zanahoria rallada · 60 g de tomate cherry · 30 g de cebolleta rehogada · 3 g de sésamo · 15 g de salsa de soja · cilantro fresco",
+      "p": "Lleva salmón y aguacate: es de los platos más grasos del menú. Esa noche, cena sin aceite añadido."
+     },
+     "cena": {
+      "t": "Pescado a la plancha con puerro",
+      "m": "P 32 · C 27 · G 5 · 282 kcal",
+      "i": "170 g merluza, rosada o lenguado · 115 g patata cruda pelada en rodajas finas · 80 g puerro · 3 g AOVE · unas gotas de limón",
+      "p": "Patata y puerro a la air fryer 180°C, 15 min. Mientras, el pescado a la plancha: 3-4 min por lado empezando por la piel."
+     }
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "bloques": [
+    {
+     "dias": "Días 1 y 2",
+     "alm": {
+      "t": "Puchero de garbanzos con pollo",
+      "m": "P 51 · C 45 · G 12 · 488 kcal",
+      "i": "70 g de garbanzos en seco (puestos a remojo la noche antes) · 150 g de pollo troceado · 60 g de zanahoria · 50 g de puerro · 40 g de cebolla · 50 g de apio · 600 ml de agua · 5 g de AOVE · 1 diente de ajo (5 g) · perejil, laurel, comino y cúrcuma al gusto",
+      "p": "Olla express, 10 min. El original lleva hueso de canilla: si lo usas, da mucho sabor pero suma grasa al caldo — desespúmalo."
+     },
+     "cena": {
+      "t": "Pollo a la plancha con pimientos asados",
+      "m": "P 33 · C 27 · G 5 · 286 kcal",
+      "i": "130 g de pollo a la plancha · 120 g de pimiento rojo · 105 g de patata cruda pelada · 3 g de AOVE · 1 diente de ajo (5 g)",
+      "p": "Pimientos a la air fryer, 200°C 15-18 min, hasta que la piel se tueste."
+     }
+    },
+    {
+     "dias": "Días 3 y 4",
+     "alm": {
+      "t": "Crema de calabacín + merluza en salsa verde",
+      "m": "P 47 · C 38 · G 14 · 466 kcal",
+      "i": "Crema: 200 g de calabacín + 50 g de patata cruda pelada + 200 ml de agua + 3 g de AOVE + comino y azafrán · Merluza: 180 g · 125 g de patata cruda pelada · 25 ml de leche evaporada · 4 g de AOVE · 20 g de perejil fresco · 100 ml de vino blanco · 1 diente de ajo (5 g)",
+      "p": "El original era crema de alcachofa. La salsa verde se liga moviendo la cazuela en vaivén, sin cuchara."
+     },
+     "cena": {
+      "t": "Salmorejo sin pan, con atún",
+      "m": "P 34 · C 32 · G 6 · 322 kcal",
+      "i": "350 g de tomate muy maduro (tipo pera) · 120 g de calabacín pelado · 50 ml de leche evaporada · 110 g de atún al natural escurrido · 50 g de patata cruda pelada · 2 g de AOVE · 1 diente de ajo pequeño (3 g) · 10 g de vinagre de Jerez · sal",
+      "p": "Cuece el calabacín pelado y la patata 5 min en olla express y déjalos enfriar del todo. Tritura el tomate con el ajo hasta que quede muy fino. Añade el calabacín, la patata y la leche evaporada, y vuelve a triturar 2-3 minutos largos. Con la máquina en marcha, el aceite en hilo fino. Sal, vinagre y mínimo 2 horas de nevera. El atún, desmigado por encima al servir. Sin pan, el cuerpo lo dan el calabacín (volumen casi sin calorías) y la leche evaporada (la untuosidad que se pierde al quitar el pan). Por separado no llegan: el calabacín solo queda acuoso y la leche sola, demasiado ligera. Tomate muy maduro y a temperatura ambiente, y pela bien el calabacín: la piel amarga y oscurece el color."
+     }
+    },
+    {
+     "dias": "Días 5 y 6",
+     "alm": {
+      "t": "Caldo de apio + hamburguesa de pollo",
+      "m": "P 44 · C 36 · G 8 · 392 kcal",
+      "i": "Caldo: 80 g de apio (2 ramas) + 100 g de cebolla + 500 ml de agua + cúrcuma, comino, hierbabuena, laurel y unas gotas de limón · Hamburguesa: 180 g de pollo picado · 160 g de patata cruda pelada · 4 g de AOVE",
+      "p": ""
+     },
+     "cena": {
+      "t": "Tortilla francesa con tomate",
+      "m": "P 26 · C 24 · G 10 · 290 kcal",
+      "i": "1 huevo + 130 ml de claras · 150 g de tomate aliñado · 115 g de patata cruda pelada · 4 g de AOVE · orégano",
+      "p": ""
+     }
+    },
+    {
+     "dias": "Día 7",
+     "alm": {
+      "t": "Gazpachuelo con patata",
+      "m": "P 42 · C 40 · G 16 · 472 kcal",
+      "i": "160 g de rosada troceada · 210 g de patata cruda pelada nueva · 80 g de almejas · 40 g de cebolla · 40 ml de leche evaporada · 5 g de AOVE · 1 diente de ajo (5 g) · 30 ml de vino blanco",
+      "p": "Plato malagueño y de los mejores del menú. La leche evaporada da la cremosidad en lugar de la mayonesa tradicional. Añádela al final, a fuego suave y sin que llegue a hervir, o se corta."
+     },
+     "cena": {
+      "t": "Noodles en caldo con pescado",
+      "m": "P 34 · C 33 · G 5 · 311 kcal",
+      "i": "80 g de noodles frescos · 150 g de merluza o rosada · 60 g de puerro · 60 g de champiñones · 40 g de zanahoria · 400 ml de caldo · 12 g de salsa de soja · 2 g de AOVE",
+      "p": "El pescado va al final y con el fuego apagado: 3-4 min con el calor residual bastan para que se haga sin deshacerse. Los noodles, 1-2 min y fuera."
+     }
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "bloques": [
+    {
+     "dias": "Días 1 y 2",
+     "alm": {
+      "t": "Pizza con base de calabacín",
+      "m": "P 47 · C 34 · G 18 · 484 kcal",
+      "i": "Base: 250 g de calabacín triturado y bien escurrido · 1 huevo · 8 g de almendras molidas (6 unidades) · 1 diente de ajo (5 g) · Cobertura: 60 g de tomate rallado · 150 g de fiambre de pavo en lonchas · 15 g de parmesano rallado · Al lado: 105 g de patata cruda pelada",
+      "p": "El original era base de coliflor. Extiende la base lo más fina posible sobre papel de horno y hornea 20 min a 180°C antes de poner nada encima. Escurrir bien el calabacín es lo que evita que quede blanda."
+     },
+     "cena": {
+      "t": "Burrata con tomate y pollo",
+      "m": "P 30 · C 24 · G 11 · 313 kcal",
+      "i": "45 g de burrata · 100 g de pollo a la plancha · 150 g de tomate en rodajas · 50 g de zanahoria en bastones · 65 g de patata cruda pelada · orégano, sal",
+      "p": "Sin aceite: la burrata ya aporta la grasa. Sácala de la nevera un rato antes y ponla al final sobre el tomate; fría pierde casi toda la gracia."
+     }
+    },
+    {
+     "dias": "Días 3 y 4",
+     "alm": {
+      "t": "Pisto + tortilla",
+      "m": "P 42 · C 35 · G 16 · 452 kcal",
+      "i": "Pisto: 40 g de guisantes + 80 g de pimiento + 100 g de tomate tamizado + 50 g de cebolla + 100 g de berenjena pelada + 50 g de puerro + 30 ml de vino + 5 g de AOVE · Tortilla: 1 huevo + 150 ml de claras · Al lado: 160 g de patata cruda pelada",
+      "p": "El pisto aguanta 4 días en nevera y mejora de un día para otro."
+     },
+     "cena": {
+      "t": "Merluza en salsa verde con patata",
+      "m": "P 30 · C 25 · G 6 · 270 kcal",
+      "i": "160 g merluza · 115 g patata cruda pelada · 30 g cebolla · 4 g AOVE · 1 diente de ajo (5 g) · 20 g de perejil fresco · 30 ml de vino blanco",
+      "p": "La salsa verde se liga moviendo la cazuela en vaivén, sin cuchara. Cinco minutos y está."
+     }
+    },
+    {
+     "dias": "Días 5 y 6",
+     "alm": {
+      "t": "Sopa de pollo con fideos",
+      "m": "P 44 · C 45 · G 10 · 446 kcal",
+      "i": "170 g de pollo troceado · 40 g de fideos · 60 g de zanahoria · 50 g de puerro · 40 g de cebolla · 500 ml de agua o caldo · 5 g de AOVE · hierbabuena y azafrán al gusto",
+      "p": ""
+     },
+     "cena": {
+      "t": "Salmorejo ligero con jamón",
+      "m": "P 30 · C 24 · G 9 · 297 kcal",
+      "i": "350 g de tomate maduro (3 unidades) · 120 g de calabacín pelado · 35 g de jamón serrano picado · 1 huevo duro · 30 g de pan · 4 g de AOVE · 1 diente de ajo (5 g)",
+      "p": "El calabacín en lugar de más pan da cuerpo sin apenas calorías. Buen truco del original."
+     }
+    },
+    {
+     "dias": "Día 7",
+     "alm": {
+      "t": "Corvina o lubina al horno con patata",
+      "m": "P 44 · C 44 · G 13 · 469 kcal",
+      "i": "200 g de corvina o lubina · 210 g de patata cruda pelada en láminas · 80 g de tomate en rodajas · 5 g de AOVE · 1 diente de ajo laminado (5 g) · 30 ml de vino blanco · unas gotas de limón · perejil y orégano al gusto",
+      "p": "Air fryer 180°C: la patata 15 min primero, luego el pescado encima 10 min más."
+     },
+     "cena": {
+      "t": "Crema de calabaza con tortilla de atún",
+      "m": "P 35 · C 24 · G 8 · 312 kcal",
+      "i": "160 g calabaza · 40 ml leche evaporada · 1 huevo + 70 ml claras pasteurizadas · 70 g atún · 40 g patata cruda pelada · 1 g AOVE · nuez moscada",
+      "p": "La leche evaporada da a la crema la textura de una hecha con nata, por mucha menos grasa. Calabaza en olla express, 5 min. La crema aguanta dos días; la tortilla hazla al momento."
+     }
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "bloques": [
+    {
+     "dias": "Días 1 y 2",
+     "alm": {
+      "t": "Ensalada templada de atún y calabacín",
+      "m": "P 45 · C 34 · G 15 · 451 kcal",
+      "i": "150 g de atún al natural · 150 g de calabacín pelado y troceado · 60 g de guisantes · 40 g de cebolleta · 80 g de tomate triturado · 1 huevo duro · 160 g de patata cruda pelada · 6 g de AOVE · 10 g de vinagre",
+      "p": "El original llevaba judías verdes."
+     },
+     "cena": {
+      "t": "Revuelto de claras con tomate + yogur de proteína",
+      "m": "P 34 · C 25 · G 8 · 309 kcal",
+      "i": "1 huevo + 120 ml de claras · 120 g de tomate · 75 g de patata cruda pelada · 2 g de AOVE · 1 yogur de proteína de postre",
+      "p": ""
+     }
+    },
+    {
+     "dias": "Días 3 y 4",
+     "alm": {
+      "t": "Dorada al horno con verduras",
+      "m": "P 44 · C 36 · G 16 · 464 kcal",
+      "i": "200 g de dorada (o salmón) · 120 g de calabacín en rodajas · 100 g de tomate en rodajas · 80 g de zanahoria en rodajas · 160 g de patata cruda pelada · 5 g de AOVE · 30 ml de vino blanco · eneldo y orégano al gusto",
+      "p": "Air fryer 180°C: verduras y patata 15 min, la dorada encima 10 min más."
+     },
+     "cena": {
+      "t": "Marmitako ligero de atún",
+      "m": "P 28 · C 28 · G 8 · 295 kcal",
+      "i": "110 g atún fresco en dados · 115 g patata cruda pelada · 50 g pimiento verde · 30 g cebolla · 300 ml de agua o caldo · 2 g AOVE · 3 g de pimentón",
+      "p": "Añade el atún con el fuego ya apagado y deja que se haga con el calor residual 2 min — si lo cueces, se seca. Otra opción: márcalo a la plancha 1 min por lado y échalo al final."
+     }
+    },
+    {
+     "dias": "Días 5 y 6",
+     "alm": {
+      "t": "Salmorejo + hamburguesa de pollo",
+      "m": "P 46 · C 38 · G 14 · 462 kcal",
+      "i": "Salmorejo: 350 g de tomate maduro (3 unidades) + 120 g de calabacín pelado + 1 diente de ajo (5 g) + 30 g de pan + 4 g de AOVE · Hamburguesa: 180 g de pollo a la plancha · Al lado: 105 g de patata cruda pelada",
+      "p": ""
+     },
+     "cena": {
+      "t": "Revuelto de gambas y calabacín",
+      "m": "P 34 · C 21 · G 9 · 300 kcal",
+      "i": "1 huevo + 80 ml de claras · 80 g de gambas peladas · 80 g de calabacín · 95 g de patata cruda pelada · 2 g de AOVE · ajo y perejil al gusto",
+      "p": ""
+     }
+    },
+    {
+     "dias": "Día 7",
+     "alm": {
+      "t": "Pollo con arroz basmati",
+      "m": "P 47 · C 52 · G 8 · 468 kcal",
+      "i": "55 g de arroz basmati en seco · 180 g de pollo troceado · 80 g de calabacín · 50 g de zanahoria · 60 g de tomate pelado · 5 g de AOVE · 30 ml de vino blanco · 5 g de curry en polvo · comino y canela al gusto",
+      "p": ""
+     },
+     "cena": {
+      "t": "Cuscús con pescado y limón",
+      "m": "P 32 · C 28 · G 5 · 281 kcal",
+      "i": "28 g de cuscús (seco) · 160 g de merluza o rosada · 50 g de zanahoria · 30 g de cebolla · 3 g de AOVE · unas gotas de limón · cilantro",
+      "p": "Cuscús hidratado con caldo 5 min mientras el pescado se hace a la plancha."
+     }
+    }
+   ]
+  }
+ ],
+ "notas": [
+  "Pescado en la cena tres noches por semana: martes, jueves y domingo. Nunca dos noches seguidas, ni al pasar del domingo al lunes. Los martes se cocina un guiso o un plato frío porque tiene que aguantar hasta el jueves; el domingo, a la plancha y en el momento.",
+  "Cuatro sesiones de cocina por semana: lunes, martes, viernes y domingo. El lunes cocinas también para el miércoles, el martes para el jueves y el viernes para el sábado. El domingo va suelto.",
+  "Lo que mejor aguanta dos días: guisos, estofados, pisto, salmorejo, ensaladilla, puchero. Todos mejoran de un día para otro.",
+  "Lo que peor aguanta: los revueltos y las tortillas (hazlas al momento, son 5 minutos) y el pescado a la plancha. En esos casos, cocina la guarnición para dos días y la proteína al momento.",
+  "El pescado de los guisos (merluza, rosada) añádelo al final del primer día y, al recalentar, hazlo a fuego muy suave. Es lo que más se pasa.",
+  "Sustituciones libres: cualquier pescado blanco vale por otro (merluza, rosada, lenguado, corvina, lubina) y pollo, pollo, ternera y cerdo magro son intercambiables ajustando la grasa.",
+  "Las raciones de patata y arroz son las que cuadran con tus tomas fijas actuales. Si algún día entrenas más fuerte, puedes subirlas 50 g sin problema.",
+  "Adaptado del menú de Vitasane. Las recetas son suyas; las cantidades están recalculadas para tus macros. Si tu nutricionista te ajusta el plan, prevalece lo que te diga."
+ ]
 };
 
 let pesosNota = 'Todas las cantidades son PESO DE COMPRA: lo que pesas antes de cocinar. Proteína y verdura en crudo · arroz, pasta, cuscús y fideos en seco · patata cruda y pelada · legumbres en seco, que es como las compras: los garbanzos necesitan remojo la noche antes, las lentejas no · pulpo, gambas y noodles frescos tal cual vienen. Lo único sin peso son las especias secas y las hierbas de adorno, que no aportan calorías relevantes.';
@@ -898,8 +1264,10 @@ let ingredientNotes = [
   {t:'Salsa de soja', d:'Unos 8 kcal por 15 ml: en macros no cuenta. Lo que sí cuenta es el sodio — 15 ml llevan unos 900 mg, casi la mitad del máximo diario. Si la usas a menudo, compra la baja en sodio y no añadas sal al plato. Va especialmente bien con salmón y atún; con pescado blanco, acompañada de ajo.'},
   {t:'Patas de pulpo cocido', d:'La proteína menos densa que usas: 15 g por 100 g, frente a los 23 del pollo, 20 de las gambas o 17 de la merluza. Por eso las raciones son de 180-250 g y casi todas llevan gambas al lado. A cambio es muy magro (1 g de grasa por 100 g) y ya cocido te ahorra el paso más largo. El error que arruina el plato es recalentarlo: uno o dos minutos bastan, pasado de ahí se vuelve gomoso y no hay marcha atrás.'},
   {t:'Tirabuzones de lentejas', d:'25 g de proteína por 100 g en seco: la mejor baza de tu despensa para subir proteína sin carne.'},
+  {t:'Wakame', d:'Prácticamente no cuenta en macros: 6 g secos se convierten en unos 60 g hidratados y son 27 kcal, así que puedes usarlo con libertad para dar volumen y sabor marino. Cómpralo deshidratado, no la ensalada preparada congelada, que viene aliñada con azúcar y aceite de sésamo. Hidrátalo 5 min en agua fría y sécalo con papel antes de echarlo al wok. Un cuidado: lleva mucho yodo y bastante sodio, así que un par de veces por semana está bien, pero a diario y en cantidad puede afectar a la tiroides. Si lo usas mucho, no añadas sal al plato.'},
+  {t:'Maíz dulce', d:'Cuenta como hidrato, no como verdura: 19 g por 100 g. Con 60 g por plato va bien; si pones más, baja el arroz o los noodles en proporción. De lata al natural, escurrido y enjuagado.'},
   {t:'Cuscús', d:'El hidrato más rápido de todos: no se cuece. Mismo volumen de agua o caldo hirviendo, tapado 5 min y listo, sin fuego. Respeta la proporción — si te pasas de agua queda pastoso y no tiene arreglo. Busca el integral si lo encuentras: sacia bastante más que el blanco, que es el que viene por defecto. Es trigo, así que lleva gluten.'},
-  {t:'Ñoquis', d:'Encajan en macros pero son menos saciantes que la patata: para los mismos 40 g de hidrato, 148 g de ñoquis son 204 kcal y 200 g de patata 178. En déficit eso juega en tu contra, aunque aportan algo más de proteína (5,9 g frente a 4). Salen del agua en cuanto flotan, 1-2 min; pasado ese punto se deshacen. Al comprarlos mira la etiqueta: muchos envases traen nata o mantequilla y se disparan de grasa. Los de patata al natural, en envase al vacío, son los que cuadran.'},
+  {t:'Ñoquis', d:'Encajan en macros pero son menos saciantes que la patata: para los mismos 40 g de hidrato, 148 g de ñoquis son 204 kcal y 210 g de patata cruda pelada 178. En déficit eso juega en tu contra, aunque aportan algo más de proteína (5,9 g frente a 4). Salen del agua en cuanto flotan, 1-2 min; pasado ese punto se deshacen. Al comprarlos mira la etiqueta: muchos envases traen nata o mantequilla y se disparan de grasa. Los de patata al natural, en envase al vacío, son los que cuadran.'},
   {t:'Leche evaporada', d:'Sustituye a la nata en carbonaras, currys y cremas con una fracción de la grasa. También da cuerpo al salmorejo sin apenas grasa.'},
 ];
 
@@ -928,10 +1296,10 @@ let secuenciaAlmuerzo = [
   '20-23 min: emplatas y montas la ensalada o la verdura cruda.',
   '23 min en adelante: comes con ~37 min por delante.',
 ];
-let secuenciaCena = 'Las cenas llevan menos hidrato: salen en 12-15 minutos — la guarnición en la air fryer mientras el pescado se hace a la plancha en 5-6 min. Ahí ni necesitas la olla.';
+let secuenciaCena = 'Las cenas llevan menos hidrato: salen en 12-15 minutos. La verdura en la air fryer mientras el pescado, el pollo o el pollo se hacen a la plancha; las tortillas y los revueltos, 10 minutos en sartén. Ahí ni necesitas la olla.';
 
 let dejarHechoAntes = [
-  'Proteína ya pesada (170 g para el almuerzo, 140 g para la cena) y marinada, en un táper. Sácala al empezar a cocinar para que atempere.',
+  'Proteína ya pesada según el plato del día siguiente, y el doble si ese día cocinas para dos (lunes, martes y viernes). El aviso de Hoy te dice la cantidad exacta. Sácala de la nevera al empezar a cocinar para que atempere.',
   'Verdura ya lavada y troceada según la guarnición que toque ese día, y la berenjena ya salada si la lleva.',
   'Legumbres a remojo si toca garbanzos al día siguiente.',
 ];
@@ -993,10 +1361,31 @@ const entrenoNotas = [
   'Progresando bien: press banca 30→40 kg, chest fly 30→43, press inclinado 20→28, elevaciones laterales 5→18.',
 ];
 
+const salsasWok = {
+  intro:'Todas sustituyen a los 15 g de salsa de soja que ya llevan las recetas, así que el coste real es la cifra indicada menos 8 kcal. Cantidades para una ración.',
+  lista:[
+    {n:'Picante de soja y sriracha', k:'+20 kcal', i:'15 g de salsa de soja · 12 g de sriracha · 10 g de vinagre de arroz · 1 diente de ajo (5 g)', p:'La de menos calorías. La sriracha lleva azúcar, pero en 12 g son apenas 2 g.'},
+    {n:'Teriyaki ligera', k:'+38 kcal', i:'15 g de salsa de soja · 10 g de vinagre de arroz · 5 g de azúcar moreno · 3 g de maicena · 1 diente de ajo (5 g)', p:'Mezcla en frío y échala al final con el fuego aún encendido: la maicena necesita calor para espesar, pero solo 30-40 segundos. La teriyaki comercial lleva el triple de azúcar.'},
+    {n:'Miso y sésamo', k:'+45 kcal', i:'15 g de miso · 8 g de salsa de soja · 10 g de vinagre de arroz · 2 g de aceite de sésamo', p:'Mucho umami por poca cosa. El miso no debe hervir: pierde sabor y fermentos. Disuélvelo en agua templada y échalo con el fuego apagado.'},
+    {n:'Curry cremoso', k:'+66 kcal', i:'50 ml de leche evaporada · 4 g de curry en polvo · 8 g de salsa de soja · 1 diente de ajo (5 g)', p:'Tuesta el curry 30 segundos en el wok seco antes de añadir la leche evaporada. Que no hierva, o se corta.'},
+    {n:'Cremosa de sésamo (tahini)', k:'+78 kcal', i:'12 g de tahini · 12 g de salsa de soja · 10 g de vinagre de arroz · 1 diente de ajo (5 g)', p:'Aflójala con dos cucharadas de agua antes de echarla: el tahini solo se agarra y queda pastoso.'},
+    {n:'Satay de cacahuete', k:'+96 kcal', i:'15 g de crema de cacahuete · 12 g de salsa de soja · 10 g de zumo de lima · 5 g de sriracha', p:'La más sabrosa y la más cara en calorías. Solo para woks magros: el de pollo con maíz o el de gambas la admiten; el de salmón no.'},
+  ],
+  pares:[
+    {w:'Pescado blanco con wakame', s:'Teriyaki, picante, miso'},
+    {w:'Gambas y maíz', s:'Satay, picante, teriyaki'},
+    {w:'Salmón con wakame', s:'Picante o teriyaki — nada con grasa'},
+    {w:'Pollo con maíz', s:'Satay, curry cremoso, teriyaki'},
+    {w:'Ternera con noodles', s:'Teriyaki, miso, picante'},
+    {w:'Cena ligera de pescado', s:'Picante o miso, las más ligeras'},
+  ],
+  regla:'Si el plato lleva salmón o ya va justo de grasa, usa las de base soja. Las cremosas, para los woks de pollo, gambas o pescado blanco.'
+};
+
 let cardioPlan = {
-  titulo: '20 min de cinta inclinada al terminar el gimnasio',
-  detalle: 'Progresión de nueve semanas subiendo del 6% al 12-15% de inclinación, a 5,5-6 km/h. Al 12% son unas 238 kcal por sesión, que promediadas salen a ~102 kcal/día: la mitad de tus calorías activas viene de aquí.',
-  nota: 'Alargar la cinta de 20 a 30 min sumaría solo 51 kcal/día de media — menos que quitar la barrita. El ejercicio se compensa peor de lo que parece.'
+  titulo: 'Cinta después de cada sesión, según el tipo de día',
+  detalle: 'Tracción: intervalos de trote, subiendo 0,3-0,5 km/h cada dos semanas. Empuje: caminata rápida con inclinación progresiva desde el 1-2%. Pierna: solo caminata suave en plano, sin impacto ni inclinación. La rutina de cada día aparece en Hoy según el tipo de sesión que tengas asignado en Ajustes.',
+  nota: 'Alargar la cinta rinde poco: pasar de 20 a 30 minutos sumaría unas 50 kcal diarias de media, menos que quitar la barrita. Lo que protege el músculo en déficit es el trabajo de fuerza, no el cardio.'
 };
 
 let notasPlan = [
@@ -1032,7 +1421,7 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-09-21b';
+const PLAN_VERSION_DEFAULT = '2026-09-22e';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 const DEFAULT_PLAN = {
@@ -1101,6 +1490,7 @@ let platos = {};
 // Compra: desde qué día y cuántos días cubre
 let compraDesde = null;   // se fija a hoy al arrancar
 let compraDias = 7;
+let compraModo = 'semana';   // 'semana' = 7 días · 'dias' = los que elijas
 let semanaSelected = 1;
 
 function uid(){ return 'i'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
@@ -1273,6 +1663,10 @@ async function loadAll(){
   try{ const r = await store.get('adherence'); if(r) adherencia = JSON.parse(r.value); }catch(e){}
   semanaSelected = settings.currentWeek || 1;
   if(!compraDesde) compraDesde = todayKey();
+  // Recordar cómo te gusta calcular la compra
+  if(settings.compraModo) compraModo = settings.compraModo;
+  if(settings.compraDias) compraDias = settings.compraDias;
+  if(compraModo === 'semana') compraDias = 7;
   renderAll();
 }
 async function saveSettings(){ try{ await store.set('settings', JSON.stringify(settings)); }catch(e){} }
@@ -1331,8 +1725,8 @@ function garnishText(code){
 // Qué corte comprar para cada proteína. La grasa cambia mucho según la pieza,
 // y los macros del plan están calculados con estos cortes.
 const CORTES = {
-  pollo:   {corte:'Pechuga en filetes',            g:'1 g grasa/100 g', nota:'Entera y sin filetear para el pollo asado. En dados o tiras para wok, curry y salteados. El contramuslo lleva 12 g de grasa (22 con piel): solo en la receta que lo pide.'},
-  pavo:    {corte:'Pechuga en filetes',            g:'1 g grasa/100 g', nota:'Para los rellenos y albóndigas, pavo picado. El fiambre de pavo solo en los rollitos.'},
+  pollo:   {corte:'Pechuga en filetes',            g:'1 g grasa/100 g', nota:'Entera y sin filetear para el pollo asado. En dados o tiras para wok, curry y salteados. Picado para rellenos, albóndigas y hamburguesas. El contramuslo lleva 12 g de grasa (22 con piel): solo en la receta que lo pide.'},
+  fiambre: {corte:'Fiambre de pavo en lonchas',    g:'2 g grasa/100 g', nota:'Solo en tres recetas: el espagueti al pesto, los rollitos de calabacín y la pizza de calabacín. Lleva menos proteína que el pollo a la plancha (18 g por 100 frente a 23) y bastante más sal, por eso las raciones son mayores.'},
   ternera: {corte:'Tapa, babilla o contra',        g:'4-5 g grasa/100 g', nota:'En filetes para plancha, en tiras finas para wok y salteados, en dados para estofado. Para boloñesa y rellenos, picada magra (pide que la piquen de tapa, no la de bandeja que suele ser 15-20% de grasa).'},
   cerdo:   {corte:'Lomo en filetes',               g:'4-5 g grasa/100 g', nota:'Lomo o cinta de lomo. Nada de panceta, secreto, presa ni aguja: triplican la grasa.'},
   merluza: {corte:'Lomos o rodajas sin piel',      g:'1 g grasa/100 g', nota:'Pide que te la limpien en la pescadería. Vale igual rosada, lenguado o corvina.'},
@@ -1351,8 +1745,10 @@ function claveCorte(nombre){
   if(/pulpo/.test(n)) return 'pulpo';
   if(/gambas|langostinos/.test(n)) return 'gambas';
   if(/dorada/.test(n)) return 'dorada';
+  if(/fiambre de pavo/.test(n)) return 'fiambre';
   if(/pollo/.test(n)) return 'pollo';
-  if(/pavo/.test(n)) return 'pavo';
+  if(/fiambre de pavo/.test(n)) return 'fiambre';
+  if(/pollo/.test(n)) return 'pollo';
   if(/ternera/.test(n)) return 'ternera';
   if(/cerdo/.test(n)) return 'cerdo';
   return null;
@@ -1360,7 +1756,7 @@ function claveCorte(nombre){
 
 const GRUPOS_PROTEINA = [
   {re:/ternera|cerdo/i,                                                        g:/ternera|cerdo/i},
-  {re:/pollo|pavo/i,                                                           g:/pollo|pavo/i},
+  {re:/pollo|pollo/i,                                                           g:/pollo|pollo/i},
   {re:/merluza|rosada|lenguado|corvina|lubina|pescado blanco|dorada|salmón|atún/i, g:/merluza|rosada|lenguado|corvina|lubina|pescado blanco|dorada|salmón|atún/i},
   {re:/gambas|pulpo|langostinos/i,                                             g:/gambas|pulpo|langostinos/i},
 ];
@@ -1392,7 +1788,20 @@ function rotDelBloque(info){
 }
 
 // Devuelve el plato concreto del recetario para ese día, o null si toca la plantilla base.
+// Pruebas puntuales: un plato concreto para una fecha concreta, por encima del menú.
+const PRUEBAS = {
+  '2026-09-23': {cena: 'Pollo a la plancha con patata y verdura · ración de prueba',
+                 nota: 'Cena de prueba: ración un 60% mayor para ver hasta dónde te entra. Se cocina en el momento, no es la del lunes. Si te llenas antes, para y anota dónde te quedaste.'}
+};
+function pruebaDe(info){ return PRUEBAS[info.key] || null; }
+
 function platoDelDia(slot, info){
+  const pr = pruebaDe(info);
+  if(pr && pr[slot]){
+    const lista = slot === 'alm' ? recetario.alm : recetario.cena;
+    const r = lista.find(x => x.title === pr[slot]);
+    if(r) return {title:r.title, macros:r.macros, ing:r.ing, tip:r.tip, prueba:true};
+  }
   const semana = info.semana || semanaMenuDe(info.d || new Date());
   const w = menuVitasane.semanas.find(x => x.n === semana) || menuVitasane.semanas[0];
   const b = w.bloques[bloqueDeDia(info.idx)];
@@ -1416,7 +1825,7 @@ function almuerzoRecipe(almRaw, dayIdx){
   if(/lentejas|garbanzos/i.test(almRaw)){
     const isLentejas = /lentejas/i.test(almRaw);
     return {
-      ing: `100 g de ${almRaw.toLowerCase()} en seco · 80 g de zanahoria · 100 g de patata · 60 g de pimiento · 50 g de cebolla · 1 diente de ajo (5 g) · 600 ml de agua o caldo · 3 g de pimentón · comino y laurel al gusto`,
+      ing: `100 g de ${almRaw.toLowerCase()} en seco · 80 g de zanahoria · 105 g de patata cruda pelada · 60 g de pimiento · 50 g de cebolla · 1 diente de ajo (5 g) · 600 ml de agua o caldo · 3 g de pimentón · comino y laurel al gusto`,
       steps:[
         'Sofríe cebolla, ajo y pimiento en la propia olla express.',
         'Añade la legumbre y las verduras en dados, cubre con 3 volúmenes de agua o caldo, y agrega las especias y el laurel.',
@@ -1434,7 +1843,7 @@ function almuerzoRecipe(almRaw, dayIdx){
   let time = '4-5 min por lado';
   if(/ternera/.test(meat)) time = '2-3 min por lado';
   else if(/cerdo/.test(meat)) time = '3-4 min por lado';
-  else if(/pavo/.test(meat)) time = '3-4 min por lado';
+  else if(/pollo/.test(meat)) time = '3-4 min por lado';
 
   const steps = [
     'Saca la proteína de la nevera 15-20 min antes y sécala con papel.',
@@ -1454,7 +1863,7 @@ function cenaRecipe(cenaRaw, dayIdx){
   const protein = cenaRaw.trim();
   const cInfo = CORTES[claveCorte(protein)];
   const corteC = cInfo ? ' (' + cInfo.corte.toLowerCase() + ')' : '';
-  const isPoultry = /pollo|pavo/i.test(protein);
+  const isPoultry = /pollo|pollo/i.test(protein);
   const cookTime = isPoultry ? '4-5 min por lado' : '3-4 min por lado (piel abajo primero si la lleva)';
   const g = garnishText(weeklyGarnish[dayIdx].cena);
 
@@ -1560,7 +1969,7 @@ function renderHoy(){
       <div class="meal-head ${openMeal[openKey]?'open':''}">
         <input type="checkbox" ${done[id]?'checked':''} onchange="event.stopPropagation(); toggleCheck('${id}')" onclick="event.stopPropagation()">
         <div class="txt" onclick="toggleMeal('${openKey}')">
-          <div class="label">${tpl.label}${cocinaHoy?'':' · cocinado ' + esc(diaAnteriorLbl)}</div>
+          <div class="label">${tpl.label}${plato && plato.prueba ? ' · prueba' : (cocinaHoy?'':' · cocinado ' + esc(diaAnteriorLbl))}</div>
           <div class="protein">${esc(titulo)}</div>
         </div>
         <div class="chev" onclick="toggleMeal('${openKey}')">▸</div>
@@ -1569,11 +1978,13 @@ function renderHoy(){
         <div class="macropill">${esc(macros)}</div>
         <div class="ing">${esc(ing)}</div>
         ${pasos.length ? `<ol>${pasos.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>` : ''}
-        ${cocinaHoy
-          ? (idxPareja === null
-              ? `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">Hoy se cocina solo para hoy.</div>`
-              : `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">Cocina el doble: la mitad es para ${esc(diaSiguienteLbl)}.</div>`)
-          : `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">Lo cocinaste ${esc(diaAnteriorLbl)}. Recalentar: air fryer 160°C, 5-6 min.</div>`}
+        ${plato && plato.prueba
+          ? `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">Se cocina en el momento: es una ración de prueba, no la tanda de otro día.</div>`
+          : cocinaHoy
+            ? (idxPareja === null
+                ? `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">Hoy se cocina solo para hoy.</div>`
+                : `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">Cocina el doble: la mitad es para ${esc(diaSiguienteLbl)}.</div>`)
+            : `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">Lo cocinaste ${esc(diaAnteriorLbl)}. Recalentar: air fryer 160°C, 5-6 min.</div>`}
       </div>
     </div>`;
   };
@@ -1617,6 +2028,7 @@ function renderHoy(){
     </div>
     <div class="info-note">Subtotal fijo: ${fixedSubtotal}. ${mealMargin}.</div>
 
+    ${(()=>{ const pr = pruebaDe(info); return pr ? `<div class="prep-note"><b>🧪 ${esc(pr.nota)}</b></div>` : ''; })()}
     <div class="section-title">Almuerzo y cena · ${cocinaHoy ? 'hoy cocinas' : 'hoy no cocinas'}</div>
     <div class="card">
       ${mealBlock('alm', mealTemplate.almuerzo, info.rot.alm, almDetail, 'alm', 'alm')}
@@ -1709,7 +2121,7 @@ function renderRecetas(){
     ${recetario.alm.map(dishCard).join('')}
 
     <div class="section-title">Recetario — cenas (${recetario.cena.length} platos)</div>
-    <div class="info-note" style="margin-bottom:14px;">Objetivo de cena: ${mealTemplate.cena.macros}. Todas están dentro de ±30 kcal. Bases repartidas para no repetir siempre pescado: pescado, pavo o pollo, huevo, marisco, ternera y requesón.</div>
+    <div class="info-note" style="margin-bottom:14px;">Objetivo de cena: ${mealTemplate.cena.macros}. Todas están dentro de ±30 kcal. Bases repartidas para no repetir siempre pescado: pescado, pollo o pollo, huevo, marisco, ternera y requesón.</div>
     ${recetario.cena.map(dishCard).join('')}
 
     <div class="section-title">Receta fija de los domingos</div>
@@ -1765,12 +2177,34 @@ function renderRecetas(){
       <div style="font-size:13px; color:var(--muted);">${esc(pescadoTabla.nota)}</div>
     </div>
 
+    <div class="section-title">Salsas para wok</div>
+    <div class="card card-pad">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">${esc(salsasWok.intro)}</div>
+      ${salsasWok.lista.map(x=>`
+        <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;gap:10px;">
+            <div style="font-weight:700;font-size:14px;">${esc(x.n)}</div>
+            <div style="font-size:12px;color:var(--muted);white-space:nowrap;">${esc(x.k)}</div>
+          </div>
+          <div style="font-size:13.5px;margin-top:3px;">${esc(x.i)}</div>
+          <div style="font-size:12.5px;color:var(--muted);margin-top:3px;">${esc(x.p)}</div>
+        </div>`).join('')}
+      <div style="font-weight:700;font-size:13px;margin:4px 0 6px;">Cuál va con cada wok</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <tbody>
+          ${salsasWok.pares.map(p=>`<tr style="border-top:1px solid var(--border);"><td style="padding:5px 6px;">${esc(p.w)}</td><td style="padding:5px 6px;color:var(--muted);">${esc(p.s)}</td></tr>`).join('')}
+        </tbody>
+      </table>
+      <div style="font-size:12.5px;color:var(--muted);margin-top:10px;">${esc(salsasWok.regla)}</div>
+    </div>
+
     <div class="section-title">Ingredientes clave</div>
     <div class="card card-pad">
       ${ingredientNotes.map(n=>`<div style="margin-bottom:12px;"><div style="font-weight:700; font-size:13.5px;">${esc(n.t)}</div><div style="font-size:13.5px; color:var(--ink);">${esc(n.d)}</div></div>`).join('')}
     </div>
 
-    <div class="section-title">Guarniciones de verdura (rotación semanal)</div>
+    <div class="section-title">Guarniciones para improvisar</div>
+    <div class="info-note" style="margin-bottom:10px;">Los platos del menú ya traen su propia verdura. Estas combinaciones son para cuando cocines la plantilla base o cambies algo por tu cuenta.</div>
     <div class="card card-pad">
       <div class="info-note" style="margin-bottom:12px;">5 verduras en rotación — pimiento, cebolla, berenjena y zanahoria en air fryer, y lechuga siempre en crudo al lado.</div>
       <table style="width:100%; border-collapse:collapse; font-size:13px;">
@@ -2504,12 +2938,12 @@ function exportarProgreso(){
 const DIAS_FRESCO = [
   {re:/merluza|rosada|lenguado|corvina|lubina|pescado blanco|dorada|salmón|atún fresco/i, dias:2, tipo:'Pescado'},
   {re:/gambas|langostinos|pulpo|almejas/i,                                                dias:2, tipo:'Marisco'},
-  {re:/pollo|pavo/i,                                                                      dias:2, tipo:'Ave'},
+  {re:/pollo|pollo/i,                                                                      dias:2, tipo:'Ave'},
   {re:/ternera|cerdo/i,                                                                   dias:4, tipo:'Carne roja'},
 ];
 // "Pollo al curry", "Cerdo especiado" y "Pollo especiado" son la misma compra que
 // "Pollo" o "Cerdo": lo que cambia es el aliño, no la pieza.
-const PROTEINAS_BASE = ['pollo','pavo','ternera','cerdo','merluza','rosada','lenguado','corvina',
+const PROTEINAS_BASE = ['pollo','pollo','ternera','cerdo','merluza','rosada','lenguado','corvina',
                         'lubina','dorada','salmón','atún','pescado blanco','pulpo','gambas',
                         'lentejas','garbanzos'];
 function normalizaProteina(nombre){
@@ -2546,8 +2980,6 @@ const INGREDIENTES = [
   [/pollo picado|carne picada de pollo|hamburguesa de pollo/i, 'Pollo picado', 'Carnes'],
   [/pechuga de pollo|pollo/i,            'Pollo — pechuga',              'Carnes'],
   [/fiambre de pavo/i,                   'Fiambre de pavo',              'Carnes'],
-  [/pavo picado|carne picada de pavo/i,  'Pavo picado',                  'Carnes'],
-  [/pavo/i,                              'Pavo — pechuga',               'Carnes'],
   [/ternera picada/i,                    'Ternera picada magra',         'Carnes'],
   [/ternera/i,                           'Ternera — tapa, babilla o contra', 'Carnes'],
   [/cerdo|lomo/i,                        'Cerdo — lomo',                 'Carnes'],
@@ -2613,7 +3045,16 @@ const INGREDIENTES = [
   [/canónigos|brotes/i,                  'Canónigos o brotes',           'Verduras y fruta'],
   [/rúcula/i,                            'Rúcula',                       'Verduras y fruta'],
   [/aguacate/i,                          'Aguacate',                     'Verduras y fruta'],
-  [/maíz/i,                              'Maíz',                         'Conservas'],
+  [/maíz/i,                              'Maíz dulce (lata)',            'Conservas'],
+  [/wakame/i,                            'Wakame deshidratado',          'Otros / despensa'],
+  [/sriracha/i,                          'Sriracha',                     'Otros / despensa'],
+  [/tahini/i,                            'Tahini',                       'Otros / despensa'],
+  [/crema de cacahuete/i,                'Crema de cacahuete',           'Otros / despensa'],
+  [/miso/i,                              'Miso',                         'Otros / despensa'],
+  [/vinagre de arroz/i,                  'Vinagre de arroz',             'Otros / despensa'],
+  [/perejil/i,                           'Perejil fresco',               'Verduras y fruta'],
+  [/albahaca/i,                          'Albahaca fresca',              'Verduras y fruta'],
+  [/cilantro/i,                          'Cilantro fresco',              'Verduras y fruta'],
   [/ajo/i,                               'Ajo',                          'Verduras y fruta'],
   [/naranja/i,                           'Naranjas',                     'Verduras y fruta'],
   [/fresas/i,                            'Fresas',                       'Verduras y fruta'],
@@ -2701,7 +3142,7 @@ function generarLista(desde, n){
       if(p){ ing = p.ing; titulo = p.title; }
       else if(slot === 'alm' && /lentejas|garbanzos/i.test(rotDelBloque(info).alm)){
         const leg = rotDelBloque(info).alm;
-        ing = `100 g de ${leg.toLowerCase()} en seco · 80 g de zanahoria · 100 g de patata · 60 g de pimiento · 50 g de cebolla · 1 diente de ajo (5 g) · 600 ml de caldo`;
+        ing = `100 g de ${leg.toLowerCase()} en seco · 80 g de zanahoria · 105 g de patata cruda pelada · 60 g de pimiento · 50 g de cebolla · 1 diente de ajo (5 g) · 600 ml de caldo`;
         titulo = /lentejas/i.test(leg) ? 'Lentejas guisadas' : 'Garbanzos guisados';
       } else {
         const r = slot === 'alm' ? almuerzoRecipe(rotDelBloque(info).alm, idx) : cenaRecipe(rotDelBloque(info).cena, idx);
@@ -2758,10 +3199,35 @@ function textoVentana(){
   const dias = diasVentana(compraDesde || todayKey(), n);
   const a = dias[0].fecha, b = dias[n-1].fecha;
   const f = d => d.toLocaleDateString('es-ES', {weekday:'long', day:'numeric', month:'short'});
-  return `Cubre ${n} días: de ${f(a)} a ${f(b)}. Suma los ingredientes de los platos que te tocan esos días más las tomas fijas. Lo que no aguanta en nevera sale aparte para congelarlo al llegar.`;
+  return (n === 1 ? `Cubre 1 día: ${f(a)}.` : `Cubre ${n} días: de ${f(a)} a ${f(b)}.`) + ` Suma los ingredientes de los platos que te tocan esos días más las tomas fijas. Lo que no aguanta en nevera sale aparte para congelarlo al llegar.`;
 }
 function setCompraDesde(v){ if(v){ compraDesde = v; renderCompra(); } }
-function setCompraDias(v){ compraDias = parseInt(v,10)||7; renderCompra(); }
+function setCompraDias(v){
+  let n = parseInt(v, 10);
+  if(isNaN(n)) n = 1;
+  compraDias = Math.max(1, Math.min(21, n));
+  settings.compraDias = compraDias;
+  saveSettings();
+  renderCompra();
+}
+function setCompraModo(m){
+  compraModo = m;
+  settings.compraModo = m;
+  if(m === 'semana') compraDias = 7;
+  else compraDias = settings.compraDiasPropios || 3;
+  saveSettings();
+  renderCompra();
+}
+function ajustaDias(delta){
+  setCompraDias(compraDias + delta);
+  settings.compraDiasPropios = compraDias;
+  saveSettings();
+}
+function diasRapidos(n){
+  setCompraDias(n);
+  settings.compraDiasPropios = n;
+  saveSettings();
+}
 
 async function generarListaSemana(){
   const generated = generarLista(compraDesde || todayKey(), compraDias);
@@ -2824,12 +3290,22 @@ function renderCompra(){
   el.innerHTML = `
     <div class="compra-cfg">
       <input type="date" id="compraFecha" value="${esc(compraDesde||todayKey())}" onchange="setCompraDesde(this.value)" aria-label="Día de la compra">
-      <select id="compraDias" onchange="setCompraDias(this.value)" aria-label="Días que cubre">
-        <option value="7" ${compraDias==7?'selected':''}>7 días</option>
-        <option value="10" ${compraDias==10?'selected':''}>10 días</option>
-        <option value="14" ${compraDias==14?'selected':''}>14 días</option>
-      </select>
     </div>
+    <div class="seg" role="group" aria-label="Qué cubre la compra">
+      <button class="${compraModo==='semana'?'on':''}" onclick="setCompraModo('semana')">Una semana</button>
+      <button class="${compraModo==='dias'?'on':''}" onclick="setCompraModo('dias')">Elegir días</button>
+    </div>
+    ${compraModo === 'dias' ? `
+    <div class="dias-box">
+      <div class="stepper">
+        <button onclick="ajustaDias(-1)" aria-label="Un día menos">−</button>
+        <div class="stepper-val"><b>${compraDias}</b> ${compraDias===1?'día':'días'}</div>
+        <button onclick="ajustaDias(1)" aria-label="Un día más">+</button>
+      </div>
+      <div class="chips">
+        ${[2,3,4,5,10,14].map(n=>`<button class="${compraDias===n?'on':''}" onclick="diasRapidos(${n})">${n}</button>`).join('')}
+      </div>
+    </div>` : ''}
     <div class="info-note" style="margin-bottom:10px;">${esc(textoVentana())}</div>
     <button class="gen-btn" onclick="generarListaSemana()">🔄 Generar lista</button>
 
