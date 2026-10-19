@@ -733,6 +733,9 @@ let recetario = {
     {title:'Cuscús con pollo y verduras', macros:'P 49 · C 50 · G 8 · 467 kcal',
      ing:'50 g de cuscús (seco) · 180 g de pollo en dados · 60 g de zanahoria · 70 g de pimiento rojo · 40 g de cebolla · 5 g de AOVE · 1 diente de ajo (5 g) · comino, cúrcuma, canela, pimentón',
      tip:['El cuscús no se cuece: ponlo en un bol, cúbrelo con el mismo volumen de agua o caldo hirviendo, tápalo y déjalo reposar 5 min. Luego sepáralo con un tenedor.','Mientras reposa, el pollo en dados a la plancha, 5-6 min.','Saltea la cebolla, el pimiento y la zanahoria con el ajo, 6-8 min.','Añade el comino, la cúrcuma, la canela y el pimentón y remueve 30 segundos en seco.','Mezcla todo con el cuscús. Es lo más rápido del recetario.']},
+    {title:'Cuscús con ternera picada', macros:'P 46 · C 44 · G 14 · 488 kcal',
+     ing:'180 g de ternera picada magra · 40 g de cuscús en seco · 100 g de calabacín en dados · 70 g de pimiento rojo · 60 g de cebolla · 60 g de tomate triturado · 4 g de AOVE · 1 diente de ajo (5 g) · comino, cilantro, pimentón y una pizca de canela',
+     tip:['Hidrata el cuscús con el mismo volumen de caldo hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','Sofríe la cebolla, el ajo y el pimiento con el aceite, 6 min.','Añade el calabacín en dados, 5 min más.','Echa la ternera picada y deshazla con la cuchara: 6-8 min, hasta que pierda el color rosado y empiece a dorarse.','Añade el tomate triturado, el comino, el pimentón y la pizca de canela, y deja 5 min a fuego medio para que reduzca.','Mezcla con el cuscús fuera del fuego y el cilantro picado por encima.','La picada, de tapa: pide que te la piquen en el momento. La de bandeja suele llevar 15-20% de grasa y descuadra el plato.','La canela es poca pero se nota: es lo que le da el aire a cuscús marroquí en lugar de a boloñesa.']},
     {title:'Cuscús con ternera y berenjena', macros:'P 45 · C 52 · G 13 · 505 kcal',
      ing:'50 g de cuscús (seco) · 170 g de ternera magra en tiras · 100 g de berenjena en dados · 60 g de pimiento rojo · 40 g de cebolla · 60 g de tomate · 4 g de AOVE · comino, cilantro, ras el hanout si tienes',
      tip:['Sala la berenjena en dados y déjala 10 min antes de saltearla: absorbe bastante menos aceite.','Hidrata el cuscús con el mismo volumen de caldo hirviendo, tapado 5 min, y suéltalo con un tenedor.','Saltea la cebolla y el pimiento 5 min, añade la berenjena escurrida 8 min y el tomate 3 min.','La ternera en tiras a fuego fuerte, 2-3 min y ni uno más.','Mezcla todo con el cuscús, el comino, el cilantro y el ras el hanout si tienes.']},
@@ -889,15 +892,18 @@ let menuVitasane = {
     {
      "dias": "Días 3 y 4",
      "alm": {
-      "t": "Cuscús con pollo y verduras",
-      "m": "P 49 · C 50 · G 8 · 467 kcal",
-      "i": "50 g de cuscús (seco) · 180 g de pollo en dados · 60 g de zanahoria · 70 g de pimiento rojo · 40 g de cebolla · 5 g de AOVE · 1 diente de ajo (5 g) · comino, cúrcuma, canela, pimentón",
+      "t": "Cuscús con ternera picada",
+      "m": "P 46 · C 44 · G 14 · 488 kcal",
+      "i": "180 g de ternera picada magra · 40 g de cuscús en seco · 100 g de calabacín en dados · 70 g de pimiento rojo · 60 g de cebolla · 60 g de tomate triturado · 4 g de AOVE · 1 diente de ajo (5 g) · comino, cilantro, pimentón y una pizca de canela",
       "p": [
-       "El cuscús no se cuece: ponlo en un bol, cúbrelo con el mismo volumen de agua o caldo hirviendo, tápalo y déjalo reposar 5 min. Luego sepáralo con un tenedor.",
-       "Mientras reposa, el pollo en dados a la plancha, 5-6 min.",
-       "Saltea la cebolla, el pimiento y la zanahoria con el ajo, 6-8 min.",
-       "Añade el comino, la cúrcuma, la canela y el pimentón y remueve 30 segundos en seco.",
-       "Mezcla todo con el cuscús. Es lo más rápido del recetario."
+       "Hidrata el cuscús con el mismo volumen de caldo hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.",
+       "Sofríe la cebolla, el ajo y el pimiento con el aceite, 6 min.",
+       "Añade el calabacín en dados, 5 min más.",
+       "Echa la ternera picada y deshazla con la cuchara: 6-8 min, hasta que pierda el color rosado y empiece a dorarse.",
+       "Añade el tomate triturado, el comino, el pimentón y la pizca de canela, y deja 5 min a fuego medio para que reduzca.",
+       "Mezcla con el cuscús fuera del fuego y el cilantro picado por encima.",
+       "La picada, de tapa: pide que te la piquen en el momento. La de bandeja suele llevar 15-20% de grasa y descuadra el plato.",
+       "La canela es poca pero se nota: es lo que le da el aire a cuscús marroquí en lugar de a boloñesa."
       ]
      },
      "cena": {
@@ -1737,7 +1743,7 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-10-19b';
+const PLAN_VERSION_DEFAULT = '2026-10-19c';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 const DEFAULT_PLAN = {
