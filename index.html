@@ -365,6 +365,13 @@ table.rot .rtag.D{background:var(--descanso-soft); color:var(--descanso);}
 .plan-msg.show{display:block;}
 .plan-msg.ok{background:var(--descanso-soft); color:var(--descanso);}
 .plan-msg.err{background:var(--entreno-soft); color:var(--entreno);}
+
+.env-table{width:100%; border-collapse:collapse; font-size:.86rem;}
+.env-table th{text-align:left; padding:10px 12px; font-size:.72rem; text-transform:uppercase;
+  letter-spacing:.04em; opacity:.6; border-bottom:1px solid var(--border);}
+.env-table td{padding:10px 12px; vertical-align:top; border-bottom:1px solid var(--border);}
+.env-table tr:last-child td{border-bottom:none;}
+.env-table td:first-child{white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -417,6 +424,7 @@ table.rot .rtag.D{background:var(--descanso-soft); color:var(--descanso);}
 
   <!-- COMPRA -->
   <section id="screen-compra" class="screen"></section>
+  <section id="screen-envases" class="screen"></section>
 
 </main>
 
@@ -426,6 +434,7 @@ table.rot .rtag.D{background:var(--descanso-soft); color:var(--descanso);}
   <button class="tab-btn" data-tab="menu" onclick="switchTab('menu')"><span class="ic">📅</span><span class="lb">Menú</span></button>
   <button class="tab-btn" data-tab="progreso" onclick="switchTab('progreso')"><span class="ic">📈</span><span class="lb">Progreso</span></button>
   <button class="tab-btn" data-tab="compra" onclick="switchTab('compra')"><span class="ic">🛒</span><span class="lb">Compra</span></button>
+  <button class="tab-btn" data-tab="envases" onclick="switchTab('envases')"><span class="ic">📦</span><span class="lb">Envases</span></button>
 </div>
 
 <div class="sheet-backdrop" id="sheetBackdrop" onclick="closeSettings()"></div>
@@ -487,8 +496,8 @@ let mealMargin = 'Margen para almuerzo + cena: ~777 kcal y 74 g de proteína';
 let mealTemplate = {
   almuerzo: {
     label:'Almuerzo',
-    macros:'45 g P · 41 g C · 16 g G · ~492 kcal',
-    base:'170 g de proteína + 40 g de arroz en seco (o 115 g de patata cruda pelada) + 100 g de verdura + 40 g de lechuga + 35 g de aguacate + 7 g de AOVE · unos 455 g en el plato'
+    macros:'44 g P · 40 g C · 16 g G · ~480 kcal',
+    base:'170 g de proteína + 40 g de arroz en seco (o 115 g de patata cruda pelada) + 100 g de verdura + 40 g de lechuga + 12 g de AOVE · unos 420 g en el plato'
   },
   cena: {
     label:'Cena',
@@ -517,7 +526,7 @@ let planchaTimes = [
 let pescadoTabla = {
   blanco: ['Merluza — 17 g P · 1 g G','Rosada — 17 g P · 1,5 g G','Lenguado — 17 g P · 1,5 g G','Corvina y lubina — 18-20 g P · 1-2 g G','Atún al natural (lata) — 23 g P · 1 g G'],
   azul: ['Dorada — 20 g P · 4 g G','Atún fresco — 23 g P · 5 g G','Salmón — 20 g P · 12 g G'],
-  marisco: ['Gambas y langostinos — 20 g P · 1 g G','Almejas'],
+  marisco: ['Gambas y langostinos — 20 g P · 1 g G','Anillas de calamar — 16 g P · 1,5 g G','Choco o sepia — 16 g P · 1,5 g G','Mejillones al natural de lata — 17 g P · 3 g G','Almejas'],
   nota: 'El pescado blanco se intercambia libremente entre recetas sin recalcular nada. El salmón es el único que no cabe en una cena: 100 g ya son 12 g de grasa y el presupuesto de la cena entera es de 8. Fuera del recetario quedan caballa, sardina y bacalao por ser difíciles de encontrar.'
 };
 
@@ -596,7 +605,7 @@ let verdurasAmpliacion = {
     {n:'Calabaza', c:'7,0 g/100g', t:'15-18 min'},
   ]
 };
-let excludedFoods = 'brócoli, miel, acelgas, judías verdes, encurtidos, pepino, espinacas, espárragos, endibia, coliflor, col (repollo, lombarda, coles de Bruselas), remolacha, alcachofa y plátano. Fuera también, por difíciles de encontrar: caballa, sardina y bacalao. Tampoco jengibre, ni fruta dentro de los platos (la fruta va sola, en sus tomas fijas; el tomate sí, y el gazpacho y el salmorejo también). Quesos: solo parmesano, burrata y queso fresco. Y fuera el pulpo, este por precio y no por gusto';
+let excludedFoods = 'brócoli, miel, acelgas, judías verdes, encurtidos, pepino, espinacas, espárragos, endibia, coliflor, col (repollo, lombarda, coles de Bruselas), remolacha, alcachofa y plátano. Fuera también, por difíciles de encontrar: caballa, sardina y bacalao. Tampoco jengibre, ni fruta dentro de los platos (la fruta va sola, en sus tomas fijas; el tomate sí, y el gazpacho y el salmorejo también). Quesos: solo parmesano y queso fresco. Fuera por precio, no por gusto: el pulpo, sustituido por calamar, choco y mejillones. Y fuera por nevera, porque no se gastan en una ración: aguacate, maíz y burrata';
 
 let recetasRef = [
   {id:'r5', tag:'legumbre', title:'Lentejas o garbanzos guisados', sub:'Domingos · olla express',
@@ -640,9 +649,9 @@ let recetario = {
     {title:'Pollo a la mostaza con arroz 🥫', macros:'P 49 · C 40 · G 8 · 435 kcal',
      ing:'40 g de arroz en seco · 180 g pollo · 60 ml leche evaporada · 15 g mostaza (a la antigua queda mejor) · 40 g cebolla · 3 g AOVE',
      tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','Sella el pollo a la plancha, 4-5 min por lado, y resérvalo.','Sofríe la cebolla 5 min en la misma sartén.','Añade la mostaza y la leche evaporada y deja reducir 5 min a fuego suave, sin que hierva o se corta.','Devuelve el pollo a la salsa 2 min para que se impregne. La mostaza a la antigua queda mejor.']},
-    {title:'Salpicón de pollo, gambas y patata', macros:'P 46 · C 38 · G 11 · 434 kcal',
-     ing:'85 g de pollo a la plancha en tiras · 110 g gambas peladas cocidas · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 135 g patata cruda pelada en dados · 8 g AOVE · 10 g de vinagre · perejil al gusto',
-     tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras. Pica el pimiento, la cebolla y el tomate en dados del mismo tamaño que la patata.','Mezcla todo con las gambas, el aceite, el vinagre y el perejil.','Un rato de nevera hace que la cebolla y el pimiento suelten sabor, pero no es obligatorio.','Cero cocina más allá de la patata.']},
+    {title:'Salpicón de mejillones, gambas y patata', macros:'P 45 · C 40 · G 11 · 436 kcal',
+     ing:'2 latas de mejillones al natural (138 g escurridos) · 85 g gambas peladas cocidas · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 135 g patata cruda pelada en dados · 8 g AOVE · 10 g de vinagre · perejil al gusto',
+     tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','Escurre bien las dos latas de mejillones. Pica el pimiento, la cebolla y el tomate en dados del mismo tamaño que la patata.','Mezcla todo con las gambas, el aceite, el vinagre y el perejil.','Un rato de nevera hace que la cebolla y el pimiento suelten sabor, pero no es obligatorio.','Cero cocina más allá de la patata.']},
     {title:'Paella de pollo y gambas', macros:'P 55 · C 45 · G 9 · 484 kcal',
      ing:'40 g arroz en seco (40 g en seco) · 150 g pollo en dados · 70 g gambas peladas · 50 g guisantes · 60 g pimiento rojo · 40 g cebolla · 30 g tomate triturado · 6 g AOVE · 150 ml de caldo · 1 diente de ajo (5 g) · 3 g de pimentón · unas hebras de azafrán',
      tip:['Dora el pollo y resérvalo. Sofríe cebolla y pimiento, añade el tomate y al final una cucharadita de pimentón: si se quema, amarga todo el plato.','Infusiona el azafrán en agua caliente aparte y viértelo — el colorante no da ese aroma.','Añade arroz, caldo, pollo, gambas y guisantes. 18-20 min a fuego medio-bajo y deja reposar 10 min antes de comer.']},
@@ -680,11 +689,11 @@ let recetario = {
      ing:'1 huevo entero + 80 ml de claras pasteurizadas · 120 g pollo en taquitos · 120 g champiñones · 40 g cebolla · 35 g de arroz en seco · 4 g AOVE',
      tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','Saltea la cebolla 4 min y añade los champiñones, 6-8 min, hasta que suelten el agua y se evapore.','El pollo en taquitos, 5-6 min, hasta que esté hecho.','Baja el fuego al mínimo, echa el huevo con las claras y remueve sin parar.','Sácalo cuando aún parezca poco hecho: se termina fuera del fuego con el calor residual.','El huevo entero que dejas es el que da color y cremosidad; solo con claras queda blanco y algo insípido.','No aguanta de un día para otro: hazlo al momento.']},
     {title:'Ensalada de brotes con pollo y queso fresco', macros:'P 48 · C 30 · G 12 · 420 kcal',
-     ing:'80 g brotes o canónigos · 100 g tomate · 160 g pollo a la plancha · 1 tarrina de queso fresco (62,5 g) · 35 g de cuscús en seco · 3 g AOVE · 10 g de vinagre de Módena',
-     tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','El pollo a la plancha bien caliente, 4-5 min por lado, y córtalo en tiras.','Monta sobre los brotes el tomate, el cuscús y el pollo aún templado.','El queso fresco en dados por encima, la tarrina entera, y aliña con el aceite y el vinagre de Módena al servir.','Es la ensalada del menú de tu nutricionista, con queso fresco en lugar de mozzarella. Sin pistachos, para que la tarrina entera de queso entre en los macros.','Si te apetece, 30 g de burrata en su lugar también cuadra, quitando los pistachos.']},
-    {title:'Ensalada de pollo, aguacate y pistachos', macros:'P 47 · C 38 · G 14 · 466 kcal',
-     ing:'80 g lechuga · 100 g tomate · 30 g cebolla morada · 170 g pollo a la plancha · 35 g aguacate · 10 g pistachos · 35 g de arroz en seco · 2 g AOVE · unas gotas de limón',
-     tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras.','Monta sobre la lechuga el tomate, la cebolla morada y el arroz.','El aguacate en láminas y los pistachos al final, con el aceite y unas gotas de limón: el limón evita que el aguacate se oxide.','Aguacate y pistachos juntos ya son bastante grasa: por eso el aceite baja a 2 g.']},
+     ing:'80 g brotes o canónigos · 100 g tomate · 160 g pollo a la plancha · 62,5 g de queso fresco (¼ de la tarrina de 250 g) · 35 g de cuscús en seco · 3 g AOVE · 10 g de vinagre de Módena',
+     tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','El pollo a la plancha bien caliente, 4-5 min por lado, y córtalo en tiras.','Monta sobre los brotes el tomate, el cuscús y el pollo aún templado.','El queso fresco en dados por encima, y aliña con el aceite y el vinagre de Módena al servir.','Es la ensalada del menú de tu nutricionista, con queso fresco en lugar de mozzarella. Sin pistachos, para que la tarrina entera de queso entre en los macros.','El queso fresco en dados, no rallado ni batido.']},
+    {title:'Ensalada de pollo con pistachos', macros:'P 47 · C 37 · G 14 · 463 kcal',
+     ing:'80 g lechuga · 100 g tomate · 30 g cebolla morada · 170 g pollo a la plancha · 13 g pistachos · 35 g de arroz en seco · 6 g AOVE · unas gotas de limón',
+     tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras.','Monta sobre la lechuga el tomate, la cebolla morada y el arroz.','Los pistachos al final, con el aceite y unas gotas de limón.','Los pistachos ya aportan grasa, así que el aceite se queda en 6 g.']},
     {title:'Ensalada de ternera, rúcula y parmesano', macros:'P 48 · C 32 · G 20 · 498 kcal',
      ing:'70 g rúcula · 100 g tomate · 160 g ternera magra a la plancha en tiras · 15 g parmesano en virutas · 10 g pistachos · 35 g de cuscús en seco · 2 g AOVE · 10 g de vinagre balsámico',
      tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','La ternera a la plancha muy caliente, 2 min por lado y muy poco hecha.','Déjala reposar 5 min y córtala en tiras finas contra la fibra.','Monta sobre la rúcula fría con el tomate y el cuscús, y encima las virutas de parmesano y los pistachos.','Aceite y balsámico al servir. Templada sobre la rúcula fría queda mucho mejor que fría del todo.']},
@@ -706,29 +715,29 @@ let recetario = {
     {title:'Sopa de noodles con pollo', macros:'P 56 · C 37 · G 7 · 435 kcal',
      ing:'100 g de noodles frescos · 200 g de pollo troceado · 50 g de zanahoria · 50 g de puerro · 60 g de champiñones · 500 ml de caldo · 15 g de salsa de soja · 3 g de AOVE · cebollino',
      tip:['Sella el pollo troceado a la plancha, 4-5 min, para que no suelte espuma en el caldo.','Cuece el caldo con la zanahoria y el puerro, 10 min.','Añade el pollo, los champiñones y la soja, 5 min más.','Los noodles, al final y solo 1-2 min: si los dejas hirviendo se deshacen.','Cebollino por encima al servir.']},
-    {title:'Ensalada fría de fideos de arroz con salmón', macros:'P 43 · C 43 · G 19 · 517 kcal',
-     ing:'40 g de fideos de arroz (seco) · 110 g de salmón a la plancha · 80 g de gambas cocidas · 50 g de zanahoria rallada · 60 g de pimiento rojo · 20 g de aguacate · 15 g de salsa de soja · 3 g de sésamo · unas gotas de lima · cilantro',
-     tip:['Hidrata los fideos de arroz según el paquete, 3-5 min, y enjuágalos en frío para cortar la cocción.','El salmón a la plancha, 3-4 min por lado, y déjalo enfriar.','Mezcla los fideos con la zanahoria rallada, el pimiento, las gambas y el salmón desmenuzado.','Aliña con la soja, el sésamo, la lima y el cilantro. El aguacate en láminas al final.','Si te sobra tiempo, 15-20 min de nevera le vienen bien, pero se come perfectamente recién hecha.','Como el salmón ya aporta 13 g de grasa, no lleva aceite añadido.']},
-    {title:'Cachelos con pollo y pimentón de la Vera', macros:'P 54 · C 40 · G 11 · 475 kcal',
-     ing:'215 g de pollo en tiras · 190 g de patata cruda pelada en rodajas · 40 g de cebolla · 8 g de AOVE · 3 g de pimentón de la Vera · sal gruesa',
-     tip:['Cuece la patata en rodajas de 1 cm, 4-5 min en olla express, y escúrrela.','Rehoga la cebolla 5 min.','El pollo a la plancha bien caliente, 5-6 min por lado, y córtalo en tiras.','Monta el pollo sobre la patata, riega con el aceite y espolvorea el pimentón y la sal gruesa al final, fuera del fuego: si el pimentón toca el aceite caliente, amarga.']},
-    {title:'Noodles salteados con pollo y gambas', macros:'P 55 · C 39 · G 10 · 465 kcal',
-     ing:'100 g de noodles frescos · 145 g de pollo en tiras · 60 g de gambas · 50 g de zanahoria · 70 g de pimiento rojo · 60 g de champiñones · 15 g de salsa de soja · 5 g de AOVE · 1 diente de ajo (5 g)',
-     tip:['Wok bien caliente con el aceite y el ajo: la zanahoria y el pimiento, 4-5 min.','Añade los champiñones, 2-3 min, hasta que suelten el agua.','Las gambas, 1-2 min.','Los noodles y la soja, 1-2 min, directos de la bolsa y sin cocer.','El pollo en tiras entra con la zanahoria y el pimiento, no al final: necesita 5-6 min para hacerse por dentro.']},
-    {title:'Ensalada de pollo, patata y pimiento', macros:'P 52 · C 47 · G 11 · 491 kcal',
-     ing:'200 g de pollo a la plancha en tiras · 180 g de patata cruda pelada en dados · 100 g de pimiento rojo · 40 g de cebolla morada · 80 g de tomate · 7 g de AOVE · 10 g de vinagre · 3 g de pimentón · perejil',
-     tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','El pollo a la plancha, 4-5 min por lado, en tiras. Déjalo templar antes de mezclarlo.','Pica el pimiento, la cebolla morada y el tomate en dados del mismo tamaño que la patata.','Mezcla todo con el aceite, el vinagre, el pimentón y el perejil.','En frío, sin cocinar nada más allá de la patata. Un rato de nevera le va bien, pero no hace falta esperar.']},
-    {title:'Ñoquis con boloñesa de ternera', macros:'P 43 · C 50 · G 14 · 499 kcal',
-     ing:'140 g de ñoquis · 170 g de ternera picada magra · 120 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 3 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto',
+    {title:'Ensalada fría de fideos de arroz con salmón', macros:'P 43 · C 43 · G 19 · 515 kcal',
+     ing:'40 g de fideos de arroz (seco) · 110 g de salmón a la plancha · 80 g de gambas cocidas · 50 g de zanahoria rallada · 60 g de pimiento rojo · 15 g de salsa de soja · 5 g de sésamo · 2 g de AOVE · unas gotas de lima · cilantro',
+     tip:['Hidrata los fideos de arroz según el paquete, 3-5 min, y enjuágalos en frío para cortar la cocción.','El salmón a la plancha, 3-4 min por lado, y déjalo enfriar.','Mezcla los fideos con la zanahoria rallada, el pimiento, las gambas y el salmón desmenuzado.','Aliña con la soja, el sésamo, la lima y el cilantro.','Si te sobra tiempo, 15-20 min de nevera le vienen bien, pero se come perfectamente recién hecha.','Como el salmón ya aporta 13 g de grasa, no lleva aceite añadido.']},
+    {title:'Choco a la gallega con patata', macros:'P 53 · C 42 · G 12 · 484 kcal',
+     ing:'230 g de choco o sepia limpia · 60 g de gambas cocidas · 190 g de patata cruda pelada en rodajas · 40 g de cebolla · 8 g de AOVE · 3 g de pimentón de la Vera · sal gruesa',
+     tip:['Cuece la patata en rodajas de 1 cm, 4-5 min en olla express, y escúrrela.','Rehoga la cebolla 5 min.','El choco en tiras anchas, plancha muy caliente 2-3 min por lado y fuera.','Monta el choco y las gambas sobre la patata, riega con el aceite y espolvorea el pimentón y la sal gruesa al final, fuera del fuego: si el pimentón toca el aceite caliente, amarga.']},
+    {title:'Noodles salteados con calamar', macros:'P 54 · C 41 · G 11 · 477 kcal',
+     ing:'100 g de noodles frescos · 200 g de anillas de calamar · 60 g de gambas · 50 g de zanahoria · 70 g de pimiento rojo · 60 g de champiñones · 15 g de salsa de soja · 5 g de AOVE · 1 diente de ajo (5 g)',
+     tip:['Wok bien caliente con el aceite y el ajo: la zanahoria y el pimiento, 4-5 min.','Añade los champiñones, 2-3 min, hasta que suelten el agua.','Las gambas, 1-2 min.','Los noodles y la soja, 1-2 min, directos de la bolsa y sin cocer.','El calamar, lo último y 2-3 min a fuego muy fuerte.']},
+    {title:'Ensalada templada de calamar y patata', macros:'P 51 · C 49 · G 10 · 489 kcal',
+     ing:'210 g de anillas de calamar · 60 g de gambas cocidas · 180 g de patata cruda pelada en dados · 100 g de pimiento rojo · 40 g de cebolla morada · 80 g de tomate · 5 g de AOVE · 10 g de vinagre · 3 g de pimentón · perejil',
+     tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','El calamar a la plancha muy caliente, 2-3 min, y mézclalo templado con el resto en frío: así la ensalada no queda fría del todo y el calamar no se apelmaza.','Pica el pimiento, la cebolla morada y el tomate en dados del mismo tamaño que la patata.','Mezcla todo con el aceite, el vinagre, el pimentón y el perejil.','En frío, sin cocinar nada más allá de la patata. Un rato de nevera le va bien, pero no hace falta esperar.']},
+    {title:'Ñoquis con boloñesa de ternera', macros:'P 46 · C 39 · G 14 · 468 kcal',
+     ing:'100 g de ñoquis · 190 g de ternera picada magra · 120 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 3 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto',
      tip:['Sofríe la cebolla, el ajo y la zanahoria rallada con el aceite, 6-8 min.','Añade la ternera picada, 6-8 min, hasta que pierda el color rosado.','Echa el tomate triturado, el orégano y el laurel, y deja reducir 15 min a fuego lento.','Los ñoquis al final, en agua hirviendo con sal: sácalos en cuanto suban a la superficie, 1-2 min. Pasado ese punto se deshacen.','Quita el laurel y mezcla los ñoquis con la salsa.']},
-    {title:'Ñoquis cremosos con pollo y champiñones 🥫', macros:'P 50 · C 51 · G 10 · 495 kcal',
-     ing:'140 g de ñoquis · 160 g de pollo en taquitos · 70 ml de leche evaporada · 80 g de champiñones laminados · 40 g de cebolla · 3 g de AOVE · nuez moscada y pimienta negra',
+    {title:'Ñoquis cremosos con pollo y champiñones 🥫', macros:'P 48 · C 40 · G 13 · 476 kcal',
+     ing:'100 g de ñoquis · 160 g de pollo en taquitos · 70 ml de leche evaporada · 80 g de champiñones laminados · 40 g de cebolla · 7 g de AOVE · nuez moscada y pimienta negra',
      tip:['El pollo en taquitos a la plancha, 5-6 min, y resérvalo.','Saltea la cebolla 4 min y los champiñones laminados 6-8 min, hasta que suelten el agua y se evapore.','Añade la leche evaporada y deja espesar 3-4 min a fuego suave, sin que hierva.','Cuece los ñoquis: salen en cuanto flotan, 1-2 min.','Incorpóralos con el pollo a la salsa. Nuez moscada y pimienta negra fuera del fuego.']},
-    {title:'Ñoquis salteados con gambas y pollo', macros:'P 51 · C 48 · G 11 · 494 kcal',
-     ing:'140 g de ñoquis · 120 g de gambas peladas · 85 g de pollo en tiras · 70 g de pimiento rojo · 40 g de cebolla · 60 g de tomate · 6 g de AOVE · 1 diente de ajo (5 g) · perejil',
-     tip:['Aquí los ñoquis NO se cuecen: se saltean directamente en la sartén con un poco de aceite hasta dorarse, 5-6 min. Quedan crujientes por fuera y tiernos dentro, bastante mejor que hervidos.','Sácalos y reserva. En la misma sartén, el ajo, la cebolla y el pimiento, 5 min.','Añade el tomate, 3 min.','Las gambas, 1-2 min.','El pollo en tiras, 5-6 min, hasta que esté dorado y hecho por dentro.','Devuelve los ñoquis, mezcla y perejil al servir.']},
-    {title:'Ñoquis gratinados con pollo', macros:'P 50 · C 46 · G 12 · 490 kcal',
-     ing:'140 g de ñoquis · 170 g de pollo picado · 100 g de tomate triturado · 12 g de parmesano rallado · 40 g de cebolla · 3 g de AOVE · orégano',
+    {title:'Ñoquis salteados con gambas y calamar', macros:'P 49 · C 38 · G 14 · 481 kcal',
+     ing:'100 g de ñoquis · 120 g de gambas peladas · 120 g de anillas de calamar · 70 g de pimiento rojo · 40 g de cebolla · 60 g de tomate · 9 g de AOVE · 1 diente de ajo (5 g) · perejil',
+     tip:['Aquí los ñoquis NO se cuecen: se saltean directamente en la sartén con un poco de aceite hasta dorarse, 5-6 min. Quedan crujientes por fuera y tiernos dentro, bastante mejor que hervidos.','Sácalos y reserva. En la misma sartén, el ajo, la cebolla y el pimiento, 5 min.','Añade el tomate, 3 min.','Las gambas, 1-2 min.','El calamar, lo último y 2-3 min a fuego muy fuerte: si se queda más, se pone gomoso y ya no hay marcha atrás.','Devuelve los ñoquis, mezcla y perejil al servir.']},
+    {title:'Ñoquis gratinados con pollo', macros:'P 48 · C 35 · G 15 · 474 kcal',
+     ing:'100 g de ñoquis · 170 g de pollo picado · 100 g de tomate triturado · 12 g de parmesano rallado · 40 g de cebolla · 7 g de AOVE · orégano',
      tip:['Sofríe la cebolla 4 min, añade el pollo picado 6-8 min y luego el tomate triturado, 5 min.','Cuece los ñoquis: salen en cuanto flotan, 1-2 min.','Mézclalos con el sofrito en una fuente.','Cubre con el parmesano y gratina en air fryer 180°C, 8-10 min.','Orégano al sacarlo.']},
     {title:'Cuscús con pollo y verduras', macros:'P 49 · C 50 · G 8 · 467 kcal',
      ing:'50 g de cuscús (seco) · 180 g de pollo en dados · 60 g de zanahoria · 70 g de pimiento rojo · 40 g de cebolla · 5 g de AOVE · 1 diente de ajo (5 g) · comino, cúrcuma, canela, pimentón',
@@ -742,9 +751,9 @@ let recetario = {
     {title:'Tabulé con pollo y garbanzos', macros:'P 48 · C 52 · G 10 · 490 kcal',
      ing:'40 g de cuscús (seco) · 150 g de pollo a la plancha en tiras · 30 g de garbanzos en seco (puestos a remojo la noche antes) · 120 g de tomate en dados · 40 g de cebolla morada · 6 g de AOVE · 10 g de zumo de limón · perejil y hierbabuena abundantes',
      tip:['Los garbanzos, a remojo la noche antes 8-12 h, y luego 10 min en olla express. Déjalos enfriar.','Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min, y déjalo enfriar.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras. Enfríalo también.','Mezcla todo en frío con el tomate, la cebolla morada, el zumo de limón y el aceite.','El perejil y la hierbabuena van generosos: son el plato, no el adorno. Mejor de un día para otro.']},
-    {title:'Cuscús con gambas y pollo', macros:'P 52 · C 49 · G 9 · 488 kcal',
-     ing:'50 g de cuscús (seco) · 110 g de gambas peladas · 100 g de pollo en tiras · 70 g de pimiento rojo · 40 g de cebolla · 50 g de zanahoria · 6 g de AOVE · 1 diente de ajo (5 g) · perejil, pimentón',
-     tip:['Hidrata el cuscús con caldo hirviendo en vez de agua: cambia bastante el resultado. Tapado 5 min y suéltalo con un tenedor.','Saltea el ajo, la cebolla, el pimiento y la zanahoria, 6-8 min.','Las gambas, 1-2 min.','El pollo en tiras, 5-6 min, hasta que esté hecho.','Mezcla con el cuscús, el pimentón y el perejil.']},
+    {title:'Cuscús con gambas y calamar', macros:'P 52 · C 50 · G 10 · 496 kcal',
+     ing:'50 g de cuscús (seco) · 110 g de gambas peladas · 140 g de anillas de calamar · 70 g de pimiento rojo · 40 g de cebolla · 50 g de zanahoria · 6 g de AOVE · 1 diente de ajo (5 g) · perejil, pimentón',
+     tip:['Hidrata el cuscús con caldo hirviendo en vez de agua: cambia bastante el resultado. Tapado 5 min y suéltalo con un tenedor.','Saltea el ajo, la cebolla, el pimiento y la zanahoria, 6-8 min.','Las gambas, 1-2 min.','El calamar, al final y 2-3 min a fuego muy fuerte.','Mezcla con el cuscús, el pimentón y el perejil.']},
     {title:'Wok de pescado blanco con noodles', macros:'P 56 · C 48 · G 10 · 505 kcal',
      ing:'100 g de noodles frescos · 180 g de rosada o corvina en dados · 60 g de gambas peladas · 60 g de champiñones laminados · 60 g de guisantes · 40 g de zanahoria en juliana · 60 g de pimiento rojo · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g) · sésamo',
      tip:['Los guisantes, primero: bol con agua hirviendo 2 min, escurre y SÉCALOS con papel. Echados congelados al wok bajan la temperatura y todo se cuece al vapor en vez de saltearse.','El pescado en dados grandes y seco con papel; la zanahoria en juliana fina y el pimiento en tiras.','Champiñones solos a fuego fuerte, 4-5 min, hasta que suelten el agua y empiecen a dorarse. No te saltes este paso: si van con el resto, el agua que sueltan cuece todo lo demás.','Zanahoria y pimiento, otros 4-5 min a fuego fuerte y moviendo.','Pescado y gambas, 2-3 min. Una sola vuelta al pescado: si lo remueves como la carne, se deshace en hebras.','Al final y todo junto 1-2 min: noodles, guisantes, soja y el ajo rallado. Los noodles van directos de la bolsa, sin cocer ni enjuagar.','Sésamo fuera del fuego.']},
@@ -783,21 +792,21 @@ let recetario = {
     {title:'Cuscús templado de tomate y atún', macros:'P 33 · C 34 · G 5 · 316 kcal',
      ing:'110 g de atún al natural escurrido · 35 g de cuscús en seco · 200 g de tomate muy maduro en dados · 40 g de cebolleta picada fina · 3 g de AOVE · 1 diente de ajo pequeño (3 g) rallado · 10 g de vinagre de Jerez · sal, albahaca o hierbabuena',
      tip:['Hidrata el cuscús con 40 ml de agua hirviendo, tapado 5 min, y ahuécalo con un tenedor.','Mientras, trocea el tomate y pica la cebolleta fina. Sala el tomate nada más partirlo: suelta jugo durante esos 5 min y el cuscús lo absorbe.','Mézclalo todo con el ajo rallado, el aceite y el vinagre.','El atún desmigado por encima y la albahaca o la hierbabuena al final.','Se come al momento, templado o a temperatura ambiente: de la encimera a la mesa en 10 minutos.','El tomate es el plato, así que cuanto más maduro mejor. Con tomate de invierno insípido no funciona.','Entró en lugar del salmorejo, que pedía dos horas de nevera como mínimo.']},
-    {title:'Salpicón de gambas y pollo', macros:'P 33 · C 30 · G 5 · 299 kcal',
-     ing:'80 g gambas peladas · 60 g de pollo a la plancha en tiras · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 95 g patata cruda pelada · 3 g AOVE · 10 g de vinagre de Jerez · perejil al gusto',
-     tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','El pollo a la plancha, 4-5 min por lado, en tiras, y déjalo enfriar. Pica el pimiento, la cebolla y el tomate en dados del mismo tamaño que la patata.','Mezcla con las gambas, el aceite, el vinagre de Jerez y el perejil.','Un rato de nevera hace que la cebolla y el pimiento suelten sabor, pero se puede comer al momento.','De un día para otro, mejor.']},
+    {title:'Salpicón de mejillones y gambas', macros:'P 34 · C 31 · G 7 · 317 kcal',
+     ing:'1 lata de mejillones al natural (69 g escurridos) · 90 g gambas peladas · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 95 g patata cruda pelada · 3 g AOVE · 10 g de vinagre de Jerez · perejil al gusto',
+     tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','Escurre bien la lata de mejillones. Pica el pimiento, la cebolla y el tomate en dados del mismo tamaño que la patata.','Mezcla con los mejillones y las gambas, el aceite, el vinagre de Jerez y el perejil.','Un rato de nevera hace que la cebolla y el pimiento suelten sabor, pero se puede comer al momento.','De un día para otro, mejor.']},
     {title:'Crema de calabaza con tortilla de atún 🥫🥚', macros:'P 35 · C 24 · G 8 · 312 kcal',
      ing:'160 g calabaza · 40 ml leche evaporada · 1 huevo + 70 ml claras pasteurizadas · 70 g atún · 40 g patata cruda pelada · 1 g AOVE · nuez moscada',
      tip:['Calabaza y patata en olla express, 5 min desde que coge presión.','Tritura con la leche evaporada y la nuez moscada, fuera del fuego. Que no vuelva a hervir o se corta.','La tortilla al momento: bate el huevo con las claras y añade el atún escurrido y desmigado.','Sartén a fuego medio-bajo, 2 min por lado.','La leche evaporada da a la crema la textura de una hecha con nata, por mucha menos grasa. La crema aguanta dos días; la tortilla hazla al momento.']},
     {title:'Ensalada de brotes con gambas y queso fresco', macros:'P 34 · C 23 · G 10 · 318 kcal',
-     ing:'80 g brotes o canónigos · 100 g tomate · 110 g gambas peladas · 1 tarrina de queso fresco (62,5 g) · 25 g de cuscús en seco · 2 g AOVE · unas gotas de limón · cebollino',
-     tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','Las gambas a la plancha, 1-2 min por lado: pasadas de ahí se ponen duras.','Monta sobre los brotes el tomate y el cuscús, y las gambas templadas encima.','El queso fresco en dados por encima, la tarrina entera: así no te queda media abierta en la nevera.','Aceite, limón y cebollino al servir.']},
+     ing:'80 g brotes o canónigos · 100 g tomate · 110 g gambas peladas · 62,5 g de queso fresco (¼ de la tarrina de 250 g) · 25 g de cuscús en seco · 2 g AOVE · unas gotas de limón · cebollino',
+     tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','Las gambas a la plancha, 1-2 min por lado: pasadas de ahí se ponen duras.','Monta sobre los brotes el tomate y el cuscús, y las gambas templadas encima.','El queso fresco en dados por encima.','Aceite, limón y cebollino al servir.']},
     {title:'Noodles en caldo con pescado', macros:'P 36 · C 24 · G 5 · 283 kcal',
      ing:'50 g de noodles frescos · 170 g de merluza o rosada · 60 g de puerro · 60 g de champiñones · 40 g de zanahoria · 400 ml de caldo · 12 g de salsa de soja · 2 g de AOVE',
      tip:['Pocha el puerro, la zanahoria y los champiñones con el aceite, 6-8 min.','Añade el caldo y la soja y lleva a hervor suave, 5 min.','Echa los noodles: 1-2 min y fuera.','Apaga el fuego, añade el pescado en dados y tapa 3-4 min: con el calor residual basta para que se haga sin deshacerse.']},
-    {title:'Pollo guisado con patata y pimentón', macros:'P 37 · C 23 · G 6 · 297 kcal',
-     ing:'150 g de pollo en dados · 105 g de patata cruda pelada · 30 g de cebolla · 4 g de AOVE · 2 g de pimentón de la Vera · 1 hoja de laurel',
-     tip:['Cuece la patata en rodajas, 4-5 min en olla express.','Rehoga la cebolla 5 min con el laurel.','El pollo en dados, dorado a fuego fuerte 4-5 min, y después 8-10 min guisado con la cebolla y el laurel a fuego suave.','El pimentón al final, fuera del fuego, o amarga.']},
+    {title:'Choco con patata y pimentón', macros:'P 36 · C 24 · G 7 · 301 kcal',
+     ing:'165 g de choco o sepia limpia · 40 g de gambas · 105 g de patata cruda pelada · 30 g de cebolla · 4 g de AOVE · 2 g de pimentón',
+     tip:['Cuece la patata en rodajas, 4-5 min en olla express.','Rehoga la cebolla 5 min.','El choco en tiras, plancha muy caliente 2-3 min por lado y fuera. Seco con papel antes, o se cuece en lugar de dorarse.','El pimentón al final, fuera del fuego, o amarga.']},
     {title:'Crema de calabaza con gambas', macros:'P 30 · C 34 · G 5 · 296 kcal',
      ing:'200 g de calabaza · 75 g de patata cruda pelada · 120 g de gambas peladas · 30 g de cebolla · 30 ml de leche evaporada · 2 g de AOVE · 250 ml de agua',
      tip:['Calabaza, patata y cebolla con los 250 ml de agua: olla express, 5 min desde que coge presión.','Tritura con la leche evaporada fuera del fuego. Que no vuelva a hervir después o se corta.','Las gambas a la plancha muy caliente, 1-2 min por lado.','Ponlas enteras por encima, no trituradas: dentro de la crema no se nota que el plato lleva proteína.','La crema aguanta dos días; las gambas, al momento.']},
@@ -807,8 +816,8 @@ let recetario = {
     {title:'Wok ligero de pescado', macros:'P 39 · C 30 · G 6 · 334 kcal',
      ing:'50 g de noodles frescos · 170 g de rosada o merluza en dados · 50 g de guisantes · 30 g de zanahoria · 110 g de champiñones · 12 g de salsa de soja · 2 g de AOVE',
      tip:['Los guisantes, primero: bol con agua hirviendo 2 min, escurre y SÉCALOS con papel. Echados congelados al wok bajan la temperatura y todo se cuece al vapor en vez de saltearse.','Wok a fuego muy fuerte: los champiñones solos hasta que suelten el agua y se doren, 4-5 min.','Añade la zanahoria, 4-5 min.','El pescado en dados grandes, 2-3 min, y una sola vuelta: si lo remueves se deshace en hebras.','Los noodles, los guisantes y la soja al final, 1-2 min.','Es la versión de cena de los woks: la mitad de noodles que un almuerzo y sin apenas aceite.']},
-    {title:'Ñoquis con pescado y tomate', macros:'P 30 · C 28 · G 6 · 283 kcal',
-     ing:'80 g de ñoquis · 150 g de merluza o rosada · 80 g de tomate triturado · 30 g de cebolla · 3 g de AOVE · albahaca',
+    {title:'Ñoquis con pescado y tomate', macros:'P 33 · C 20 · G 8 · 282 kcal',
+     ing:'50 g de ñoquis · 175 g de merluza o rosada · 80 g de tomate triturado · 30 g de cebolla · 5 g de AOVE · albahaca',
      tip:['Pocha la cebolla con el aceite, 5 min.','Añade el tomate triturado y deja reducir 8-10 min a fuego suave.','Apaga el fuego, añade el pescado en dados y tapa 4 min.','Los ñoquis, en agua hirviendo con sal: salen en cuanto flotan, 1-2 min, y van directos a la salsa.','Albahaca fresca fuera del fuego.']},
     {title:'Cuscús con pescado y limón', macros:'P 32 · C 28 · G 5 · 281 kcal',
      ing:'28 g de cuscús (seco) · 160 g de merluza o rosada · 50 g de zanahoria · 30 g de cebolla · 3 g de AOVE · unas gotas de limón · cilantro',
@@ -825,9 +834,9 @@ let recetario = {
     {title:'Tortilla de calabacín con claras 🥚', macros:'P 28 · C 26 · G 8 · 290 kcal',
      ing:'1 huevo + 150 ml de claras pasteurizadas · 200 g de calabacín en rodajas finas · 40 g de cebolla · 20 g de arroz en seco · 2 g de AOVE · sal, pimienta',
      tip:['Pocha el calabacín en rodajas finas y la cebolla, 8-10 min, y ESCÚRRELOS BIEN: el calabacín suelta mucha agua y es la razón habitual de que este tipo de tortilla no cuaje.','Cuece el arroz en olla express, 4 min, y resérvalo.','Mezcla todo con el huevo y las claras, y deja reposar 5 min.','Cuaja a fuego bajo, 3-4 min por lado. Sal y pimienta.']},
-    {title:'Bol de pollo, tomate y cuscús', macros:'P 34 · C 27 · G 8 · 319 kcal',
-     ing:'25 g de cuscús en seco · 110 g de pollo a la plancha · 100 g de tomate rallado · 1 tarrina de queso fresco (62,5 g) · 1 g de AOVE · orégano',
-     tip:['Hidrata el cuscús con 25 ml de agua hirviendo, tapado 5 min, mientras el pollo está en la plancha.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras.','Ahueca el cuscús con un tenedor y pon el tomate rallado por encima, sin cocinar.','El pollo y la tarrina entera de queso fresco en dados al final, con el aceite y el orégano.','La cena más rápida del recetario: el cuscús se hidrata en los mismos 5 minutos que tarda el pollo.']},
+    {title:'Bol de pollo, tomate y parmesano', macros:'P 34 · C 25 · G 9 · 317 kcal',
+     ing:'25 g de cuscús en seco · 110 g de pollo a la plancha · 100 g de tomate rallado · 20 g de parmesano en virutas · 3 g de AOVE · orégano',
+     tip:['Hidrata el cuscús con 25 ml de agua hirviendo, tapado 5 min, mientras el pollo está en la plancha.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras.','Ahueca el cuscús con un tenedor y pon el tomate rallado por encima, sin cocinar.','El pollo al final y el parmesano en virutas con el pelador, no rallado, con el aceite y el orégano.','La cena más rápida del recetario: el cuscús se hidrata en los mismos 5 minutos que tarda el pollo. Lleva parmesano y no queso fresco a propósito: el parmesano aguanta semanas y así no se abre una tarrina para una sola cena.']},
     {title:'Revuelto de gambas y calabacín 🥚', macros:'P 37 · C 19 · G 9 · 303 kcal',
      ing:'1 huevo + 90 ml de claras · 80 g de gambas peladas · 120 g de calabacín · 20 g de cuscús en seco · 2 g de AOVE · ajo, perejil',
      tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','Saltea el calabacín en dados con el aceite y el ajo, 5-6 min.','Añade las gambas, 1-2 min: pasadas de ahí se ponen duras.','Baja el fuego al mínimo, echa el huevo con las claras y remueve sin parar.','Sácalo cuando aún parezca poco hecho: termina de cuajarse fuera del fuego. Perejil picado por encima.']},
@@ -838,7 +847,7 @@ let recetario = {
      ing:'95 g de pollo a la plancha en tiras · 20 g de jamón serrano picado · 250 g de tomate maduro en dados · 25 g de cuscús en seco · 3 g de AOVE · 1 diente de ajo (5 g) · 10 g de vinagre · albahaca',
      tip:['Hidrata el cuscús con 30 ml de agua hirviendo, tapado 5 min, mientras el pollo está en la plancha.','El pollo a la plancha bien caliente, 4-5 min por lado, y córtalo en tiras.','Trocea el tomate en dados y mézclalo con el cuscús, el ajo rallado, el aceite y el vinagre.','El pollo templado por encima y el jamón picado al final, en crudo: es donde da sabor.','Albahaca fresca al servir. Se come templada y al momento.']},
     {title:'Queso fresco con tomate y pollo', macros:'P 31 · C 27 · G 8 · 300 kcal',
-     ing:'1 tarrina de queso fresco (62,5 g) · 90 g de pollo a la plancha en tiras · 150 g de tomate en rodajas · 100 g de patata cruda pelada · 1 g de AOVE · orégano, sal',
+     ing:'62,5 g de queso fresco (¼ de la tarrina de 250 g) · 90 g de pollo a la plancha en tiras · 150 g de tomate en rodajas · 100 g de patata cruda pelada · 1 g de AOVE · orégano, sal',
      tip:['Cuece la patata en dados, 5 min en olla express, y déjala enfriar.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras.','Monta el tomate en rodajas con la patata, el queso fresco en dados y el pollo templado encima.','Aceite, orégano y sal al servir.','La tarrina entera de queso fresco, que es justo la ración: así no queda media tarrina abierta en la nevera.']},
     {title:'Rollitos de calabacín con fiambre de pavo', macros:'P 32 · C 22 · G 12 · 327 kcal',
      ing:'250 g de calabacín crudo (unos 200 g ya cocido y triturado) · 1 huevo batido · 8 g de almendras molidas (5 unidades) · 100 g de fiambre de pavo · 18 g de cuscús en seco',
@@ -869,15 +878,15 @@ let menuVitasane = {
     {
      "dias": "Días 1 y 2",
      "alm": {
-      "t": "Ensalada campera con atún y patata",
-      "m": "P 42 · C 41 · G 14 · 458 kcal",
-      "i": "160 g patata cruda pelada en dados · 130 g atún al natural · 1 huevo duro · 120 g tomate · 60 g pimiento rojo · 30 g cebolla morada · 6 g AOVE · 10 g de vinagre · sal",
+      "t": "Ñoquis con boloñesa de ternera",
+      "m": "P 46 · C 39 · G 14 · 468 kcal",
+      "i": "100 g de ñoquis · 190 g de ternera picada magra · 120 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 3 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto",
       "p": [
-       "Cuece la patata en dados en olla express, 5-6 min, y déjala enfriar del todo.",
-       "Cuece el huevo 10 min y enfríalo en agua fría.",
-       "Pica el tomate, el pimiento y la cebolla morada en dados del tamaño de la patata.",
-       "Mezcla todo con el atún escurrido, el aceite, el vinagre y la sal.",
-       "El huevo en cuartos por encima. Mejor de un día para otro."
+       "Sofríe la cebolla, el ajo y la zanahoria rallada con el aceite, 6-8 min.",
+       "Añade la ternera picada, 6-8 min, hasta que pierda el color rosado.",
+       "Echa el tomate triturado, el orégano y el laurel, y deja reducir 15 min a fuego lento.",
+       "Los ñoquis al final, en agua hirviendo con sal: sácalos en cuanto suban a la superficie, 1-2 min. Pasado ese punto se deshacen.",
+       "Quita el laurel y mezcla los ñoquis con la salsa."
       ]
      },
      "cena": {
@@ -910,29 +919,30 @@ let menuVitasane = {
       ]
      },
      "cena": {
-      "t": "Pescado a la plancha con puerro",
-      "m": "P 32 · C 27 · G 5 · 282 kcal",
-      "i": "170 g merluza, rosada o lenguado · 115 g patata cruda pelada en rodajas finas · 80 g puerro · 3 g AOVE · unas gotas de limón",
+      "t": "Ñoquis con pescado y tomate",
+      "m": "P 33 · C 20 · G 8 · 282 kcal",
+      "i": "50 g de ñoquis · 175 g de merluza o rosada · 80 g de tomate triturado · 30 g de cebolla · 5 g de AOVE · albahaca",
       "p": [
-       "Patata en rodajas finas y puerro a la air fryer, 180°C, 15 min.",
-       "Mientras, el pescado a la plancha bien caliente: 3-4 min por lado, empezando por el lado de la piel.",
-       "Una sola vuelta: el pescado blanco se deshace si lo mueves mucho.",
-       "Unas gotas de limón al sacarlo."
+       "Pocha la cebolla con el aceite, 5 min.",
+       "Añade el tomate triturado y deja reducir 8-10 min a fuego suave.",
+       "Apaga el fuego, añade el pescado en dados y tapa 4 min.",
+       "Los ñoquis, en agua hirviendo con sal: salen en cuanto flotan, 1-2 min, y van directos a la salsa.",
+       "Albahaca fresca fuera del fuego."
       ]
      }
     },
     {
      "dias": "Días 5 y 6",
      "alm": {
-      "t": "Ñoquis salteados con gambas y pollo",
-      "m": "P 51 · C 48 · G 11 · 494 kcal",
-      "i": "140 g de ñoquis · 120 g de gambas peladas · 85 g de pollo en tiras · 70 g de pimiento rojo · 40 g de cebolla · 60 g de tomate · 6 g de AOVE · 1 diente de ajo (5 g) · perejil",
+      "t": "Ñoquis salteados con gambas y calamar",
+      "m": "P 49 · C 38 · G 14 · 481 kcal",
+      "i": "100 g de ñoquis · 120 g de gambas peladas · 120 g de anillas de calamar · 70 g de pimiento rojo · 40 g de cebolla · 60 g de tomate · 9 g de AOVE · 1 diente de ajo (5 g) · perejil",
       "p": [
        "Aquí los ñoquis NO se cuecen: se saltean directamente en la sartén con un poco de aceite hasta dorarse, 5-6 min. Quedan crujientes por fuera y tiernos dentro, bastante mejor que hervidos.",
        "Sácalos y reserva. En la misma sartén, el ajo, la cebolla y el pimiento, 5 min.",
        "Añade el tomate, 3 min.",
        "Las gambas, 1-2 min.",
-       "El pollo en tiras, 5-6 min, hasta que esté dorado y hecho por dentro.",
+       "El calamar, lo último y 2-3 min a fuego muy fuerte: si se queda más, se pone gomoso y ya no hay marcha atrás.",
        "Devuelve los ñoquis, mezcla y perejil al servir."
       ]
      },
@@ -999,12 +1009,12 @@ let menuVitasane = {
      "cena": {
       "t": "Ensalada de brotes con gambas y queso fresco",
       "m": "P 34 · C 23 · G 10 · 318 kcal",
-      "i": "80 g brotes o canónigos · 100 g tomate · 110 g gambas peladas · 1 tarrina de queso fresco (62,5 g) · 25 g de cuscús en seco · 2 g AOVE · unas gotas de limón · cebollino",
+      "i": "80 g brotes o canónigos · 100 g tomate · 110 g gambas peladas · 62,5 g de queso fresco (¼ de la tarrina de 250 g) · 25 g de cuscús en seco · 2 g AOVE · unas gotas de limón · cebollino",
       "p": [
        "Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.",
        "Las gambas a la plancha, 1-2 min por lado: pasadas de ahí se ponen duras.",
        "Monta sobre los brotes el tomate y el cuscús, y las gambas templadas encima.",
-       "El queso fresco en dados por encima, la tarrina entera: así no te queda media abierta en la nevera.",
+       "El queso fresco en dados por encima.",
        "Aceite, limón y cebollino al servir."
       ]
      }
@@ -1012,15 +1022,15 @@ let menuVitasane = {
     {
      "dias": "Días 3 y 4",
      "alm": {
-      "t": "Ñoquis con boloñesa de ternera",
-      "m": "P 43 · C 50 · G 14 · 499 kcal",
-      "i": "140 g de ñoquis · 170 g de ternera picada magra · 120 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 3 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto",
+      "t": "Ensalada campera con atún y patata",
+      "m": "P 42 · C 41 · G 14 · 458 kcal",
+      "i": "160 g patata cruda pelada en dados · 130 g atún al natural · 1 huevo duro · 120 g tomate · 60 g pimiento rojo · 30 g cebolla morada · 6 g AOVE · 10 g de vinagre · sal",
       "p": [
-       "Sofríe la cebolla, el ajo y la zanahoria rallada con el aceite, 6-8 min.",
-       "Añade la ternera picada, 6-8 min, hasta que pierda el color rosado.",
-       "Echa el tomate triturado, el orégano y el laurel, y deja reducir 15 min a fuego lento.",
-       "Los ñoquis al final, en agua hirviendo con sal: sácalos en cuanto suban a la superficie, 1-2 min. Pasado ese punto se deshacen.",
-       "Quita el laurel y mezcla los ñoquis con la salsa."
+       "Cuece la patata en dados en olla express, 5-6 min, y déjala enfriar del todo.",
+       "Cuece el huevo 10 min y enfríalo en agua fría.",
+       "Pica el tomate, el pimiento y la cebolla morada en dados del tamaño de la patata.",
+       "Mezcla todo con el atún escurrido, el aceite, el vinagre y la sal.",
+       "El huevo en cuartos por encima. Mejor de un día para otro."
       ]
      },
      "cena": {
@@ -1052,7 +1062,7 @@ let menuVitasane = {
      "cena": {
       "t": "Queso fresco con tomate y pollo",
       "m": "P 31 · C 27 · G 8 · 300 kcal",
-      "i": "1 tarrina de queso fresco (62,5 g) · 90 g de pollo a la plancha en tiras · 150 g de tomate en rodajas · 100 g de patata cruda pelada · 1 g de AOVE · orégano, sal",
+      "i": "62,5 g de queso fresco (¼ de la tarrina de 250 g) · 90 g de pollo a la plancha en tiras · 150 g de tomate en rodajas · 100 g de patata cruda pelada · 1 g de AOVE · orégano, sal",
       "p": [
        "Cuece la patata en dados, 5 min en olla express, y déjala enfriar.",
        "El pollo a la plancha, 4-5 min por lado, y córtalo en tiras.",
@@ -1102,14 +1112,14 @@ let menuVitasane = {
     {
      "dias": "Días 1 y 2",
      "alm": {
-      "t": "Cuscús con gambas y pollo",
-      "m": "P 52 · C 49 · G 9 · 488 kcal",
-      "i": "50 g de cuscús (seco) · 110 g de gambas peladas · 100 g de pollo en tiras · 70 g de pimiento rojo · 40 g de cebolla · 50 g de zanahoria · 6 g de AOVE · 1 diente de ajo (5 g) · perejil, pimentón",
+      "t": "Cuscús con gambas y calamar",
+      "m": "P 52 · C 50 · G 10 · 496 kcal",
+      "i": "50 g de cuscús (seco) · 110 g de gambas peladas · 140 g de anillas de calamar · 70 g de pimiento rojo · 40 g de cebolla · 50 g de zanahoria · 6 g de AOVE · 1 diente de ajo (5 g) · perejil, pimentón",
       "p": [
        "Hidrata el cuscús con caldo hirviendo en vez de agua: cambia bastante el resultado. Tapado 5 min y suéltalo con un tenedor.",
        "Saltea el ajo, la cebolla, el pimiento y la zanahoria, 6-8 min.",
        "Las gambas, 1-2 min.",
-       "El pollo en tiras, 5-6 min, hasta que esté hecho.",
+       "El calamar, al final y 2-3 min a fuego muy fuerte.",
        "Mezcla con el cuscús, el pimentón y el perejil."
       ]
      },
@@ -1218,13 +1228,13 @@ let menuVitasane = {
      "dias": "Días 1 y 2",
      "alm": {
       "t": "Ensalada fría de fideos de arroz con salmón",
-      "m": "P 43 · C 43 · G 19 · 517 kcal",
-      "i": "40 g de fideos de arroz (seco) · 110 g de salmón a la plancha · 80 g de gambas cocidas · 50 g de zanahoria rallada · 60 g de pimiento rojo · 20 g de aguacate · 15 g de salsa de soja · 3 g de sésamo · unas gotas de lima · cilantro",
+      "m": "P 43 · C 43 · G 19 · 515 kcal",
+      "i": "40 g de fideos de arroz (seco) · 110 g de salmón a la plancha · 80 g de gambas cocidas · 50 g de zanahoria rallada · 60 g de pimiento rojo · 15 g de salsa de soja · 5 g de sésamo · 2 g de AOVE · unas gotas de lima · cilantro",
       "p": [
        "Hidrata los fideos de arroz según el paquete, 3-5 min, y enjuágalos en frío para cortar la cocción.",
        "El salmón a la plancha, 3-4 min por lado, y déjalo enfriar.",
        "Mezcla los fideos con la zanahoria rallada, el pimiento, las gambas y el salmón desmenuzado.",
-       "Aliña con la soja, el sésamo, la lima y el cilantro. El aguacate en láminas al final.",
+       "Aliña con la soja, el sésamo, la lima y el cilantro.",
        "Si te sobra tiempo, 15-20 min de nevera le vienen bien, pero se come perfectamente recién hecha.",
        "Como el salmón ya aporta 13 g de grasa, no lleva aceite añadido."
       ]
@@ -1245,12 +1255,12 @@ let menuVitasane = {
     {
      "dias": "Días 3 y 4",
      "alm": {
-      "t": "Ensalada de pollo, patata y pimiento",
-      "m": "P 52 · C 47 · G 11 · 491 kcal",
-      "i": "200 g de pollo a la plancha en tiras · 180 g de patata cruda pelada en dados · 100 g de pimiento rojo · 40 g de cebolla morada · 80 g de tomate · 7 g de AOVE · 10 g de vinagre · 3 g de pimentón · perejil",
+      "t": "Ensalada templada de calamar y patata",
+      "m": "P 51 · C 49 · G 10 · 489 kcal",
+      "i": "210 g de anillas de calamar · 60 g de gambas cocidas · 180 g de patata cruda pelada en dados · 100 g de pimiento rojo · 40 g de cebolla morada · 80 g de tomate · 5 g de AOVE · 10 g de vinagre · 3 g de pimentón · perejil",
       "p": [
        "Cuece la patata en dados, 5 min en olla express, y enfríala del todo.",
-       "El pollo a la plancha, 4-5 min por lado, en tiras. Déjalo templar antes de mezclarlo.",
+       "El calamar a la plancha muy caliente, 2-3 min, y mézclalo templado con el resto en frío: así la ensalada no queda fría del todo y el calamar no se apelmaza.",
        "Pica el pimiento, la cebolla morada y el tomate en dados del mismo tamaño que la patata.",
        "Mezcla todo con el aceite, el vinagre, el pimentón y el perejil.",
        "En frío, sin cocinar nada más allá de la patata. Un rato de nevera le va bien, pero no hace falta esperar."
@@ -1283,13 +1293,13 @@ let menuVitasane = {
       ]
      },
      "cena": {
-      "t": "Pollo guisado con patata y pimentón",
-      "m": "P 37 · C 23 · G 6 · 297 kcal",
-      "i": "150 g de pollo en dados · 105 g de patata cruda pelada · 30 g de cebolla · 4 g de AOVE · 2 g de pimentón de la Vera · 1 hoja de laurel",
+      "t": "Choco con patata y pimentón",
+      "m": "P 36 · C 24 · G 7 · 301 kcal",
+      "i": "165 g de choco o sepia limpia · 40 g de gambas · 105 g de patata cruda pelada · 30 g de cebolla · 4 g de AOVE · 2 g de pimentón",
       "p": [
        "Cuece la patata en rodajas, 4-5 min en olla express.",
-       "Rehoga la cebolla 5 min con el laurel.",
-       "El pollo en dados, dorado a fuego fuerte 4-5 min, y después 8-10 min guisado con la cebolla y el laurel a fuego suave.",
+       "Rehoga la cebolla 5 min.",
+       "El choco en tiras, plancha muy caliente 2-3 min por lado y fuera. Seco con papel antes, o se cuece en lugar de dorarse.",
        "El pimentón al final, fuera del fuego, o amarga."
       ]
      }
@@ -1455,13 +1465,13 @@ let menuVitasane = {
       ]
      },
      "cena": {
-      "t": "Salpicón de gambas y pollo",
-      "m": "P 33 · C 30 · G 5 · 299 kcal",
-      "i": "80 g gambas peladas · 60 g de pollo a la plancha en tiras · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 95 g patata cruda pelada · 3 g AOVE · 10 g de vinagre de Jerez · perejil al gusto",
+      "t": "Salpicón de mejillones y gambas",
+      "m": "P 34 · C 31 · G 7 · 317 kcal",
+      "i": "1 lata de mejillones al natural (69 g escurridos) · 90 g gambas peladas · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 95 g patata cruda pelada · 3 g AOVE · 10 g de vinagre de Jerez · perejil al gusto",
       "p": [
        "Cuece la patata en dados, 5 min en olla express, y enfríala del todo.",
-       "El pollo a la plancha, 4-5 min por lado, en tiras, y déjalo enfriar. Pica el pimiento, la cebolla y el tomate en dados del mismo tamaño que la patata.",
-       "Mezcla con las gambas, el aceite, el vinagre de Jerez y el perejil.",
+       "Escurre bien la lata de mejillones. Pica el pimiento, la cebolla y el tomate en dados del mismo tamaño que la patata.",
+       "Mezcla con los mejillones y las gambas, el aceite, el vinagre de Jerez y el perejil.",
        "Un rato de nevera hace que la cebolla y el pimiento suelten sabor, pero se puede comer al momento.",
        "De un día para otro, mejor."
       ]
@@ -1470,14 +1480,14 @@ let menuVitasane = {
     {
      "dias": "Días 3 y 4",
      "alm": {
-      "t": "Cachelos con pollo y pimentón de la Vera",
-      "m": "P 54 · C 40 · G 11 · 475 kcal",
-      "i": "215 g de pollo en tiras · 190 g de patata cruda pelada en rodajas · 40 g de cebolla · 8 g de AOVE · 3 g de pimentón de la Vera · sal gruesa",
+      "t": "Choco a la gallega con patata",
+      "m": "P 53 · C 42 · G 12 · 484 kcal",
+      "i": "230 g de choco o sepia limpia · 60 g de gambas cocidas · 190 g de patata cruda pelada en rodajas · 40 g de cebolla · 8 g de AOVE · 3 g de pimentón de la Vera · sal gruesa",
       "p": [
        "Cuece la patata en rodajas de 1 cm, 4-5 min en olla express, y escúrrela.",
        "Rehoga la cebolla 5 min.",
-       "El pollo a la plancha bien caliente, 5-6 min por lado, y córtalo en tiras.",
-       "Monta el pollo sobre la patata, riega con el aceite y espolvorea el pimentón y la sal gruesa al final, fuera del fuego: si el pimentón toca el aceite caliente, amarga."
+       "El choco en tiras anchas, plancha muy caliente 2-3 min por lado y fuera.",
+       "Monta el choco y las gambas sobre la patata, riega con el aceite y espolvorea el pimentón y la sal gruesa al final, fuera del fuego: si el pimentón toca el aceite caliente, amarga."
       ]
      },
      "cena": {
@@ -1508,15 +1518,15 @@ let menuVitasane = {
       ]
      },
      "cena": {
-      "t": "Bol de pollo, tomate y cuscús",
-      "m": "P 34 · C 27 · G 8 · 319 kcal",
-      "i": "25 g de cuscús en seco · 110 g de pollo a la plancha · 100 g de tomate rallado · 1 tarrina de queso fresco (62,5 g) · 1 g de AOVE · orégano",
+      "t": "Bol de pollo, tomate y parmesano",
+      "m": "P 34 · C 25 · G 9 · 317 kcal",
+      "i": "25 g de cuscús en seco · 110 g de pollo a la plancha · 100 g de tomate rallado · 20 g de parmesano en virutas · 3 g de AOVE · orégano",
       "p": [
        "Hidrata el cuscús con 25 ml de agua hirviendo, tapado 5 min, mientras el pollo está en la plancha.",
        "El pollo a la plancha, 4-5 min por lado, y córtalo en tiras.",
        "Ahueca el cuscús con un tenedor y pon el tomate rallado por encima, sin cocinar.",
-       "El pollo y la tarrina entera de queso fresco en dados al final, con el aceite y el orégano.",
-       "La cena más rápida del recetario: el cuscús se hidrata en los mismos 5 minutos que tarda el pollo."
+       "El pollo al final y el parmesano en virutas con el pelador, no rallado, con el aceite y el orégano.",
+       "La cena más rápida del recetario: el cuscús se hidrata en los mismos 5 minutos que tarda el pollo. Lleva parmesano y no queso fresco a propósito: el parmesano aguanta semanas y así no se abre una tarrina para una sola cena."
       ]
      }
     },
@@ -1535,15 +1545,14 @@ let menuVitasane = {
       ]
      },
      "cena": {
-      "t": "Ñoquis con pescado y tomate",
-      "m": "P 30 · C 28 · G 6 · 283 kcal",
-      "i": "80 g de ñoquis · 150 g de merluza o rosada · 80 g de tomate triturado · 30 g de cebolla · 3 g de AOVE · albahaca",
+      "t": "Pescado a la plancha con puerro",
+      "m": "P 32 · C 27 · G 5 · 282 kcal",
+      "i": "170 g merluza, rosada o lenguado · 115 g patata cruda pelada en rodajas finas · 80 g puerro · 3 g AOVE · unas gotas de limón",
       "p": [
-       "Pocha la cebolla con el aceite, 5 min.",
-       "Añade el tomate triturado y deja reducir 8-10 min a fuego suave.",
-       "Apaga el fuego, añade el pescado en dados y tapa 4 min.",
-       "Los ñoquis, en agua hirviendo con sal: salen en cuanto flotan, 1-2 min, y van directos a la salsa.",
-       "Albahaca fresca fuera del fuego."
+       "Patata en rodajas finas y puerro a la air fryer, 180°C, 15 min.",
+       "Mientras, el pescado a la plancha bien caliente: 3-4 min por lado, empezando por el lado de la piel.",
+       "Una sola vuelta: el pescado blanco se deshace si lo mueves mucho.",
+       "Unas gotas de limón al sacarlo."
       ]
      }
     }
@@ -1588,8 +1597,8 @@ let ingredientNotes = [
   {t:'Pollo (pechuga entera)', d:'Se congela entera y, descongelada, solo aguanta un día en crudo. Por eso conviene descongelar la pieza completa y hacerla entera a la plancha el mismo día: cocinada aguanta dos días, así que lo que no entre en la receta queda listo para el plato siguiente. Nunca volver a congelar una pechuga ya descongelada.'},
   {t:'Choco (sepia)', d:'16 g de proteína y 1,5 de grasa por 100 g, de lo más magro que puedes comprar. Dos formas de cocinarlo y ninguna intermedia: muy poco (2-3 min a la plancha) o mucho (guisado 25-30 min, u 8 en olla express). En el término medio queda correoso. Congelado va perfectamente para guisos, y además congelarlo rompe la fibra y lo ablanda.'},
   {t:'Calabaza', d:'7 g de hidrato por 100 g, así que cuenta algo como carbohidrato, pero menos que la patata (20 g). Hervida se deshace rápido y va bien para cremas; asada en air fryer es otro plato, porque caramelizan los azúcares. Para cremas, la cacahuete (butternut) es la más fiable.'},
-  {t:'Formatos de Mercadona: comprar y gastar', d:'Las raciones están puestas en unidades enteras de envase siempre que se puede, para que no quede media tarrina ni media lata abierta. Formatos: noodles frescos 200 g · queso fresco Burgos en tarrinas de 62,5 g (pack de 6) · burrata 250 g de tarrina, 150 escurrido · leche evaporada en mini bricks de 200 ml (pack de 3) o brick de 330 · claras pasteurizadas en botella de 300 ml · ñoquis frescos en paquete de 500 g · fiambre de pavo en paquete de 225 g. Comprueba el envase al comprar, que los formatos cambian.'},
-  {t:'Queso fresco: una tarrina por ración', d:'La ración es una tarrina entera de 62,5 g, no una cantidad suelta. Así abres una y la gastas, y el pack de seis te cubre seis cenas. Las dos cenas que lo llevan están puestas a una tarrina cada una.'},
+  {t:'Formatos de Mercadona: comprar y gastar', d:'Las raciones están puestas para que los envases se acaben y no quede medio abierto en la nevera, y los platos agrupados en la semana que toca. Noodles frescos 200 g: los dos platos que los llevan están en las semanas 2 y 3, 200 g exactos cada una. Ñoquis en paquete de 500 g: los tres platos están juntos en la semana 1, dos almuerzos de 100 g y una cena de 50, que por repetirse dos días suman los 500. Queso fresco en tarrina de 250 g: las dos cenas que lo llevan están en la semana 2, a 62,5 g, tarrina entera. Mejillones al natural en lata de 111 g netos, 69 escurridos: 2 latas en el almuerzo y 1 en la cena. Claras pasteurizadas en botella de 300 ml y fiambre de pavo en paquete de 225 g. Comprueba el envase al comprar, que los formatos cambian.'},
+  {t:'Queso fresco: la tarrina son 250 g', d:'Hay que acabarla en la semana o se pone mala. La ración es de 62,5 g, un cuarto de tarrina, y como cada cena se repite dos días, dos cenas con queso fresco en la misma semana la gastan entera. Están las dos juntas en la semana 2 y no aparece en ninguna otra: 250 g exactos, cero sobras. Donde antes había una tercera cena suelta ahora va parmesano, que aguanta semanas.'},
   {t:'Noodles: el paquete son 200 g', d:'Las raciones están ajustadas para que el paquete cuadre siempre: 100 g en el almuerzo y 50 g en la cena. Un paquete da dos almuerzos, o un almuerzo y dos cenas, o cuatro cenas. Empareja los platos de noodles dentro de la misma semana y con 2-3 días de margen como mucho, porque la bolsa abierta aguanta poco en la nevera. Lo que sobre, al congelador: se congela bien y pasa directo de congelador al wok.'},
   {t:'Guisantes congelados en el wok', d:'No los eches congelados al principio: el hielo baja la temperatura del wok y todo se cuece al vapor en lugar de saltearse. Escáldalos 2 min en un bol con agua hirviendo, escúrrelos y SÉCALOS con papel; van al final, con los noodles y la soja, 1-2 min solo para calentarlos. Si vas con prisa, échalos congelados al final, tapa 2 min y destapa otro minuto a fuego fuerte para evaporar el agua. Lo que no conviene es descongelarlos del todo y dejarlos reposar: se arrugan y pierden el verde.'},
   {t:'Nada hay que cocinar con antelación', d:'Ningún plato del recetario obliga a prepararse el día antes. Hay varios que mejoran de un día para otro — el salpicón, la ensalada de garbanzos, la ensalada campera, el pisto, el estofado y la lasaña — pero todos se pueden hacer y comer en el momento. El salmorejo, que sí pedía dos horas de nevera, está fuera del plan.'},
@@ -1598,7 +1607,7 @@ let ingredientNotes = [
   {t:'Dónde se queda la patata', d:'La patata se mantiene en los platos donde es el plato y no un relleno: los guisos y estofados, el marmitako, las papas con choco, los cachelos, los salpicones, la ensalada campera, la tortilla de patata, el gazpachuelo, las cremas (hace de espesante) y los pescados al horno en láminas. En el resto se fue variando, porque patata a diario acaba cansando.'},
   {t:'Bases de hidrato', d:'Por cada ración de 40 g de hidrato: tirabuzones de lentejas 20 g de proteína, pasta integral 7,8, noodles frescos 7,7, cuscús 7,1 y fideos de arroz solo 2,8. Los fideos de arroz no son peores — son ligeros y se hidratan en 5 min — pero obligan a subir la carne o el marisco del plato para llegar a los 45 g del almuerzo. Los noodles frescos van siempre al final, 1-2 min; si hierven, se deshacen. Son los de bolsa al vacío, ya cocidos, tipo yakisoba: directos de la bolsa a la sartén. Los fideos de arroz no se cuecen: se hidratan fuera del fuego y se enjuagan en frío, o se apelmazan.'},
   {t:'Salsa de soja', d:'Unos 8 kcal por 15 ml: en macros no cuenta. Lo que sí cuenta es el sodio — 15 ml llevan unos 900 mg, casi la mitad del máximo diario. Si la usas a menudo, compra la baja en sodio y no añadas sal al plato. Va especialmente bien con salmón y atún; con pescado blanco, acompañada de ajo.'},
-  {t:'Fuera el pulpo', d:'El pulpo sale del plan por precio: era con diferencia la proteína más cara, y además la menos densa (15 g por 100 g, frente a los 23 del pollo). Los seis platos que lo llevaban están rehechos con pollo, ajustando la ración para mantener los mismos macros: los dos salpicones, la ensalada de patata, los ñoquis salteados, el cuscús con gambas, los cachelos al pimentón y el guiso con patata.'},
+  {t:'Calamar, choco y mejillones en lugar del pulpo', d:'El pulpo salió del plan por precio: ronda los 25-30 €/kg, frente a los 7-10 de las anillas de calamar congeladas o el choco ya limpio. En macros es casi un cambio uno a uno (pulpo 15 g de proteína por 100 g, calamar y choco 16), así que solo bajan un poco las raciones. Lo que SÍ cambia es la cocción: el pulpo venía cocido y solo había que calentarlo, mientras que el calamar y el choco van crudos y solo admiten dos tiempos, 2-3 minutos a fuego muy fuerte o 30-40 guisados. Lo que queda en medio sale gomoso. Descongélalos en la nevera la noche antes y sécalos bien con papel antes de la plancha. En los dos salpicones van mejillones al natural de lata, que no obligan a cocinar: la lata son 69 g escurridos, 2 latas en el almuerzo y 1 en la cena, para no dejar media abierta.'},
   {t:'Tirabuzones de lentejas', d:'25 g de proteína por 100 g en seco: la mejor baza de tu despensa para subir proteína sin carne.'},
   {t:'Cuscús', d:'El hidrato más rápido de todos: no se cuece. Mismo volumen de agua o caldo hirviendo, tapado 5 min y listo, sin fuego. Respeta la proporción — si te pasas de agua queda pastoso y no tiene arreglo. Busca el integral si lo encuentras: sacia bastante más que el blanco, que es el que viene por defecto. Es trigo, así que lleva gluten.'},
   {t:'Ñoquis', d:'Encajan en macros pero son menos saciantes que la patata: para los mismos 40 g de hidrato, 148 g de ñoquis son 204 kcal y 210 g de patata cruda pelada 178. En déficit eso juega en tu contra, aunque aportan algo más de proteína (5,9 g frente a 4). Salen del agua en cuanto flotan, 1-2 min; pasado ese punto se deshacen. Al comprarlos mira la etiqueta: muchos envases traen nata o mantequilla y se disparan de grasa. Los de patata al natural, en envase al vacío, son los que cuadran.'},
@@ -1755,8 +1764,44 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-10-25';
+const PLAN_VERSION_DEFAULT = '2026-10-27c';
 let planVersion = PLAN_VERSION_DEFAULT;
+
+let envases = {
+  intro: 'El criterio es que la ración sea una fracción exacta del envase y que los platos que comparten producto caigan en la misma semana. Así se abre, se gasta y no queda medio bote en la nevera. Pesos de Mercadona; comprueba el envase al comprar, que los formatos cambian.',
+  cuadra: [
+    {p:'Noodles frescos',        f:'Paquete de 200 g',                r:'100 g en almuerzo · 50 g en cena', d:'Semanas 2 y 3: 200 g exactos cada una.'},
+    {p:'Ñoquis frescos',         f:'Paquete de 500 g',                r:'100 g en almuerzo · 50 g en cena', d:'Semana 1: los tres platos juntos, 500 g exactos.'},
+    {p:'Queso fresco de Burgos', f:'Tarrina de 250 g',                r:'62,5 g por cena',                  d:'Semana 2: las dos cenas que lo llevan gastan la tarrina entera.'},
+    {p:'Mejillones al natural',  f:'Lata de 111 g netos, 69 escurridos', r:'2 latas en almuerzo · 1 en cena', d:'Semana 6: latas enteras, nada abierto a medias.'},
+    {p:'Avena en copos',         f:'Paquete de 500 g',                r:'70 g al día',                      d:'490 g por semana: un paquete por semana, casi clavado.'}
+  ],
+  sinRiesgo: [
+    {p:'Anillas de calamar',  f:'Bolsa congelada',       d:'Sacas solo la ración y el resto sigue congelado. Descongela en la nevera la noche antes.'},
+    {p:'Choco o sepia',       f:'Limpio, congelado',     d:'Igual que el calamar. Congelarlo además rompe la fibra y lo ablanda.'},
+    {p:'Guisantes',           f:'Bolsa congelada',       d:'Del congelador a la sartén, sin descongelar.'},
+    {p:'Pechuga de pollo',    f:'Congelada entera',      d:'Descongelas una pieza y la gastas ese día.'},
+    {p:'Cuscús, arroz, pasta',f:'Paquete seco',          d:'Meses en el armario, la ración da igual.'},
+    {p:'Parmesano, pistachos, sésamo, chocolate', f:'Seco o curado', d:'Aguantan semanas abiertos: no hace falta cuadrarlos.'}
+  ],
+  sobra: [
+    {p:'Claras pasteurizadas', f:'Botella de 300 ml', d:'Semanas 3 y 5 la gastan entera. La 4 usa solo 80 ml de los 300.'},
+    {p:'Fiambre de pavo',      f:'Paquete de 225 g',  d:'La semana 4 gasta 200 g: sobran 25.'},
+    {p:'Jamón serrano',        f:'Sobre de ~75 g',    d:'La semana 3 gasta 40 g: sobra la mitad.'},
+    {p:'Verdura de una pieza', f:'Pieza entera',      d:'Perejil, lechuga, puerro, calabaza y berenjena entran en algún plato en cantidades de media pieza o menos.'}
+  ],
+  pendiente: [
+    {p:'Ternera picada magra', u:'300-520 g por semana', q:'¿Bandeja del lineal, y de cuánto, o picada al peso en carnicería?'},
+    {p:'Pescado blanco y salmón', u:'150-340 g por semana', q:'¿Fresco en pescadería o congelado en bolsa? Si es bolsa, cuánto trae.'},
+    {p:'Gambas',               u:'100-390 g por semana', q:'¿Peladas congeladas en bolsa o cocidas frescas de la nevera?'},
+    {p:'Atún al natural',      u:'260-370 g por semana', q:'¿Pack de tres latitas o lata grande?'},
+    {p:'Tomate triturado',     u:'240-320 g por semana', q:'¿Lata o brick, y de cuánto?'},
+    {p:'Caldo',                u:'400-800 ml por semana', q:'¿Brick de 1 L o pastilla concentrada?'},
+    {p:'Leche evaporada',      u:'140-180 ml por semana', q:'¿Brick de 330 ml o mini brick de 200?'},
+    {p:'Yogur natural',        u:'14 por semana',        q:'¿Pack de 4, de 6 o de 12?'},
+    {p:'Chocolate negro 99%',  u:'140 g por semana',     q:'¿Tableta de 100 g o de 50?'}
+  ]
+};
 
 const DEFAULT_PLAN = {
   version: PLAN_VERSION_DEFAULT,
@@ -1764,7 +1809,7 @@ const DEFAULT_PLAN = {
   planchaTimes, pescadoTabla, rotation, coreGarnishes, weeklyGarnish, garnishNote,
   verdurasAmpliacion, excludedFoods, recetasRef, recetario, menuVitasane, pesosNota,
   ingredientNotes, trucosAirFryer, trucosPlancha, secuenciaAlmuerzo, secuenciaCena,
-  dejarHechoAntes, cardioPlan, notasPlan
+  dejarHechoAntes, cardioPlan, notasPlan, envases
 };
 
 function applyPlan(p){
@@ -1788,6 +1833,7 @@ function applyPlan(p){
   if(p.menuVitasane)       menuVitasane = p.menuVitasane;
   if(p.pesosNota)          pesosNota = p.pesosNota;
   if(p.ingredientNotes)    ingredientNotes = p.ingredientNotes;
+  if(p.envases)            envases = p.envases;
   if(p.trucosAirFryer)     trucosAirFryer = p.trucosAirFryer;
   if(p.trucosPlancha)      trucosPlancha = p.trucosPlancha;
   if(p.secuenciaAlmuerzo)  secuenciaAlmuerzo = p.secuenciaAlmuerzo;
@@ -2085,6 +2131,8 @@ const CORTES = {
   dorada:  {corte:'Lomos o entera limpia',         g:'4 g grasa/100 g', nota:'Si la compras entera, 200 g de lomo salen de una pieza de unos 400 g.'},
   atun:    {corte:'Lomo fresco o lata al natural', g:'5 g / 1 g grasa/100 g', nota:'El fresco para marmitako y plancha; el de lata al natural (escurrido) para ensaladas y salmorejo.'},
   gambas:  {corte:'Peladas y cocidas',             g:'1 g grasa/100 g', nota:'Congeladas van bien y evitan el desperdicio.'},
+  calamar: {corte:'Anillas congeladas',           g:'1,5 g grasa/100 g', nota:'Descongela en la nevera la noche antes y sécalas muy bien con papel: sueltan agua y, húmedas, se cuecen en vez de dorarse.'},
+  mejillones: {corte:'Al natural, de lata',       g:'3 g grasa/100 g',   nota:'La lata son 111 g netos y 69 g escurridos. Al natural, ni en escabeche ni en salsa.'},
   choco:   {corte:'Limpio, en dados o entero',     g:'1,5 g grasa/100 g', nota:'Choco o sepia, ya limpio de la pescadería. 16 g de proteína por 100 g, de lo más magro que puedes comprar. Congelado va perfectamente para guisos: congelarlo rompe la fibra y lo ablanda.'},
 };
 
@@ -2093,6 +2141,8 @@ function claveCorte(nombre){
   if(/merluza|rosada|lenguado|corvina|lubina|pescado blanco/.test(n)) return 'merluza';
   if(/salmón|salmon/.test(n)) return 'salmon';
   if(/atún|atun/.test(n)) return 'atun';
+  if(/calamar/.test(n)) return 'calamar';
+  if(/mejillones/.test(n)) return 'mejillones';
   if(/gambas|langostinos/.test(n)) return 'gambas';
   if(/dorada/.test(n)) return 'dorada';
   if(/choco|sepia/.test(n)) return 'choco';
@@ -2233,10 +2283,10 @@ function almuerzoRecipe(almRaw, dayIdx){
     `${protein} a la plancha bien caliente: ${time}. No la toques hasta el cambio de lado, y sala al final.`
   ];
   if(g.step) steps.push(g.step);
-  steps.push('Al emplatar, los 35 g de aguacate en láminas y el aceite en crudo por encima.');
+  steps.push('Al emplatar, el aceite en crudo por encima.');
 
   return {
-    ing: `170 g de ${meat}${corte} · 40 g de arroz en seco o 115 g de patata cruda pelada · ${g.text} · 35 g de aguacate · 7 g de AOVE · 1 diente de ajo (5 g) · 3 g de pimentón · orégano y sal al gusto`,
+    ing: `170 g de ${meat}${corte} · 40 g de arroz en seco o 115 g de patata cruda pelada · ${g.text} · 12 g de AOVE · 1 diente de ajo (5 g) · 3 g de pimentón · orégano y sal al gusto`,
     steps
   };
 }
@@ -2679,10 +2729,40 @@ function renderRecetas(){
   `;
 }
 
+/* ============== RENDER: ENVASES ============== */
+function renderEnvases(){
+  const el = document.getElementById('screen-envases');
+  if(!el) return;
+  const e = envases || {};
+  const fila = (a, b, c) => `<tr><td><b>${esc(a)}</b></td><td>${esc(b)}</td><td>${esc(c)}</td></tr>`;
+  const tabla = (titulo, cab, filas) => filas && filas.length ? `
+    <h3 class="sec-title">${esc(titulo)}</h3>
+    <div class="card" style="overflow-x:auto; padding:0;">
+      <table class="env-table">
+        <thead><tr>${cab.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead>
+        <tbody>${filas.join('')}</tbody>
+      </table>
+    </div>` : '';
+
+  el.innerHTML = `
+    <div class="info-note" style="margin-top:0; margin-bottom:14px;">${esc(e.intro || '')}</div>
+    ${tabla('Cuadra exacto', ['Producto','Formato','Ración y dónde cae'],
+      (e.cuadra||[]).map(x => fila(x.p, x.f, x.r + ' — ' + x.d)))}
+    ${tabla('Sin riesgo de que se ponga malo', ['Producto','Formato','Por qué da igual la ración'],
+      (e.sinRiesgo||[]).map(x => fila(x.p, x.f, x.d)))}
+    ${tabla('Sobra parte del envase', ['Producto','Formato','Qué sobra'],
+      (e.sobra||[]).map(x => fila(x.p, x.f, x.d)))}
+    ${tabla('Pendiente de confirmar el formato', ['Producto','Lo que gastas','Lo que falta saber'],
+      (e.pendiente||[]).map(x => fila(x.p, x.u, x.q)))}
+  `;
+}
+
 /* ============== RENDER: MENÚ 6 SEMANAS ============== */
 
 let menuSemanaSel = null;
 function selectMenuSemana(n){ menuSemanaSel = n; renderMenu(); }
+// El menú va cerrado por meses: la semana la manda el calendario, no se re-ancla a mano.
+// Se deja la función por si hubiera que recolocar el ciclo al diseñar un mes nuevo.
 async function fijarSemanaMenu(n){
   settings.semanaMenu = n;
   settings.anclaMenu = lunesDe(new Date());
@@ -2719,8 +2799,8 @@ function renderMenu(){
       ${menuVitasane.semanas.map(w=>`<div class="week-tab ${w.n===menuSemanaSel?'active':''}" onclick="selectMenuSemana(${w.n})">Sem. ${w.n}${w.n===actual?' ·':''}</div>`).join('')}
     </div>
     ${menuSemanaSel === actual
-      ? `<div class="info-note">Esta es la semana en curso. Es la que siguen Hoy y la lista de la compra, y avanza sola cada lunes.</div>`
-      : `<button class="gen-btn" onclick="fijarSemanaMenu(${menuSemanaSel})">Hacer de la semana ${menuSemanaSel} la semana en curso</button>`}
+      ? `<div class="info-note"><b>Semana en curso.</b> Es la que siguen Hoy y la lista de la compra, y avanza sola cada lunes.</div>`
+      : `<div class="info-note">Estás viendo la <b>semana ${menuSemanaSel}</b>, que no es la que toca. El calendario manda: la semana en curso es la <b>${actual}</b> y avanza sola cada lunes. El menú se cierra por meses, el primer miércoles, así que desde aquí solo se consulta.</div>`}
 
     ${wk.bloques.map((b,bi) => {
       const dias = [['Lunes','Miércoles'],['Martes','Jueves'],['Viernes','Sábado'],['Domingo']][bi] || [b.dias];
@@ -3430,6 +3510,9 @@ const INGREDIENTES = [
   [/lenguado/i,                          'Lenguado',                     'Pescados'],
   [/corvina|lubina/i,                    'Corvina o lubina',             'Pescados'],
   [/merluza|pescado blanco/i,            'Merluza',                      'Pescados'],
+  [/anillas de calamar|calamar/i,         'Anillas de calamar (congeladas)', 'Pescados'],
+  [/choco|sepia/i,                        'Choco o sepia limpia',         'Pescados'],
+  [/mejillones/i,                         'Mejillones al natural (lata)', 'Conservas'],
   [/gambas|langostinos/i,                'Gambas peladas',               'Pescados'],
   [/almejas/i,                           'Almejas',                      'Pescados'],
   // Huevos y lácteos
@@ -3441,7 +3524,6 @@ const INGREDIENTES = [
   [/queso fresco/i,                      'Queso fresco',                 'Lácteos y huevos'],
   [/mozzarella/i,                        'Mozzarella light',             'Lácteos y huevos'],
   [/parmesano/i,                         'Parmesano',                    'Lácteos y huevos'],
-  [/burrata/i,                           'Burrata',                      'Lácteos y huevos'],
   [/provolone/i,                         'Provolone',                    'Lácteos y huevos'],
   [/requesón/i,                          'Requesón',                     'Lácteos y huevos'],
   [/yogur de proteína/i,                 'Yogur de proteína',            'Lácteos y huevos'],
@@ -3480,7 +3562,6 @@ const INGREDIENTES = [
   [/lechuga/i,                           'Lechuga',                      'Verduras y fruta'],
   [/canónigos|brotes/i,                  'Canónigos o brotes',           'Verduras y fruta'],
   [/rúcula/i,                            'Rúcula',                       'Verduras y fruta'],
-  [/aguacate/i,                          'Aguacate',                     'Verduras y fruta'],
   [/sriracha/i,                          'Sriracha',                     'Otros / despensa'],
   [/tahini/i,                            'Tahini',                       'Otros / despensa'],
   [/crema de cacahuete/i,                'Crema de cacahuete',           'Otros / despensa'],
@@ -3646,6 +3727,7 @@ function setCompraDias(v){
   settings.compraDias = compraDias;
   saveSettings();
   renderCompra();
+  renderEnvases();
 }
 function setCompraModo(m){
   compraModo = m;
@@ -3827,7 +3909,7 @@ function exportPlan(){
     planchaTimes, pescadoTabla, rotation, coreGarnishes, weeklyGarnish, garnishNote,
     verdurasAmpliacion, excludedFoods, recetasRef, recetario, menuVitasane, pesosNota,
     ingredientNotes, trucosAirFryer, trucosPlancha, secuenciaAlmuerzo, secuenciaCena,
-    dejarHechoAntes, cardioPlan, notasPlan
+    dejarHechoAntes, cardioPlan, notasPlan, envases
   };
   const txt = JSON.stringify(actual, null, 2);
   const box = document.getElementById('planInput');
