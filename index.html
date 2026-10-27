@@ -1764,7 +1764,7 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-10-27c';
+const PLAN_VERSION_DEFAULT = '2026-10-27d';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 let envases = {
@@ -2736,7 +2736,7 @@ function renderEnvases(){
   const e = envases || {};
   const fila = (a, b, c) => `<tr><td><b>${esc(a)}</b></td><td>${esc(b)}</td><td>${esc(c)}</td></tr>`;
   const tabla = (titulo, cab, filas) => filas && filas.length ? `
-    <h3 class="sec-title">${esc(titulo)}</h3>
+    <h3 class="section-title">${esc(titulo)}</h3>
     <div class="card" style="overflow-x:auto; padding:0;">
       <table class="env-table">
         <thead><tr>${cab.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead>
@@ -2744,6 +2744,14 @@ function renderEnvases(){
       </table>
     </div>` : '';
 
+  const vacio = !e.intro && !(e.cuadra||[]).length && !(e.sinRiesgo||[]).length
+                && !(e.sobra||[]).length && !(e.pendiente||[]).length;
+  if(vacio){
+    el.innerHTML = `<div class="info-note" style="margin-top:0;"><b>No hay datos de envases.</b>
+      El plan guardado no trae el apartado <code>envases</code>. En Ajustes &rarr; Plan de la dieta,
+      pulsa <b>Restaurar original</b> para recuperarlo, o importa un plan que lo incluya.</div>`;
+    return;
+  }
   el.innerHTML = `
     <div class="info-note" style="margin-top:0; margin-bottom:14px;">${esc(e.intro || '')}</div>
     ${tabla('Cuadra exacto', ['Producto','Formato','Ración y dónde cae'],
