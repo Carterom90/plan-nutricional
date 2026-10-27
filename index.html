@@ -1764,7 +1764,7 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-10-27e';
+const PLAN_VERSION_DEFAULT = '2026-10-27f';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 let envases = {
@@ -2216,8 +2216,20 @@ function rotDelBloque(info){
 // Devuelve el plato concreto del recetario para ese día, o null si toca la plantilla base.
 // Pruebas puntuales: un plato concreto para una fecha concreta, por encima del menú.
 const PRUEBAS = {
-  '2026-09-23': {cena: 'Pollo a la plancha con patata y verdura · ración de prueba',
-                 nota: 'Cena de prueba: ración un 60% mayor para ver hasta dónde te entra. Se cocina en el momento, no es la del lunes. Si te llenas antes, para y anota dónde te quedaste.'}
+  // SEMANA DE SOBRAS (27 oct - 1 nov 2026). Excepción por fechas: no toca el menú de
+  // 6 semanas, la lista de la compra la recoge sola y el lunes 2 todo vuelve a su sitio.
+  '2026-10-27': {cena: 'Ñoquis con pescado y tomate',
+                 nota: 'Semana de sobras. La rosada ya está descongelada, así que hoy se gasta sí o sí. Se lleva de paso 50 g de los ñoquis abiertos. Si la albahaca es seca, va con el tomate en el paso 2, no al final.'},
+  '2026-10-28': {alm: 'Ñoquis con boloñesa de ternera', cena: 'Revuelto de gambas y calabacín 🥚',
+                 nota: 'Semana de sobras: 100 g de ñoquis y 190 g de carne picada en la comida, 120 g de calabacín en la cena. Saca esta noche los filetes para el sábado.'},
+  '2026-10-29': {alm: 'Ñoquis cremosos con pollo y champiñones 🥫', cena: 'Tortilla de calabacín con claras 🥚',
+                 nota: 'Semana de sobras: la comida gasta 100 g de ñoquis, los 70 ml de leche evaporada y 80 g de champiñones de golpe. La cena, 200 g de calabacín.'},
+  '2026-10-30': {alm: 'Ñoquis salteados con gambas y calamar', cena: 'Hamburguesa de ternera con ensalada',
+                 nota: 'Semana de sobras: últimos 100 g de ñoquis en la comida y 120 g de picada en la cena. Con esto los ñoquis quedan en 10 g, es decir, en nada.'},
+  '2026-10-31': {alm: 'Wok de ternera con noodles',
+                 nota: 'Semana de sobras: 170 g de los filetes, los últimos 100 g de calabacín y los champiñones que queden. La cena ya vuelve al menú.'},
+  '2026-11-01': {alm: 'Estofado de ternera con patata',
+                 nota: 'Último día de la semana de sobras: 180 g de filetes y, en lugar del vino, el caldo de pollo que quede. Desde mañana, menú normal.'}
 };
 function pruebaDe(info){ return PRUEBAS[info.key] || null; }
 
