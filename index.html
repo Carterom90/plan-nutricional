@@ -1764,7 +1764,7 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-10-27d';
+const PLAN_VERSION_DEFAULT = '2026-10-27e';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 let envases = {
@@ -3735,7 +3735,6 @@ function setCompraDias(v){
   settings.compraDias = compraDias;
   saveSettings();
   renderCompra();
-  renderEnvases();
 }
 function setCompraModo(m){
   compraModo = m;
@@ -4022,6 +4021,7 @@ function renderAll(){
   renderMenu();
   renderProgreso();
   renderCompra();
+  renderEnvases();
 }
 
 initAuth();
