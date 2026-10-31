@@ -1782,7 +1782,7 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-10-31g';
+const PLAN_VERSION_DEFAULT = '2026-10-31h';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 let envases = {
@@ -1866,7 +1866,9 @@ function applyPlan(p){
   if(p.menuVitasane)       menuVitasane = p.menuVitasane;
   if(p.pesosNota)          pesosNota = p.pesosNota;
   if(p.ingredientNotes)    ingredientNotes = p.ingredientNotes;
-  if(p.envases)            envases = p.envases;
+  // Se fusiona por apartados: así un plan guardado de hace semanas no se lleva por delante
+  // las secciones que se hayan añadido después en el código (pasó con la tabla de bolsas).
+  if(p.envases)            envases = Object.assign({}, envases, p.envases);
   if(p.trucosAirFryer)     trucosAirFryer = p.trucosAirFryer;
   if(p.trucosPlancha)      trucosPlancha = p.trucosPlancha;
   if(p.secuenciaAlmuerzo)  secuenciaAlmuerzo = p.secuenciaAlmuerzo;
