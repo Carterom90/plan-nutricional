@@ -448,6 +448,21 @@ table.rot .rtag.D{background:var(--descanso-soft); color:var(--descanso);}
   <div class="section-title">Cómo cocinas</div>
   <div id="modoCocinaBox" style="margin-bottom:14px;"></div>
   <div class="info-note" style="margin-bottom:0;">El menú no cambia: el plato se sigue repitiendo los dos días del bloque, así que la compra es la misma. Lo que cambia es si Hoy te dice de cocinar el doble y recalentar, o de hacerlo al momento cada día.</div>
+  <div class="section-title">Inicio del ciclo del menú</div>
+  <div class="plan-box">
+    <div style="font-size:13px; color:var(--muted); margin-bottom:8px;">
+      El menú va cerrado y avanza solo cada lunes. Esto solo se toca al diseñar un bloque nuevo: elige el lunes de arranque y con qué semana del ciclo empieza. Ahora mismo toca la <b id="cicloActual">—</b>.
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px;">
+      <input type="date" id="cicloLunes" style="flex:1; min-width:150px; padding:8px; border:1px solid var(--border); border-radius:8px; font:inherit;">
+      <select id="cicloSemana" style="padding:8px; border:1px solid var(--border); border-radius:8px; font:inherit;">
+        <option value="1">Semana 1</option><option value="2">Semana 2</option><option value="3">Semana 3</option>
+        <option value="4">Semana 4</option><option value="5">Semana 5</option><option value="6">Semana 6</option>
+      </select>
+    </div>
+    <div class="plan-btn-row"><button class="plan-btn primary" onclick="fijarCiclo()">Fijar inicio del ciclo</button></div>
+    <div class="plan-msg" id="cicloMsg"></div>
+  </div>
   <div class="section-title">Plan de la dieta</div>
   <div class="plan-box">
     <div style="font-size:13px; color:var(--muted); margin-bottom:8px;">
@@ -605,7 +620,7 @@ let verdurasAmpliacion = {
     {n:'Calabaza', c:'7,0 g/100g', t:'15-18 min'},
   ]
 };
-let excludedFoods = 'brócoli, miel, acelgas, judías verdes, encurtidos, pepino, espinacas, espárragos, endibia, coliflor, col (repollo, lombarda, coles de Bruselas), remolacha, alcachofa y plátano. Fuera también, por difíciles de encontrar: caballa, sardina y bacalao. Tampoco jengibre, ni fruta dentro de los platos (la fruta va sola, en sus tomas fijas; el tomate sí, y el gazpacho y el salmorejo también). Quesos: solo parmesano y queso fresco. Fuera por precio, no por gusto: el pulpo, sustituido por calamar, choco y mejillones. Y fuera por nevera, porque no se gastan en una ración: aguacate, maíz y burrata';
+let excludedFoods = 'brócoli, miel, acelgas, judías verdes, encurtidos, pepino, espinacas, espárragos, endibia, coliflor, col (repollo, lombarda, coles de Bruselas), remolacha, alcachofa y plátano. Fuera también, por difíciles de encontrar: caballa, sardina y bacalao. Tampoco jengibre, ni fruta dentro de los platos (la fruta va sola, en sus tomas fijas; el tomate sí, y el gazpacho y el salmorejo también). Quesos: parmesano, queso fresco y burrata, esta última solo si se gasta en la semana que se compra. La mozzarella queda fuera. Fuera por precio, no por gusto: el pulpo, sustituido por calamar, choco y mejillones. Y fuera por nevera, porque no se gastan en una ración: aguacate, maíz y burrata';
 
 let recetasRef = [
   {id:'r5', tag:'legumbre', title:'Lentejas o garbanzos guisados', sub:'Domingos · olla express',
@@ -727,18 +742,18 @@ let recetario = {
     {title:'Ensalada templada de calamar y patata', macros:'P 51 · C 49 · G 10 · 489 kcal',
      ing:'210 g de anillas de calamar · 60 g de gambas cocidas · 180 g de patata cruda pelada en dados · 100 g de pimiento rojo · 40 g de cebolla morada · 80 g de tomate · 5 g de AOVE · 10 g de vinagre · 3 g de pimentón · perejil',
      tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','El calamar a la plancha muy caliente, 2-3 min, y mézclalo templado con el resto en frío: así la ensalada no queda fría del todo y el calamar no se apelmaza.','Pica el pimiento, la cebolla morada y el tomate en dados del mismo tamaño que la patata.','Mezcla todo con el aceite, el vinagre, el pimentón y el perejil.','En frío, sin cocinar nada más allá de la patata. Un rato de nevera le va bien, pero no hace falta esperar.']},
-    {title:'Ñoquis con boloñesa de ternera', macros:'P 46 · C 39 · G 14 · 468 kcal',
-     ing:'100 g de ñoquis · 190 g de ternera picada magra · 120 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 3 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto',
-     tip:['Sofríe la cebolla, el ajo y la zanahoria rallada con el aceite, 6-8 min.','Añade la ternera picada, 6-8 min, hasta que pierda el color rosado.','Echa el tomate triturado, el orégano y el laurel, y deja reducir 15 min a fuego lento.','Los ñoquis al final, en agua hirviendo con sal: sácalos en cuanto suban a la superficie, 1-2 min. Pasado ese punto se deshacen.','Quita el laurel y mezcla los ñoquis con la salsa.']},
+    {title:'Ñoquis con boloñesa de ternera', macros:'P 46 · C 39 · G 17 · 493 kcal',
+     ing:'100 g de ñoquis · 190 g de ternera picada magra · 120 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 6 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto',
+     tip:['Los ñoquis primero: saltéalos en la sartén con la mitad del aceite hasta dorarse, 5-6 min, y resérvalos. No se cuecen.','En la misma sartén, sofríe la cebolla, el ajo y la zanahoria rallada con el aceite que queda, 6-8 min, y añade la ternera picada otros 6-8, hasta que pierda el color rosado.','Echa el tomate triturado, el orégano y el laurel, y deja reducir 15 min a fuego lento.','Quita el laurel y devuelve los ñoquis al final, mezclando solo lo justo: si entran antes se ablandan y pierden la costra.','Orégano fresco al servir.']},
     {title:'Ñoquis cremosos con pollo y champiñones 🥫', macros:'P 48 · C 40 · G 13 · 476 kcal',
      ing:'100 g de ñoquis · 160 g de pollo en taquitos · 70 ml de leche evaporada · 80 g de champiñones laminados · 40 g de cebolla · 7 g de AOVE · nuez moscada y pimienta negra',
-     tip:['El pollo en taquitos a la plancha, 5-6 min, y resérvalo.','Saltea la cebolla 4 min y los champiñones laminados 6-8 min, hasta que suelten el agua y se evapore.','Añade la leche evaporada y deja espesar 3-4 min a fuego suave, sin que hierva.','Cuece los ñoquis: salen en cuanto flotan, 1-2 min.','Incorpóralos con el pollo a la salsa. Nuez moscada y pimienta negra fuera del fuego.']},
+     tip:['Saltea los ñoquis con parte del aceite hasta dorarse, 5-6 min, y resérvalos: no se cuecen. Después, el pollo en taquitos a la plancha, 5-6 min, también aparte.','Saltea la cebolla 4 min y los champiñones laminados 6-8 min, hasta que suelten el agua y se evapore.','Añade la leche evaporada y deja espesar 3-4 min a fuego suave, sin que hierva.','Incorpora el pollo y los ñoquis al final, mezclando solo lo justo. Nuez moscada y pimienta negra fuera del fuego.']},
     {title:'Ñoquis salteados con gambas y calamar', macros:'P 49 · C 38 · G 14 · 481 kcal',
      ing:'100 g de ñoquis · 120 g de gambas peladas · 120 g de anillas de calamar · 70 g de pimiento rojo · 40 g de cebolla · 60 g de tomate · 9 g de AOVE · 1 diente de ajo (5 g) · perejil',
-     tip:['Aquí los ñoquis NO se cuecen: se saltean directamente en la sartén con un poco de aceite hasta dorarse, 5-6 min. Quedan crujientes por fuera y tiernos dentro, bastante mejor que hervidos.','Sácalos y reserva. En la misma sartén, el ajo, la cebolla y el pimiento, 5 min.','Añade el tomate, 3 min.','Las gambas, 1-2 min.','El calamar, lo último y 2-3 min a fuego muy fuerte: si se queda más, se pone gomoso y ya no hay marcha atrás.','Devuelve los ñoquis, mezcla y perejil al servir.']},
+     tip:['Los ñoquis, salteados en la sartén con un poco de aceite hasta dorarse, 5-6 min. Crujientes por fuera y tiernos dentro.','Sácalos y reserva. En la misma sartén, el ajo, la cebolla y el pimiento, 5 min.','Añade el tomate, 3 min.','Las gambas, 1-2 min.','El calamar, lo último y 2-3 min a fuego muy fuerte: si se queda más, se pone gomoso y ya no hay marcha atrás.','Devuelve los ñoquis, mezcla y perejil al servir.']},
     {title:'Ñoquis gratinados con pollo', macros:'P 48 · C 35 · G 15 · 474 kcal',
      ing:'100 g de ñoquis · 170 g de pollo picado · 100 g de tomate triturado · 12 g de parmesano rallado · 40 g de cebolla · 7 g de AOVE · orégano',
-     tip:['Sofríe la cebolla 4 min, añade el pollo picado 6-8 min y luego el tomate triturado, 5 min.','Cuece los ñoquis: salen en cuanto flotan, 1-2 min.','Mézclalos con el sofrito en una fuente.','Cubre con el parmesano y gratina en air fryer 180°C, 8-10 min.','Orégano al sacarlo.']},
+     tip:['Saltea los ñoquis con parte del aceite hasta dorarse, 5-6 min, y resérvalos: así no quedan blandos bajo el gratinado.','Sofríe la cebolla 4 min, añade el pollo picado 6-8 min y luego el tomate triturado, 5 min.','Mezcla los ñoquis dorados con el sofrito en una fuente, en una capa.','Cubre con el parmesano y gratina en air fryer 180°C, 8-10 min.','Orégano al sacarlo.']},
     {title:'Cuscús con pollo y verduras', macros:'P 49 · C 50 · G 8 · 467 kcal',
      ing:'50 g de cuscús (seco) · 180 g de pollo en dados · 60 g de zanahoria · 70 g de pimiento rojo · 40 g de cebolla · 5 g de AOVE · 1 diente de ajo (5 g) · comino, cúrcuma, canela, pimentón',
      tip:['El cuscús no se cuece: ponlo en un bol, cúbrelo con el mismo volumen de agua o caldo hirviendo, tápalo y déjalo reposar 5 min. Luego sepáralo con un tenedor.','Mientras reposa, el pollo en dados a la plancha, 5-6 min.','Saltea la cebolla, el pimiento y la zanahoria con el ajo, 6-8 min.','Añade el comino, la cúrcuma, la canela y el pimentón y remueve 30 segundos en seco.','Mezcla todo con el cuscús. Es lo más rápido del recetario.']},
@@ -818,7 +833,7 @@ let recetario = {
      tip:['Los guisantes, primero: bol con agua hirviendo 2 min, escurre y SÉCALOS con papel. Echados congelados al wok bajan la temperatura y todo se cuece al vapor en vez de saltearse.','Wok a fuego muy fuerte: los champiñones solos hasta que suelten el agua y se doren, 4-5 min.','Añade la zanahoria, 4-5 min.','El pescado en dados grandes, 2-3 min, y una sola vuelta: si lo remueves se deshace en hebras.','Los noodles, los guisantes y la soja al final, 1-2 min.','Es la versión de cena de los woks: la mitad de noodles que un almuerzo y sin apenas aceite.']},
     {title:'Ñoquis con pescado y tomate', macros:'P 33 · C 20 · G 8 · 282 kcal',
      ing:'50 g de ñoquis · 175 g de merluza o rosada · 80 g de tomate triturado · 30 g de cebolla · 5 g de AOVE · albahaca',
-     tip:['Pocha la cebolla con el aceite, 5 min.','Añade el tomate triturado y deja reducir 8-10 min a fuego suave.','Apaga el fuego, añade el pescado en dados y tapa 4 min.','Los ñoquis, en agua hirviendo con sal: salen en cuanto flotan, 1-2 min, y van directos a la salsa.','Albahaca fresca fuera del fuego.']},
+     tip:['Saltea los ñoquis con parte del aceite hasta dorarse, 5-6 min, y resérvalos. Pocha la cebolla con el aceite que queda, 5 min.','Añade el tomate triturado y deja reducir 8-10 min a fuego suave.','Apaga el fuego, añade el pescado en dados y tapa 4 min.','Devuelve los ñoquis al final, mezclando solo lo justo para que no se ablanden.','Albahaca fresca fuera del fuego.']},
     {title:'Cuscús con pescado y limón', macros:'P 32 · C 28 · G 5 · 281 kcal',
      ing:'28 g de cuscús (seco) · 160 g de merluza o rosada · 50 g de zanahoria · 30 g de cebolla · 3 g de AOVE · unas gotas de limón · cilantro',
      tip:['Hidrata el cuscús con el mismo volumen de caldo hirviendo, tapado 5 min y sin fuego. Suéltalo con un tenedor.','Mientras, saltea la cebolla y la zanahoria en juliana con el aceite, 6 min.','El pescado a la plancha bien caliente, 3-4 min por lado según el grosor.','Mezcla el cuscús con la verdura, el limón y el cilantro, y el pescado encima.']},
@@ -879,14 +894,14 @@ let menuVitasane = {
      "dias": "Días 1 y 2",
      "alm": {
       "t": "Ñoquis con boloñesa de ternera",
-      "m": "P 46 · C 39 · G 14 · 468 kcal",
-      "i": "100 g de ñoquis · 190 g de ternera picada magra · 120 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 3 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto",
+      "m": "P 46 · C 39 · G 17 · 493 kcal",
+      "i": "100 g de ñoquis · 190 g de ternera picada magra · 120 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 6 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto",
       "p": [
-       "Sofríe la cebolla, el ajo y la zanahoria rallada con el aceite, 6-8 min.",
-       "Añade la ternera picada, 6-8 min, hasta que pierda el color rosado.",
+       "Los ñoquis primero: saltéalos en la sartén con la mitad del aceite hasta dorarse, 5-6 min, y resérvalos. No se cuecen.",
+       "En la misma sartén, sofríe la cebolla, el ajo y la zanahoria rallada con el aceite que queda, 6-8 min, y añade la ternera picada otros 6-8, hasta que pierda el color rosado.",
        "Echa el tomate triturado, el orégano y el laurel, y deja reducir 15 min a fuego lento.",
-       "Los ñoquis al final, en agua hirviendo con sal: sácalos en cuanto suban a la superficie, 1-2 min. Pasado ese punto se deshacen.",
-       "Quita el laurel y mezcla los ñoquis con la salsa."
+       "Quita el laurel y devuelve los ñoquis al final, mezclando solo lo justo: si entran antes se ablandan y pierden la costra.",
+       "Orégano fresco al servir."
       ]
      },
      "cena": {
@@ -923,10 +938,10 @@ let menuVitasane = {
       "m": "P 33 · C 20 · G 8 · 282 kcal",
       "i": "50 g de ñoquis · 175 g de merluza o rosada · 80 g de tomate triturado · 30 g de cebolla · 5 g de AOVE · albahaca",
       "p": [
-       "Pocha la cebolla con el aceite, 5 min.",
+       "Saltea los ñoquis con parte del aceite hasta dorarse, 5-6 min, y resérvalos. Pocha la cebolla con el aceite que queda, 5 min.",
        "Añade el tomate triturado y deja reducir 8-10 min a fuego suave.",
        "Apaga el fuego, añade el pescado en dados y tapa 4 min.",
-       "Los ñoquis, en agua hirviendo con sal: salen en cuanto flotan, 1-2 min, y van directos a la salsa.",
+       "Devuelve los ñoquis al final, mezclando solo lo justo para que no se ablanden.",
        "Albahaca fresca fuera del fuego."
       ]
      }
@@ -938,7 +953,7 @@ let menuVitasane = {
       "m": "P 49 · C 38 · G 14 · 481 kcal",
       "i": "100 g de ñoquis · 120 g de gambas peladas · 120 g de anillas de calamar · 70 g de pimiento rojo · 40 g de cebolla · 60 g de tomate · 9 g de AOVE · 1 diente de ajo (5 g) · perejil",
       "p": [
-       "Aquí los ñoquis NO se cuecen: se saltean directamente en la sartén con un poco de aceite hasta dorarse, 5-6 min. Quedan crujientes por fuera y tiernos dentro, bastante mejor que hervidos.",
+       "Los ñoquis, salteados en la sartén con un poco de aceite hasta dorarse, 5-6 min. Crujientes por fuera y tiernos dentro.",
        "Sácalos y reserva. En la misma sartén, el ajo, la cebolla y el pimiento, 5 min.",
        "Añade el tomate, 3 min.",
        "Las gambas, 1-2 min.",
@@ -1598,6 +1613,8 @@ let ingredientNotes = [
   {t:'Choco (sepia)', d:'16 g de proteína y 1,5 de grasa por 100 g, de lo más magro que puedes comprar. Dos formas de cocinarlo y ninguna intermedia: muy poco (2-3 min a la plancha) o mucho (guisado 25-30 min, u 8 en olla express). En el término medio queda correoso. Congelado va perfectamente para guisos, y además congelarlo rompe la fibra y lo ablanda.'},
   {t:'Calabaza', d:'7 g de hidrato por 100 g, así que cuenta algo como carbohidrato, pero menos que la patata (20 g). Hervida se deshace rápido y va bien para cremas; asada en air fryer es otro plato, porque caramelizan los azúcares. Para cremas, la cacahuete (butternut) es la más fiable.'},
   {t:'Formatos de Mercadona: comprar y gastar', d:'Las raciones están puestas para que los envases se acaben y no quede medio abierto en la nevera, y los platos agrupados en la semana que toca. Noodles frescos 200 g: los dos platos que los llevan están en las semanas 2 y 3, 200 g exactos cada una. Ñoquis en paquete de 500 g: los tres platos están juntos en la semana 1, dos almuerzos de 100 g y una cena de 50, que por repetirse dos días suman los 500. Queso fresco en tarrina de 250 g: las dos cenas que lo llevan están en la semana 2, a 62,5 g, tarrina entera. Mejillones al natural en lata de 111 g netos, 69 escurridos: 2 latas en el almuerzo y 1 en la cena. Claras pasteurizadas en botella de 300 ml y fiambre de pavo en paquete de 225 g. Comprueba el envase al comprar, que los formatos cambian.'},
+  {t:'Los ñoquis, salteados y no cocidos', d:'Los cinco platos de ñoquis van salteados en sartén hasta dorarse, 5-6 minutos, en lugar de hervidos: crujientes por fuera y tiernos dentro. Dos reglas para que salga bien: se hacen los primeros y se reservan, y vuelven al final mezclando solo lo justo, porque si entran antes en la salsa se ablandan y pierden la costra. Solo la boloñesa necesitó subir el aceite de 3 a 6 g para poder dorarlos; los demás ya llevaban bastante.'},
+  {t:'Burrata: gastarla la semana que la compres', d:'Vuelve al plan con una condición, que es justo lo que la sacó la primera vez: la tarrina de 250 g deja unos 150 g escurridos y 30 g de grasa, más de lo que suman tres cenas. Así que va a 50 g por cena, en tres cenas de la misma semana, y en platos sin aceite añadido y con proteína magra, porque la grasa la pone ella. Escúrrela y sécala con papel antes de trocearla.'},
   {t:'Queso fresco: la tarrina son 250 g', d:'Hay que acabarla en la semana o se pone mala. La ración es de 62,5 g, un cuarto de tarrina, y como cada cena se repite dos días, dos cenas con queso fresco en la misma semana la gastan entera. Están las dos juntas en la semana 2 y no aparece en ninguna otra: 250 g exactos, cero sobras. Donde antes había una tercera cena suelta ahora va parmesano, que aguanta semanas.'},
   {t:'Noodles: el paquete son 200 g', d:'Las raciones están ajustadas para que el paquete cuadre siempre: 100 g en el almuerzo y 50 g en la cena. Un paquete da dos almuerzos, o un almuerzo y dos cenas, o cuatro cenas. Empareja los platos de noodles dentro de la misma semana y con 2-3 días de margen como mucho, porque la bolsa abierta aguanta poco en la nevera. Lo que sobre, al congelador: se congela bien y pasa directo de congelador al wok.'},
   {t:'Guisantes congelados en el wok', d:'No los eches congelados al principio: el hielo baja la temperatura del wok y todo se cuece al vapor en lugar de saltearse. Escáldalos 2 min en un bol con agua hirviendo, escúrrelos y SÉCALOS con papel; van al final, con los noodles y la soja, 1-2 min solo para calentarlos. Si vas con prisa, échalos congelados al final, tapa 2 min y destapa otro minuto a fuego fuerte para evaporar el agua. Lo que no conviene es descongelarlos del todo y dejarlos reposar: se arrugan y pierden el verde.'},
@@ -1764,7 +1781,7 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-10-27f';
+const PLAN_VERSION_DEFAULT = '2026-10-31b';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 let envases = {
@@ -2224,20 +2241,32 @@ const PRUEBAS = {
                  nota: 'Semana de sobras: 100 g de ñoquis y 190 g de carne picada en la comida, 120 g de calabacín en la cena. Saca esta noche los filetes para el sábado.'},
   '2026-10-29': {alm: 'Ñoquis cremosos con pollo y champiñones 🥫', cena: 'Tortilla de calabacín con claras 🥚',
                  nota: 'Semana de sobras: la comida gasta 100 g de ñoquis, los 70 ml de leche evaporada y 80 g de champiñones de golpe. La cena, 200 g de calabacín.'},
-  '2026-10-30': {alm: 'Ñoquis salteados con gambas y calamar', cena: 'Hamburguesa de ternera con ensalada',
-                 nota: 'Semana de sobras: últimos 100 g de ñoquis en la comida y 120 g de picada en la cena. Con esto los ñoquis quedan en 10 g, es decir, en nada.'},
+  '2026-10-30': {alm: 'Ñoquis salteados con gambas y calamar',
+                 nota: 'Semana de sobras: últimos 100 g de ñoquis en la comida. La mozzarella sale del plan; si te sobra, congélala en porciones de 60 g y úsala solo para gratinar.'},
   '2026-10-31': {alm: 'Wok de ternera con noodles',
-                 nota: 'Semana de sobras: 170 g de los filetes, los últimos 100 g de calabacín y los champiñones que queden. La cena ya vuelve al menú.'},
+                 cena: {t:'Tortilla de claras con queso fresco y tomate', m:'P 33 · C 27 · G 9 · 315 kcal',
+                        i:'200 ml de claras · 60 g de queso fresco en dados · 150 g de tomate en rodajas · 25 g de cuscús en seco · 3 g de AOVE · orégano, sal',
+                        p:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min, y suéltalo con un tenedor.','Bate las claras con sal. Sin huevo entero: el queso fresco ya pone los 5 g de grasa que lleva el plato.','Sartén a fuego bajo con el aceite, 3-4 min. Sácala cuando aún parezca poco hecha: termina de cuajarse fuera del fuego.','El tomate en rodajas y el queso fresco en dados, en crudo por encima.','Orégano al servir.']},
+                 nota: 'Semana de sobras: 170 g de filetes, los últimos 100 g de calabacín y los champiñones que queden en la comida. La cena empieza a gastar la tarrina de queso fresco y las claras.'},
   '2026-11-01': {alm: 'Estofado de ternera con patata',
-                 nota: 'Último día de la semana de sobras: 180 g de filetes y, en lugar del vino, el caldo de pollo que quede. Desde mañana, menú normal.'}
+                 cena: {t:'Revuelto de claras con gambas y queso fresco', m:'P 47 · C 21 · G 9 · 350 kcal',
+                        i:'200 ml de claras · 70 g de gambas (una bolsa del congelador) · 60 g de queso fresco · 120 g de calabacín · 20 g de cuscús en seco · 2 g de AOVE · ajo, perejil',
+                        p:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min.','Saltea el calabacín en dados con el aceite y el ajo, 5-6 min, y escúrrelo bien si suelta agua.','Las gambas, 1-2 min: pasadas de ahí se ponen duras.','Baja el fuego al mínimo, echa las claras y remueve sin parar.','Sácalo cuando aún parezca poco hecho y añade el queso fresco en dados y el perejil fuera del fuego.']},
+                 nota: 'Último día de la semana de sobras: 180 g de filetes y el caldo que quede en lugar del vino. La cena remata los 120 g de queso fresco y los 400 ml de claras. Desde mañana, menú normal.'}
 };
 function pruebaDe(info){ return PRUEBAS[info.key] || null; }
 
 function platoDelDia(slot, info){
   const pr = pruebaDe(info);
   if(pr && pr[slot]){
+    const v = pr[slot];
+    // Un plato suelto, escrito aquí mismo: para gastar algo que no está en el recetario.
+    if(typeof v === 'object' && v.t){
+      return {title:v.t, macros:v.m, ing:v.i, tip:pasosDe(v), prueba:true,
+              partido:false, cocina:true, pareja:null};
+    }
     const lista = slot === 'alm' ? recetario.alm : recetario.cena;
-    const r = lista.find(x => x.title === pr[slot]);
+    const r = lista.find(x => x.title === v);
     if(r) return {title:r.title, macros:r.macros, ing:r.ing, tip:r.tip, prueba:true,
                   partido:false, cocina:true, pareja:null};
   }
@@ -3542,7 +3571,6 @@ const INGREDIENTES = [
   [/queso de untar/i,                    'Queso de untar light',         'Lácteos y huevos'],
   [/queso rallado/i,                     'Queso rallado light',          'Lácteos y huevos'],
   [/queso fresco/i,                      'Queso fresco',                 'Lácteos y huevos'],
-  [/mozzarella/i,                        'Mozzarella light',             'Lácteos y huevos'],
   [/parmesano/i,                         'Parmesano',                    'Lácteos y huevos'],
   [/provolone/i,                         'Provolone',                    'Lácteos y huevos'],
   [/requesón/i,                          'Requesón',                     'Lácteos y huevos'],
@@ -3958,8 +3986,32 @@ function refreshPlanVersion(){
   if(el) el.textContent = planVersion;
 }
 
+async function fijarCiclo(){
+  const f = document.getElementById('cicloLunes').value;
+  const n = parseInt(document.getElementById('cicloSemana').value, 10);
+  const msg = document.getElementById('cicloMsg');
+  if(!f){ msg.textContent = 'Elige la fecha del lunes de arranque.'; msg.className = 'plan-msg show err'; return; }
+  const d = new Date(f + 'T12:00:00');
+  if(d.getDay() !== 1){ msg.textContent = 'Esa fecha no es un lunes. El ciclo siempre arranca en lunes.'; msg.className = 'plan-msg show err'; return; }
+  settings.anclaMenu = lunesDe(d);
+  settings.semanaMenu = n;
+  await saveSettings();
+  renderAll();
+  refreshCiclo();
+  msg.textContent = 'Listo: la semana del ' + f + ' es la semana ' + n + ' del ciclo.';
+  msg.className = 'plan-msg show ok';
+}
+
+function refreshCiclo(){
+  const el = document.getElementById('cicloActual');
+  if(el) el.textContent = 'semana ' + semanaMenuDe(new Date());
+  const f = document.getElementById('cicloLunes');
+  if(f && !f.value) f.value = lunesDe(new Date());
+}
+
 function openSettings(){
   renderDayToggles();
+  refreshCiclo();
   refreshPlanVersion();
   document.getElementById('planMsg').classList.remove('show');
   document.getElementById('sheetBackdrop').classList.add('open');
