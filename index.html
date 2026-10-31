@@ -1782,7 +1782,7 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-10-31h';
+const PLAN_VERSION_DEFAULT = '2026-10-31k';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 let envases = {
@@ -2251,11 +2251,16 @@ function rotDelBloque(info){
 // Devuelve el plato concreto del recetario para ese día, o null si toca la plantilla base.
 // Pruebas puntuales: un plato concreto para una fecha concreta, por encima del menú.
 const PRUEBAS = {
-  // Noviembre: adelantar los filetes de ternera que quedan en el congelador.
-  '2026-11-02': {alm: 'Salteado asiático de ternera con arroz',
-                 nota: 'En lugar del cuscús con ternera picada, para gastar los filetes que quedan congelados: una bolsa de 175 g hoy y otra el miércoles. Si te queda el resto suelto de 77 g, échalo hoy y haz la ración de 250.'},
-  '2026-11-04': {alm: 'Salteado asiático de ternera con arroz',
-                 nota: 'Segunda bolsa de 175 g de filetes. Con esta el congelador queda limpio de ternera en pieza hasta la semana del 16.'},
+  // Lo que quedó a medias en la semana del 2 se gasta a primeros de la del 9.
+  '2026-11-09': {alm: 'Ñoquis con boloñesa de ternera',
+                 nota: 'Gasta los 100 g de ñoquis y 140 de los 220 g de tomate triturado que sobraron de la semana pasada. No compres ñoquis esta semana.'},
+  '2026-11-10': {alm: 'Wok de pollo con noodles',
+                 nota: 'Gasta los 100 g de noodles que sobraron. Con estos, la semana pide 300 g: los 100 de casa más un paquete de 200, y no queda nada abierto.'},
+  // Los filetes que quedaban se comen el lunes y el martes: el finde no come en casa.
+  '2026-11-02': {alm: 'Wok de ternera con noodles',
+                 nota: 'Viene del sábado, que no comiste en casa: 175 g de los filetes congelados y 100 g de noodles.'},
+  '2026-11-03': {alm: 'Estofado de ternera con patata',
+                 nota: 'Viene del domingo: los últimos 175 g de filetes más el resto suelto de 77, haciendo la ración de 250. Con esto el congelador queda sin ternera en pieza.'},
   // SEMANA DE SOBRAS (27 oct - 1 nov 2026). Excepción por fechas: no toca el menú de
   // 6 semanas, la lista de la compra la recoge sola y el lunes 2 todo vuelve a su sitio.
   '2026-10-27': {cena: 'Ñoquis con pescado y tomate',
@@ -2266,16 +2271,14 @@ const PRUEBAS = {
                  nota: 'Semana de sobras: la comida gasta 100 g de ñoquis, los 70 ml de leche evaporada y 80 g de champiñones de golpe. La cena, 200 g de calabacín.'},
   '2026-10-30': {alm: 'Ñoquis salteados con gambas y calamar',
                  nota: 'Semana de sobras: últimos 100 g de ñoquis en la comida. La mozzarella sale del plan; si te sobra, congélala en porciones de 60 g y úsala solo para gratinar.'},
-  '2026-10-31': {alm: 'Wok de ternera con noodles',
-                 cena: {t:'Tortilla de claras con queso fresco y tomate', m:'P 33 · C 27 · G 9 · 315 kcal',
+  '2026-10-31': {cena: {t:'Tortilla de claras con queso fresco y tomate', m:'P 33 · C 27 · G 9 · 315 kcal',
                         i:'200 ml de claras · 60 g de queso fresco en dados · 150 g de tomate en rodajas · 25 g de cuscús en seco · 3 g de AOVE · orégano, sal',
                         p:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min, y suéltalo con un tenedor.','Bate las claras con sal. Sin huevo entero: el queso fresco ya pone los 5 g de grasa que lleva el plato.','Sartén a fuego bajo con el aceite, 3-4 min. Sácala cuando aún parezca poco hecha: termina de cuajarse fuera del fuego.','El tomate en rodajas y el queso fresco en dados, en crudo por encima.','Orégano al servir.']},
-                 nota: 'Semana de sobras: 170 g de filetes, los últimos 100 g de calabacín y los champiñones que queden en la comida. La cena empieza a gastar la tarrina de queso fresco y las claras.'},
-  '2026-11-01': {alm: 'Estofado de ternera con patata',
-                 cena: {t:'Revuelto de claras con gambas y queso fresco', m:'P 47 · C 21 · G 9 · 350 kcal',
+                 nota: 'No comes en casa: la comida se va al lunes. La cena sí, y empieza a gastar la tarrina de queso fresco y las claras.'},
+  '2026-11-01': {cena: {t:'Revuelto de claras con gambas y queso fresco', m:'P 47 · C 21 · G 9 · 350 kcal',
                         i:'200 ml de claras · 70 g de gambas (una bolsa del congelador) · 60 g de queso fresco · 120 g de calabacín · 20 g de cuscús en seco · 2 g de AOVE · ajo, perejil',
                         p:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min.','Saltea el calabacín en dados con el aceite y el ajo, 5-6 min, y escúrrelo bien si suelta agua.','Las gambas, 1-2 min: pasadas de ahí se ponen duras.','Baja el fuego al mínimo, echa las claras y remueve sin parar.','Sácalo cuando aún parezca poco hecho y añade el queso fresco en dados y el perejil fuera del fuego.']},
-                 nota: 'Último día de la semana de sobras: 180 g de filetes y el caldo que quede en lugar del vino. La cena remata los 120 g de queso fresco y los 400 ml de claras. Desde mañana, menú normal.'}
+                 nota: 'No comes en casa: la comida se va al martes. La cena remata los 120 g de queso fresco y los 400 ml de claras. Desde mañana, menú normal.'}
 };
 function pruebaDe(info){ return PRUEBAS[info.key] || null; }
 
