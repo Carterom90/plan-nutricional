@@ -451,10 +451,16 @@ table.rot .rtag.D{background:var(--descanso-soft); color:var(--descanso);}
   <div class="day-toggle-row" id="dayToggleRow"></div>
   <div class="section-title">Tipo de sesión</div>
   <div id="tiposSesionBox" style="margin-bottom:14px;"></div>
-  <div class="info-note" style="margin-bottom:0;">Los macros son iguales todos los días. El tipo de sesión determina qué rutina de cinta aparece en Hoy: los días de pierna no llevan impacto, y la inclinación solo se introduce en los tramos de caminata.</div>
+  <div class="info-note" style="margin-bottom:0;">Los macros son iguales todos los días. El tipo de sesión decide qué cinta aparece en Hoy: los días que llevan pierna (tren inferior y refuerzo) van suaves y sin impacto, y el 12% de inclinación solo entra los días de tren superior, que es cuando las piernas están descansadas.</div>
   <div class="section-title">Cómo cocinas</div>
   <div id="modoCocinaBox" style="margin-bottom:14px;"></div>
-  <div class="info-note" style="margin-bottom:0;">El menú no cambia: el plato se sigue repitiendo los dos días del bloque, así que la compra es la misma. Lo que cambia es si Hoy te dice de cocinar el doble y recalentar, o de hacerlo al momento cada día.</div>
+  <div class="info-note" style="margin-bottom:0;">Con el ciclo de 4 semanas cada día lleva plato propio, así que esto solo cambia el texto de Hoy: si te dice de cocinar al momento o de aprovechar algo que ya tengas hecho. La compra es la misma.</div>
+  <div class="section-title">Rotación del próximo ciclo</div>
+  <div class="plan-box">
+    <div id="rotBox" style="font-size:13px; color:var(--muted); margin-bottom:8px;"></div>
+    <div class="plan-btn-row"><button class="plan-btn primary" onclick="activarRotacionNueva()">Activar la rotación nueva</button></div>
+    <div id="rotMsg" class="plan-msg" style="display:none;"></div>
+  </div>
   <div class="section-title">Inicio del ciclo del menú</div>
   <div class="plan-box">
     <div style="font-size:13px; color:var(--muted); margin-bottom:8px;">
@@ -625,7 +631,7 @@ let verdurasAmpliacion = {
     {n:'Calabaza', c:'7,0 g/100g', t:'15-18 min'},
   ]
 };
-let excludedFoods = 'brócoli, miel, acelgas, judías verdes, encurtidos, pepino, espinacas, espárragos, endibia, coliflor, col (repollo, lombarda, coles de Bruselas), remolacha, alcachofa y plátano. Fuera también, por difíciles de encontrar: caballa, sardina y bacalao. Tampoco jengibre, ni fruta dentro de los platos (la fruta va sola, en sus tomas fijas; el tomate sí, y el gazpacho y el salmorejo también). Quesos: parmesano, queso fresco y burrata, esta última solo si se gasta en la semana que se compra. La mozzarella queda fuera. Fuera por precio, no por gusto: el pulpo, sustituido por calamar, choco y mejillones. Y fuera por nevera, porque no se gastan en una ración: aguacate, maíz y burrata';
+let excludedFoods = 'brócoli, miel, acelgas, judías verdes, encurtidos, pepino, espinacas, espárragos, endibia, coliflor, col (repollo, lombarda, coles de Bruselas), remolacha, alcachofa y plátano. Fuera también, por difíciles de encontrar: caballa, sardina y bacalao. Tampoco jengibre, ni fruta dentro de los platos (la fruta va sola, en sus tomas fijas; el tomate sí, y el gazpacho y el salmorejo también). Quesos: solo parmesano y queso fresco. Fuera la mozzarella, el queso de untar, el rallado light y el queso fresco batido. La burrata también se quitó: la unidad entera son 20 g de grasa y no cabe en el presupuesto de una cena. Fuera por precio, no por gusto: el pulpo, sustituido por calamar, choco y mejillones. Y fuera por nevera, porque no se gastan en una ración: aguacate y maíz';
 
 let recetasRef = [
   {id:'r5', tag:'legumbre', title:'Lentejas o garbanzos guisados', sub:'Domingos · olla express',
@@ -648,17 +654,17 @@ let recetario = {
     {title:'Carbonara con tirabuzones de lentejas 🥫🔴', macros:'P 48 · C 47 · G 11 · 477 kcal',
      ing:'65 g tirabuzones de lentejas (seco) · 90 ml leche evaporada · 90 g pollo · 1 yema · 40 g cebolla · 60 g champiñones',
      tip:['Cuece los tirabuzones de lentejas el tiempo del paquete, 7-9 min. Se pasan antes que la pasta de trigo: pruébalos un minuto antes.','El pollo a la plancha hasta dorarlo, 4-5 min por lado, y pásalo a la sartén con la cebolla y los champiñones, 5-6 min.','Incorpora la leche evaporada y deja reducir 2-3 min.','Retira del fuego ANTES de echar la yema y remueve rápido, o se cuaja y se corta la salsa.','Lleva menos carne que la de macarrones porque la pasta de lenteja ya aporta 25 g de proteína por 100 g.']},
-    {title:'Pollo al curry con arroz 🥫', macros:'P 49 · C 48 · G 6 · 443 kcal',
-     ing:'170 g pollo en dados · 90 ml leche evaporada · 40 g arroz en seco · 50 g cebolla · 60 g pimiento rojo · 5 g de curry en polvo · 1 diente de ajo (5 g) · comino al gusto',
+    {title:'Pollo al curry con arroz 🥫', macros:'P 50 · C 48 · G 6 · 446 kcal',
+     ing:'175 g pollo en dados · 90 ml leche evaporada · 40 g arroz en seco · 50 g cebolla · 60 g pimiento rojo · 5 g de curry en polvo · 1 diente de ajo (5 g) · comino al gusto',
      tip:['Tritura el tomate pelado, el vino y la leche evaporada: esa es la base de la salsa.','Rehoga la cebolla 4 min, añade el pollo troceado y séllalo 4-5 min.','Añade el calabacín en dados, 4 min más.','Echa el curry, el comino y la canela y remueve 30 segundos en seco: así sueltan el aroma.','Moja con la crema de tomate y deja 8-10 min a fuego medio hasta que espese, sin que llegue a hervir fuerte o la leche evaporada se corta.','El arroz, en olla express 4 min, y se añade al final o se sirve al lado.']},
-    {title:'Boloñesa con macarrones integrales 🍝', macros:'P 46 · C 43 · G 14 · 482 kcal',
-     ing:'50 g macarrones integrales (seco) · 180 g ternera picada de cadera · 120 g tomate triturado · 40 g cebolla · 40 g zanahoria rallada · 3 g AOVE · orégano y laurel al gusto',
+    {title:'Boloñesa con macarrones integrales 🍝', macros:'P 45 · C 43 · G 14 · 478 kcal',
+     ing:'50 g macarrones integrales (seco) · 175 g ternera picada de cadera · 120 g tomate triturado · 40 g cebolla · 40 g zanahoria rallada · 3 g AOVE · orégano y laurel al gusto',
      tip:['Sofríe la cebolla y la zanahoria rallada con el aceite, 6-8 min. La zanahoria aporta dulzor natural sin añadir azúcar.','Añade la ternera picada y deshazla con la cuchara, 6-8 min, hasta que pierda el color rosado.','Echa el tomate triturado, el orégano y el laurel, y deja reducir al menos 15 min a fuego lento.','Cuece los macarrones al dente, 9-11 min, y mézclalos con la salsa.','Quita el laurel antes de servir.']},
-    {title:'Pasta de lentejas cremosa con pollo 🥫🔴', macros:'P 48 · C 50 · G 9 · 473 kcal',
-     ing:'70 g tirabuzones de lentejas (seco) · 110 g pollo en taquitos · 75 ml leche evaporada · 70 g pimiento rojo · 40 g cebolla · 3 g AOVE · nuez moscada y pimienta al gusto',
+    {title:'Pasta de lentejas cremosa con pollo 🥫🔴', macros:'P 43 · C 50 · G 9 · 453 kcal',
+     ing:'70 g tirabuzones de lentejas (seco) · 90 g pollo en taquitos · 75 ml leche evaporada · 70 g pimiento rojo · 40 g cebolla · 3 g AOVE · nuez moscada y pimienta al gusto',
      tip:['Cuece los tirabuzones el tiempo del paquete, 7-9 min.','El pollo en taquitos y el pimiento a la plancha, 5-6 min, hasta que el pollo esté dorado.','Añade la leche evaporada y deja espesar 3-4 min a fuego suave, sin que llegue a hervir.','Nuez moscada y pimienta fuera del fuego. La nuez moscada es clave aquí.']},
-    {title:'Arroz caldoso con pollo', macros:'P 50 · C 46 · G 12 · 492 kcal',
-     ing:'170 g de pollo en taquitos · 45 g de arroz en seco · 100 g de champiñones laminados · 60 g de pimiento rojo · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo de pollo · 8 g de AOVE · 1 diente de ajo (5 g) · pimentón, azafrán y laurel',
+    {title:'Arroz caldoso con pollo', macros:'P 51 · C 46 · G 12 · 496 kcal',
+     ing:'175 g de pollo en taquitos · 45 g de arroz en seco · 100 g de champiñones laminados · 60 g de pimiento rojo · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo de pollo · 8 g de AOVE · 1 diente de ajo (5 g) · pimentón, azafrán y laurel',
      tip:['Sella el pollo 3-4 min en la cazuela destapada y resérvalo.','Sofríe la cebolla, el pimiento y los champiñones, 5 min. Añade el ajo y el pimentón FUERA DEL FUEGO para que no amargue, y luego el tomate, 2 min.','Vuelve a poner el pollo, añade el caldo caliente, el azafrán y el laurel, y cuando rompa a hervir echa el arroz: 16-18 min sin tapar, a fuego medio.','El caldoso no va en olla express. Necesitas verlo para controlar el punto de caldo, y el arroz solo tarda 18 min. La olla úsala para el sofrito y ya.','Tiene que quedar más líquido de lo que crees, porque el arroz sigue absorbiendo en el plato. Si al apagar parece una sopa, está bien; si parece un arroz meloso, en dos minutos lo tienes seco.','Este se come recién hecho: de un día para otro el arroz se pasa.']},
     {title:'Salteado asiático de ternera con arroz', macros:'P 42 · C 40 · G 13 · 445 kcal',
      ing:'40 g arroz en seco · 175 g cadera de ternera en tiras · 50 g zanahoria en juliana · 60 g pimiento verde · 15 g salsa de soja · 4 g AOVE · 1 diente de ajo (5 g) · 3 g de sésamo',
@@ -666,26 +672,26 @@ let recetario = {
     {title:'Estofado de ternera con patata', macros:'P 41 · C 41 · G 13 · 445 kcal',
      ing:'170 g patata cruda pelada · 175 g cadera de ternera en dados · 60 g zanahoria · 40 g cebolla · 4 g AOVE · 3 g de pimentón · laurel · 50 ml de vino tinto (opcional)',
      tip:['Sella la ternera en dados en la olla con el aceite, 4-5 min, hasta dorarla por fuera.','Añade la cebolla y la zanahoria, 5 min.','Echa el pimentón y remueve 30 segundos fuera del fuego, y moja con el vino tinto si lo usas, 2 min.','Añade la patata chascada, el laurel y agua hasta cubrir.','Olla express, 15-18 min desde que coge presión. Lo dejas y te olvidas.','Aguanta perfectamente dos días y mejora de un día para otro.']},
-    {title:'Pollo a la mostaza con arroz 🥫', macros:'P 48 · C 39 · G 8 · 420 kcal',
-     ing:'40 g de arroz en seco · 180 g pollo · 50 ml leche evaporada · 15 g mostaza (a la antigua queda mejor) · 40 g cebolla · 3 g AOVE',
-     tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','Sella el pollo a la plancha, 4-5 min por lado, y resérvalo.','Sofríe la cebolla 5 min en la misma sartén.','Añade la mostaza y la leche evaporada y deja reducir 5 min a fuego suave, sin que hierva o se corta.','Devuelve el pollo a la salsa 2 min para que se impregne. La mostaza a la antigua queda mejor.']},
+    {title:'Pollo en salsa de cebolla con arroz 🥫', macros:'P 47 · C 41 · G 10 · 442 kcal',
+     ing:'35 g de arroz en seco · 175 g pollo · 120 g cebolla en juliana · 50 ml leche evaporada · 5 g AOVE · 2 g de pimentón dulce · laurel, pimienta',
+     tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','Sella el pollo 2-3 min, solo para que coja color por fuera, y resérvalo. No lo hagas del todo aquí: termina en la salsa.','La cebolla, muy despacio: en la misma sartén, con el jugo que ha soltado el pollo, fuego medio-bajo y 10 min. Tiene que quedar dorada y dulce, no transparente. Este paso es el plato entero; si lo haces en tres minutos, la salsa no sabe a nada.','Si ves que se seca, una cucharada de agua y sigues.','El pimentón, con el fuego apagado: remueve 15 segundos con el calor residual y vuelve al fuego. Si cae sobre aceite caliente, amarga.','Devuelve el pollo con la leche evaporada y el laurel, fuego al mínimo, 5 min. QUE NO HIERVA: la leche evaporada se corta y se queda con grumos.','Fuera la mostaza: se quitó porque comprar un bote para 15 g no merecía la pena. La cebolla pochada despacio hace el mismo papel.']},
     {title:'Salpicón de mejillones, gambas y patata', macros:'P 42 · C 40 · G 11 · 427 kcal',
      ing:'2 latas de mejillones al natural (138 g escurridos) · 70 g gambas peladas cocidas · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 135 g patata cruda pelada en dados · 8 g AOVE · 10 g de vinagre · perejil al gusto',
      tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','Escurre bien las dos latas de mejillones. Pica el pimiento, la cebolla y el tomate en dados del mismo tamaño que la patata.','Mezcla todo con las gambas, el aceite, el vinagre y el perejil.','Un rato de nevera hace que la cebolla y el pimiento suelten sabor, pero no es obligatorio.','Cero cocina más allá de la patata.']},
-    {title:'Paella de pollo y gambas', macros:'P 55 · C 45 · G 9 · 484 kcal',
-     ing:'40 g arroz en seco (40 g en seco) · 150 g pollo en dados · 70 g gambas peladas · 50 g guisantes · 60 g pimiento rojo · 40 g cebolla · 30 g tomate triturado · 6 g AOVE · 150 ml de caldo · 1 diente de ajo (5 g) · 3 g de pimentón · unas hebras de azafrán',
+    {title:'Paella de pollo y gambas', macros:'P 53 · C 45 · G 9 · 473 kcal',
+     ing:'40 g arroz en seco (40 g en seco) · 140 g pollo en dados · 70 g gambas peladas · 50 g guisantes · 60 g pimiento rojo · 40 g cebolla · 30 g tomate triturado · 6 g AOVE · 150 ml de caldo · 1 diente de ajo (5 g) · 3 g de pimentón · unas hebras de azafrán',
      tip:['Dora el pollo y resérvalo. Sofríe cebolla y pimiento, añade el tomate y al final una cucharadita de pimentón: si se quema, amarga todo el plato.','Infusiona el azafrán en agua caliente aparte y viértelo — el colorante no da ese aroma.','Añade arroz, caldo, pollo, gambas y guisantes. 18-20 min a fuego medio-bajo y deja reposar 10 min antes de comer.']},
-    {title:'Arroz con tomate y huevo', macros:'P 44 · C 41 · G 14 · 471 kcal',
-     ing:'40 g arroz en seco · 2 huevos · 110 g pollo en taquitos · 150 g tomate triturado · 40 g cebolla · 2 g AOVE · 1 diente de ajo (5 g) · orégano y pimienta al gusto',
+    {title:'Arroz con tomate y huevo', macros:'P 39 · C 41 · G 14 · 446 kcal',
+     ing:'40 g arroz en seco · 2 huevos · 90 g pollo en taquitos · 150 g tomate triturado · 40 g cebolla · 2 g AOVE · 1 diente de ajo (5 g) · orégano y pimienta al gusto',
      tip:['Sofríe cebolla y ajo, añade el tomate y deja reducir 15 min a fuego lento: es lo que concentra el sabor.','Variante más ligera 🥚 (P 46 · C 42 · G 8 · 424 kcal): 1 huevo entero + 100 ml de claras pasteurizadas y el pollo a 130 g. La clara cuaja igual a la plancha, solo tarda un poco menos.','Sin el pollo el plato se queda en 22 g de proteína. Alternativa: 80 g de atún.']},
-    {title:'Pollo asado con boniato', macros:'P 47 · C 41 · G 8 · 423 kcal',
-     ing:'190 g de pechuga entera (sin filetear) · 170 g de boniato crudo pelado · 60 g zanahoria · 40 g cebolla · 5 g AOVE · 1 diente de ajo (5 g) · 3 g de pimentón · tomillo · unas gotas de limón',
+    {title:'Pollo asado con boniato', macros:'P 44 · C 41 · G 8 · 412 kcal',
+     ing:'175 g de pechuga entera (sin filetear) · 170 g de boniato crudo pelado · 60 g zanahoria · 40 g cebolla · 5 g AOVE · 1 diente de ajo (5 g) · 3 g de pimentón · tomillo · unas gotas de limón',
      tip:['Boniato en gajos a la air fryer, 200°C, 18-20 min, hasta que los bordes se caramelicen.','Esta es la excepción a hacer la carne a la plancha: una pechuga entera necesita calor envolvente para hacerse por dentro sin quemarse por fuera.','Deja reposar 5 min tapada con aluminio antes de cortarla. Si la abres recién sacada pierde todo el jugo en la tabla.']},
-    {title:'Pollo asado tradicional (contramuslo)', macros:'P 37 · C 38 · G 21 · 491 kcal',
-     ing:'190 g de contramuslo con piel · 100 g pimiento rojo · 60 g cebolla · 50 g zanahoria · 115 g de boniato crudo pelado · 30 ml de vino blanco · 1 diente de ajo (5 g) · 3 g de pimentón · orégano al gusto · sin aceite añadido (la piel ya suelta grasa)',
+    {title:'Pollo asado tradicional (contramuslo)', macros:'P 34 · C 38 · G 20 · 468 kcal',
+     ing:'175 g de contramuslo con piel · 100 g pimiento rojo · 60 g cebolla · 50 g zanahoria · 115 g de boniato crudo pelado · 30 ml de vino blanco · 1 diente de ajo (5 g) · 3 g de pimentón · orégano al gusto · sin aceite añadido (la piel ya suelta grasa)',
      tip:['Boniato en gajos a la air fryer, 200°C, 18-20 min, hasta que los bordes se caramelicen.','Pon las verduras y el boniato en la base de la cesta, con el ajo, el pimentón, el orégano y el vino.','El contramuslo encima, con la piel hacia abajo, para que el jugo caiga sobre las verduras.','Air fryer 190°C, 22-25 min.','Dale la vuelta los últimos 10 min, con la piel hacia arriba, para que quede crujiente.','Sin aceite añadido: la piel ya suelta la grasa suficiente.','Por cada 200 g: pechuga 2 g de grasa, contramuslo sin piel 12 g, con piel 22 g. Por eso este plato va sin aceite.']},
-    {title:'Ensalada de pasta de lentejas con pollo 🔴', macros:'P 45 · C 44 · G 11 · 451 kcal',
-     ing:'65 g tirabuzones de lentejas (seco) · 110 g pollo a la plancha en tiras · 100 g tomate · 60 g pimiento rojo · 30 g cebolla morada · 10 g pistachos picados · 3 g AOVE · 10 g de vinagre · albahaca fresca',
+    {title:'Ensalada de pasta de lentejas con pollo 🔴', macros:'P 40 · C 44 · G 11 · 435 kcal',
+     ing:'65 g tirabuzones de lentejas (seco) · 90 g pollo a la plancha en tiras · 100 g tomate · 60 g pimiento rojo · 30 g cebolla morada · 10 g pistachos picados · 3 g AOVE · 10 g de vinagre · albahaca fresca',
      tip:['Cuece los tirabuzones 7-9 min, enfríalos bajo el grifo y escúrrelos bien.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras. Déjalo enfriar.','Mezcla en frío con el tomate, el pimiento y la cebolla morada.','Aliña con el aceite, el vinagre y la albahaca. Los pistachos al final, para que no se ablanden.']},
     {title:'Ensalada campera con atún y patata', macros:'P 42 · C 41 · G 14 · 458 kcal',
      ing:'160 g patata cruda pelada en dados · 130 g atún al natural · 1 huevo duro · 120 g tomate · 60 g pimiento rojo · 30 g cebolla morada · 6 g AOVE · 10 g de vinagre · sal',
@@ -696,23 +702,23 @@ let recetario = {
     {title:'Lasaña de calabacín 🥫', macros:'P 42 · C 41 · G 15 · 467 kcal',
      ing:'250 g calabacín en láminas · 120 g ternera picada de cadera · 100 g tomate triturado · 40 g cebolla · 50 ml leche evaporada · 11 g parmesano rallado · 30 g de cuscús en seco · 2 g AOVE · orégano, sal y pimienta al gusto',
      tip:['Sala las láminas de calabacín y déjalas 15 min soltando agua sobre papel de cocina antes de montar, o la lasaña queda aguada.','Sofríe la cebolla 5 min, añade la ternera picada 6-8 min y luego el tomate triturado; deja reducir 10 min.','Monta capas alternando calabacín y carne.','Cubre con la leche evaporada y el parmesano.','Air fryer 180°C, 15-18 min, hasta que la superficie esté dorada.','Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.']},
-    {title:'Berenjenas rellenas de ternera', macros:'P 48 · C 46 · G 17 · 529 kcal',
-     ing:'250 g berenjena (2 pequeñas) · 180 g ternera picada de cadera · 100 g tomate triturado · 40 g cebolla · 11 g parmesano rallado · 30 g de arroz en seco · 3 g AOVE',
+    {title:'Berenjenas rellenas de ternera', macros:'P 47 · C 46 · G 17 · 525 kcal',
+     ing:'250 g berenjena (2 pequeñas) · 175 g ternera picada de cadera · 100 g tomate triturado · 40 g cebolla · 11 g parmesano rallado · 30 g de arroz en seco · 3 g AOVE',
      tip:['Corta las berenjenas por la mitad, vacíalas y pica la carne que saques.','Hornéalas 15 min en air fryer a 180°C.','Mientras, la ternera picada a la plancha 6-8 min con la cebolla, la pulpa de la berenjena y el tomate triturado.','Rellena, cubre con el parmesano y gratina 5 min más a 180°C.','Cuece el arroz en olla express, 4 min, y resérvalo.']},
-    {title:'Pimientos rellenos de pollo', macros:'P 48 · C 42 · G 10 · 448 kcal',
-     ing:'220 g pimiento rojo (2 grandes) · 170 g pollo picado · 60 g tomate triturado · 30 g cebolla · 11 g parmesano rallado · 30 g de arroz en seco · 3 g AOVE · comino y orégano al gusto',
+    {title:'Pimientos rellenos de pollo', macros:'P 49 · C 42 · G 10 · 454 kcal',
+     ing:'220 g pimiento rojo (2 grandes) · 175 g pollo picado · 60 g tomate triturado · 30 g cebolla · 11 g parmesano rallado · 30 g de arroz en seco · 3 g AOVE · comino y orégano al gusto',
      tip:['El pollo picado, primero a la plancha 6-8 min con la cebolla y el tomate, hasta que pierda el color rosado.','Corta los pimientos por arriba, quítales las semillas y rellénalos.','Cubre con el parmesano y air fryer 180°C, 18-20 min: los grandes tardan más de lo que parece.','Cuece el arroz en olla express, 4 min, y resérvalo.','Comino y orégano en la carne, no por encima.']},
     {title:'Wok de ternera con noodles', macros:'P 50 · C 44 · G 15 · 511 kcal',
      ing:'100 g de noodles frescos · 175 g de cadera de ternera en tiras · 60 g de guisantes · 100 g de calabacín · 70 g de pimiento rojo · 60 g de champiñones · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g)',
      tip:['Fuego muy fuerte y por tandas: primero el pimiento y el calabacín (4-5 min), luego los champiñones (2 min), después la ternera (2-3 min y ni uno más).','Los guisantes, escaldados 2 min en agua hirviendo y bien secos, van al FINAL con los noodles: 1-2 min solo para calentarlos.','Incorpora los noodles, la soja y el ajo, y saltea todo junto 1-2 min.','Los noodles frescos van directos de la bolsa al wok, sin cocer ni enjuagar: solo necesitan ese minuto o dos finales para calentarse y coger la salsa.','Antes llevaba arroz. Los noodles le pegan más al wok, absorben la salsa de soja y aportan 7,7 g de proteína frente a los 2,5 que daría el arroz en esa cantidad.']},
-    {title:'Revuelto de champiñones con pollo 🥚', macros:'P 48 · C 36 · G 17 · 489 kcal',
-     ing:'2 huevos enteros · 120 g pollo en taquitos · 120 g champiñones · 40 g cebolla · 35 g de arroz en seco · 4 g AOVE',
+    {title:'Revuelto de champiñones con pollo 🥚', macros:'P 53 · C 36 · G 17 · 509 kcal',
+     ing:'2 huevos enteros · 140 g pollo en taquitos · 120 g champiñones · 40 g cebolla · 35 g de arroz en seco · 4 g AOVE',
      tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','Saltea la cebolla 4 min y añade los champiñones, 6-8 min, hasta que suelten el agua y se evapore.','El pollo en taquitos, 5-6 min, hasta que esté hecho.','Baja el fuego al mínimo, echa el huevo con las claras y remueve sin parar.','Sácalo cuando aún parezca poco hecho: se termina fuera del fuego con el calor residual.','El huevo entero que dejas es el que da color y cremosidad; solo con claras queda blanco y algo insípido.','No aguanta de un día para otro: hazlo al momento.']},
-    {title:'Ensalada de brotes con pollo y queso fresco', macros:'P 48 · C 30 · G 12 · 420 kcal',
-     ing:'80 g brotes o canónigos · 100 g tomate · 160 g pollo a la plancha · 62,5 g de queso fresco (¼ de la tarrina de 250 g) · 35 g de cuscús en seco · 3 g AOVE · 10 g de vinagre de Módena',
+    {title:'Ensalada de brotes con pollo y queso fresco', macros:'P 51 · C 30 · G 12 · 432 kcal',
+     ing:'80 g brotes o canónigos · 100 g tomate · 175 g pollo a la plancha · 62,5 g de queso fresco (¼ de la tarrina de 250 g) · 35 g de cuscús en seco · 3 g AOVE · 10 g de vinagre de Módena',
      tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','El pollo a la plancha bien caliente, 4-5 min por lado, y córtalo en tiras.','Monta sobre los brotes el tomate, el cuscús y el pollo aún templado.','El queso fresco en dados por encima, y aliña con el aceite y el vinagre de Módena al servir.','Es la ensalada del menú de tu nutricionista, con queso fresco en lugar de mozzarella. Sin pistachos, para que la tarrina entera de queso entre en los macros.','El queso fresco en dados, no rallado ni batido.']},
-    {title:'Ensalada de pollo con pistachos', macros:'P 47 · C 37 · G 14 · 463 kcal',
-     ing:'80 g lechuga · 100 g tomate · 30 g cebolla morada · 170 g pollo a la plancha · 13 g pistachos · 35 g de arroz en seco · 6 g AOVE · unas gotas de limón',
+    {title:'Ensalada de pollo con pistachos', macros:'P 48 · C 37 · G 14 · 466 kcal',
+     ing:'80 g lechuga · 100 g tomate · 30 g cebolla morada · 175 g pollo a la plancha · 13 g pistachos · 35 g de arroz en seco · 6 g AOVE · unas gotas de limón',
      tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras.','Monta sobre la lechuga el tomate, la cebolla morada y el arroz.','Los pistachos al final, con el aceite y unas gotas de limón.','Los pistachos ya aportan grasa, así que el aceite se queda en 6 g.']},
     {title:'Ensalada de ternera, rúcula y parmesano', macros:'P 51 · C 32 · G 21 · 521 kcal',
      ing:'70 g rúcula · 100 g tomate · 175 g cadera de ternera a la plancha en tiras (1 bolsa) · 15 g parmesano en virutas · 10 g pistachos · 35 g de cuscús en seco · 2 g AOVE · 10 g de vinagre balsámico',
@@ -720,23 +726,23 @@ let recetario = {
     {title:'Ensalada de atún, huevo y pistachos', macros:'P 45 · C 38 · G 14 · 460 kcal',
      ing:'80 g lechuga · 120 g tomate · 50 g pimiento rojo · 130 g atún al natural · 1 huevo duro · 10 g pistachos · 35 g de arroz en seco · 2 g AOVE',
      tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','Enfría el huevo en agua fría nada más sacarlo: pela mejor.','Monta sobre la lechuga el tomate, el pimiento y el arroz, con el atún escurrido.','El huevo en cuartos y los pistachos por encima, y el aceite al servir.']},
-    {title:'Dorada con pisto', macros:'P 58 · C 45 · G 12 · 520 kcal',
-     ing:'180 g dorada · 70 g gambas · 150 g calabacín · 80 g pimiento rojo · 100 g tomate triturado · 40 g de cuscús en seco · 40 g cebolla · 3 g AOVE',
+    {title:'Dorada con pisto', macros:'P 56 · C 45 · G 12 · 512 kcal',
+     ing:'170 g dorada · 70 g gambas · 150 g calabacín · 80 g pimiento rojo · 100 g tomate triturado · 40 g de cuscús en seco · 40 g cebolla · 3 g AOVE',
      tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','La dorada a la plancha, 3-4 min piel abajo y 1-2 min el otro lado.','El pisto aguanta 4 días en nevera y mejora de un día para otro: hazlo en cantidad.','Antes era caballa. La dorada tiene 4 g de grasa por 100 g frente a los 14 de la caballa, así que el plato cuadra sin compensar nada.']},
-    {title:'Salmón con champiñones y nueces ⚠️', macros:'P 44 · C 38 · G 19 · 499 kcal',
-     ing:'110 g salmón · 70 g gambas · 120 g champiñones · 40 g cebolla · 40 g de arroz en seco · 6 g nueces · sin aceite añadido',
+    {title:'Salmón con champiñones y nueces ⚠️', macros:'P 47 · C 38 · G 21 · 529 kcal',
+     ing:'125 g salmón · 70 g gambas · 120 g champiñones · 40 g cebolla · 40 g de arroz en seco · 6 g nueces · sin aceite añadido',
      tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','Salmón a la plancha: piel abajo 3-4 min, vuelta y 1-2 min más. Las nueces, tostadas 2 min en seco antes de añadirlas.','AJUSTE OBLIGATORIO: el salmón tiene 12 g de grasa por 100 g y el plato llega a 21, con 16 de presupuesto. Son 5 g de más (45 kcal). Esa noche cena sin aceite añadido y quita también el queso fresco si la cena lo lleva.','Por eso el plato va sin AOVE y con solo 6 g de nueces: el salmón ya aporta toda la grasa.']},
     {title:'Noodles salteados con ternera', macros:'P 50 · C 46 · G 14 · 510 kcal',
      ing:'100 g de noodles frescos (bolsa al vacío, ya cocidos) · 175 g de cadera de ternera en tiras · 60 g de guisantes · 50 g de zanahoria en juliana · 70 g de pimiento rojo · 60 g de champiñones laminados · 15 g de salsa de soja · 3 g de AOVE · 1 diente de ajo (5 g)',
      tip:['Los noodles frescos solo necesitan 1-2 min, así que van al final. Saltea primero la zanahoria y el pimiento a fuego fuerte (4-5 min), luego los champiñones (2 min) y después la ternera (2-3 min y ni uno más). Los guisantes escaldados van al final, con los noodles.','Incorpora los noodles, la soja y el ajo, y saltea todo junto 1-2 min.','La clave del salteado: sartén muy caliente y sin amontonar. Si metes todo a la vez la temperatura cae, las verduras sueltan agua y en lugar de saltear estás cociendo.','Los guisantes aportan hidrato, por eso los noodles bajan de 150 a 125 g.']},
-    {title:'Fideos de arroz con pollo y gambas', macros:'P 47 · C 53 · G 7 · 463 kcal',
-     ing:'48 g de fideos de arroz (seco) · 120 g de pollo en tiras · 70 g de gambas peladas · 50 g de zanahoria · 70 g de pimiento rojo · 40 g de cebolla · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g) · cilantro fresco · unas gotas de lima',
+    {title:'Fideos de arroz con pollo y gambas', macros:'P 52 · C 53 · G 7 · 483 kcal',
+     ing:'48 g de fideos de arroz (seco) · 140 g de pollo en tiras · 70 g de gambas peladas · 50 g de zanahoria · 70 g de pimiento rojo · 40 g de cebolla · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g) · cilantro fresco · unas gotas de lima',
      tip:['Los fideos de arroz no se cuecen, se hidratan: agua hirviendo fuera del fuego, 5-8 min según grosor, y enjuágalos en agua fría para cortar la cocción. Si no lo haces se apelmazan en un bloque.','Saltea aparte las verduras, el pollo y las gambas, y junta todo al final.','Lleva más carne y gambas de lo habitual por un motivo: los fideos de arroz aportan solo 2,8 g de proteína por ración, así que toda tiene que venir de la proteína animal.']},
-    {title:'Sopa de noodles con pollo', macros:'P 56 · C 37 · G 7 · 435 kcal',
-     ing:'100 g de noodles frescos · 200 g de pollo troceado · 50 g de zanahoria · 50 g de puerro · 60 g de champiñones · 500 ml de caldo · 15 g de salsa de soja · 3 g de AOVE · cebollino',
+    {title:'Sopa de noodles con pollo', macros:'P 50 · C 37 · G 7 · 411 kcal',
+     ing:'100 g de noodles frescos · 175 g de pollo troceado · 50 g de zanahoria · 50 g de puerro · 60 g de champiñones · 500 ml de caldo · 15 g de salsa de soja · 3 g de AOVE · cebollino',
      tip:['Sella el pollo troceado a la plancha, 4-5 min, para que no suelte espuma en el caldo.','Cuece el caldo con la zanahoria y el puerro, 10 min.','Añade el pollo, los champiñones y la soja, 5 min más.','Los noodles, al final y solo 1-2 min: si los dejas hirviendo se deshacen.','Cebollino por encima al servir.']},
-    {title:'Ensalada fría de fideos de arroz con salmón', macros:'P 41 · C 43 · G 19 · 507 kcal',
-     ing:'40 g de fideos de arroz (seco) · 110 g de salmón a la plancha · 70 g de gambas cocidas · 50 g de zanahoria rallada · 60 g de pimiento rojo · 15 g de salsa de soja · 5 g de sésamo · 2 g de AOVE · unas gotas de lima · cilantro',
+    {title:'Ensalada fría de fideos de arroz con salmón', macros:'P 44 · C 43 · G 21 · 537 kcal',
+     ing:'40 g de fideos de arroz (seco) · 125 g de salmón a la plancha · 70 g de gambas cocidas · 50 g de zanahoria rallada · 60 g de pimiento rojo · 15 g de salsa de soja · 5 g de sésamo · 2 g de AOVE · unas gotas de lima · cilantro',
      tip:['Hidrata los fideos de arroz según el paquete, 3-5 min, y enjuágalos en frío para cortar la cocción.','El salmón a la plancha, 3-4 min por lado, y déjalo enfriar.','Mezcla los fideos con la zanahoria rallada, el pimiento, las gambas y el salmón desmenuzado.','Aliña con la soja, el sésamo, la lima y el cilantro.','Si te sobra tiempo, 15-20 min de nevera le vienen bien, pero se come perfectamente recién hecha.','Como el salmón ya aporta 13 g de grasa, no lleva aceite añadido.']},
     {title:'Choco a la gallega con patata', macros:'P 53 · C 42 · G 12 · 488 kcal',
      ing:'300 g de choco o sepia limpia · 190 g de patata cruda pelada en rodajas · 40 g de cebolla · 8 g de AOVE · 3 g de pimentón de la Vera · sal gruesa',
@@ -747,56 +753,56 @@ let recetario = {
     {title:'Ensalada templada de calamar y patata', macros:'P 59 · C 49 · G 11 · 531 kcal',
      ing:'250 g de anillas de calamar · 70 g de gambas cocidas · 180 g de patata cruda pelada en dados · 100 g de pimiento rojo · 40 g de cebolla morada · 80 g de tomate · 5 g de AOVE · 10 g de vinagre · 3 g de pimentón · perejil',
      tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','El calamar a la plancha muy caliente, 2-3 min, y mézclalo templado con el resto en frío: así la ensalada no queda fría del todo y el calamar no se apelmaza.','Pica el pimiento, la cebolla morada y el tomate en dados del mismo tamaño que la patata.','Mezcla todo con el aceite, el vinagre, el pimentón y el perejil.','En frío, sin cocinar nada más allá de la patata. Un rato de nevera le va bien, pero no hace falta esperar.']},
-    {title:'Ñoquis con boloñesa de ternera', macros:'P 44 · C 40 · G 16 · 480 kcal',
-     ing:'100 g de ñoquis · 180 g de ternera picada de cadera · 140 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 6 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto',
+    {title:'Ñoquis con boloñesa de ternera', macros:'P 43 · C 40 · G 16 · 476 kcal',
+     ing:'100 g de ñoquis · 175 g de ternera picada de cadera · 140 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 6 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto',
      tip:['Los ñoquis primero: saltéalos en la sartén con la mitad del aceite hasta dorarse, 5-6 min, y resérvalos. No se cuecen.','En la misma sartén, sofríe la cebolla, el ajo y la zanahoria rallada con el aceite que queda, 6-8 min, y añade la ternera picada otros 6-8, hasta que pierda el color rosado.','Echa el tomate triturado, el orégano y el laurel, y deja reducir 15 min a fuego lento.','Quita el laurel y devuelve los ñoquis al final, mezclando solo lo justo: si entran antes se ablandan y pierden la costra.','Orégano fresco al servir.']},
-    {title:'Ñoquis cremosos con pollo y champiñones 🥫', macros:'P 48 · C 40 · G 13 · 469 kcal',
-     ing:'100 g de ñoquis · 160 g de pollo en taquitos · 75 ml de leche evaporada · 80 g de champiñones laminados · 40 g de cebolla · 7 g de AOVE · nuez moscada y pimienta negra',
+    {title:'Ñoquis cremosos con pollo y champiñones 🥫', macros:'P 51 · C 40 · G 13 · 481 kcal',
+     ing:'100 g de ñoquis · 175 g de pollo en taquitos · 75 ml de leche evaporada · 80 g de champiñones laminados · 40 g de cebolla · 7 g de AOVE · nuez moscada y pimienta negra',
      tip:['Saltea los ñoquis con parte del aceite hasta dorarse, 5-6 min, y resérvalos: no se cuecen. Después, el pollo en taquitos a la plancha, 5-6 min, también aparte.','Saltea la cebolla 4 min y los champiñones laminados 6-8 min, hasta que suelten el agua y se evapore.','Añade la leche evaporada y deja espesar 3-4 min a fuego suave, sin que hierva.','Incorpora el pollo y los ñoquis al final, mezclando solo lo justo. Nuez moscada y pimienta negra fuera del fuego.']},
     {title:'Ñoquis salteados con gambas y calamar', macros:'P 54 · C 38 · G 14 · 494 kcal',
      ing:'100 g de ñoquis · 140 g de gambas peladas · 125 g de anillas de calamar · 70 g de pimiento rojo · 40 g de cebolla · 60 g de tomate · 9 g de AOVE · 1 diente de ajo (5 g) · perejil',
      tip:['Los ñoquis, salteados en la sartén con un poco de aceite hasta dorarse, 5-6 min. Crujientes por fuera y tiernos dentro.','Sácalos y reserva. En la misma sartén, el ajo, la cebolla y el pimiento, 5 min.','Añade el tomate, 3 min.','Las gambas, 1-2 min.','El calamar, lo último y 2-3 min a fuego muy fuerte: si se queda más, se pone gomoso y ya no hay marcha atrás.','Devuelve los ñoquis, mezcla y perejil al servir.']},
-    {title:'Ñoquis gratinados con pollo', macros:'P 48 · C 35 · G 15 · 474 kcal',
-     ing:'100 g de ñoquis · 170 g de pollo picado · 100 g de tomate triturado · 12 g de parmesano rallado · 40 g de cebolla · 7 g de AOVE · orégano',
+    {title:'Ñoquis gratinados con pollo', macros:'P 49 · C 35 · G 15 · 471 kcal',
+     ing:'100 g de ñoquis · 175 g de pollo picado · 100 g de tomate triturado · 12 g de parmesano rallado · 40 g de cebolla · 7 g de AOVE · orégano',
      tip:['Saltea los ñoquis con parte del aceite hasta dorarse, 5-6 min, y resérvalos: así no quedan blandos bajo el gratinado.','Sofríe la cebolla 4 min, añade el pollo picado 6-8 min y luego el tomate triturado, 5 min.','Mezcla los ñoquis dorados con el sofrito en una fuente, en una capa.','Cubre con el parmesano y gratina en air fryer 180°C, 8-10 min.','Orégano al sacarlo.']},
-    {title:'Cuscús con pollo y verduras', macros:'P 49 · C 50 · G 8 · 467 kcal',
-     ing:'50 g de cuscús (seco) · 180 g de pollo en dados · 60 g de zanahoria · 70 g de pimiento rojo · 40 g de cebolla · 5 g de AOVE · 1 diente de ajo (5 g) · comino, cúrcuma, canela, pimentón',
+    {title:'Cuscús con pollo y verduras', macros:'P 48 · C 50 · G 8 · 464 kcal',
+     ing:'50 g de cuscús (seco) · 175 g de pollo en dados · 60 g de zanahoria · 70 g de pimiento rojo · 40 g de cebolla · 5 g de AOVE · 1 diente de ajo (5 g) · comino, cúrcuma, canela, pimentón',
      tip:['El cuscús no se cuece: ponlo en un bol, cúbrelo con el mismo volumen de agua o caldo hirviendo, tápalo y déjalo reposar 5 min. Luego sepáralo con un tenedor.','Mientras reposa, el pollo en dados a la plancha, 5-6 min.','Saltea la cebolla, el pimiento y la zanahoria con el ajo, 6-8 min.','Añade el comino, la cúrcuma, la canela y el pimentón y remueve 30 segundos en seco.','Mezcla todo con el cuscús. Es lo más rápido del recetario.']},
-    {title:'Cuscús con ternera picada', macros:'P 46 · C 45 · G 14 · 490 kcal',
-     ing:'180 g de ternera picada de cadera · 40 g de cuscús en seco · 100 g de calabacín en dados · 70 g de pimiento rojo · 60 g de cebolla · 80 g de tomate triturado · 4 g de AOVE · 1 diente de ajo (5 g) · comino, cilantro, pimentón y una pizca de canela',
+    {title:'Cuscús con ternera picada', macros:'P 45 · C 45 · G 14 · 486 kcal',
+     ing:'175 g de ternera picada de cadera · 40 g de cuscús en seco · 100 g de calabacín en dados · 70 g de pimiento rojo · 60 g de cebolla · 80 g de tomate triturado · 4 g de AOVE · 1 diente de ajo (5 g) · comino, cilantro, pimentón y una pizca de canela',
      tip:['Hidrata el cuscús con el mismo volumen de caldo hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','Sofríe la cebolla, el ajo y el pimiento con el aceite, 6 min.','Añade el calabacín en dados, 5 min más.','Echa la ternera picada y deshazla con la cuchara: 6-8 min, hasta que pierda el color rosado y empiece a dorarse.','Añade el tomate triturado, el comino, el pimentón y la pizca de canela, y deja 5 min a fuego medio para que reduzca.','Mezcla con el cuscús fuera del fuego y el cilantro picado por encima.','La picada, de cadera: compra la pieza y pide que te piquen un trozo en el momento. La de bandeja suele llevar 15-20% de grasa y descuadra el plato.','La canela es poca pero se nota: es lo que le da el aire a cuscús marroquí en lugar de a boloñesa.']},
     {title:'Cuscús con ternera y berenjena', macros:'P 46 · C 52 · G 13 · 509 kcal',
      ing:'50 g de cuscús (seco) · 175 g de cadera de ternera en tiras · 100 g de berenjena en dados · 60 g de pimiento rojo · 40 g de cebolla · 60 g de tomate · 4 g de AOVE · comino, cilantro, ras el hanout si tienes',
      tip:['Sala la berenjena en dados y déjala 10 min antes de saltearla: absorbe bastante menos aceite.','Hidrata el cuscús con el mismo volumen de caldo hirviendo, tapado 5 min, y suéltalo con un tenedor.','Saltea la cebolla y el pimiento 5 min, añade la berenjena escurrida 8 min y el tomate 3 min.','La ternera en tiras a fuego fuerte, 2-3 min y ni uno más.','Mezcla todo con el cuscús, el comino, el cilantro y el ras el hanout si tienes.']},
-    {title:'Tabulé con pollo y garbanzos', macros:'P 48 · C 52 · G 10 · 490 kcal',
-     ing:'40 g de cuscús (seco) · 150 g de pollo a la plancha en tiras · 30 g de garbanzos en seco (puestos a remojo la noche antes) · 120 g de tomate en dados · 40 g de cebolla morada · 6 g de AOVE · 10 g de zumo de limón · perejil y hierbabuena abundantes',
+    {title:'Tabulé con pollo y garbanzos', macros:'P 46 · C 52 · G 10 · 482 kcal',
+     ing:'40 g de cuscús (seco) · 140 g de pollo a la plancha en tiras · 30 g de garbanzos en seco (puestos a remojo la noche antes) · 120 g de tomate en dados · 40 g de cebolla morada · 6 g de AOVE · 10 g de zumo de limón · perejil y hierbabuena abundantes',
      tip:['Los garbanzos, a remojo la noche antes 8-12 h, y luego 10 min en olla express. Déjalos enfriar.','Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min, y déjalo enfriar.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras. Enfríalo también.','Mezcla todo en frío con el tomate, la cebolla morada, el zumo de limón y el aceite.','El perejil y la hierbabuena van generosos: son el plato, no el adorno. Mejor de un día para otro.']},
     {title:'Cuscús con gambas y calamar', macros:'P 56 · C 50 · G 10 · 514 kcal',
      ing:'50 g de cuscús (seco) · 140 g de gambas peladas · 125 g de anillas de calamar · 70 g de pimiento rojo · 40 g de cebolla · 50 g de zanahoria · 6 g de AOVE · 1 diente de ajo (5 g) · perejil, pimentón',
      tip:['Hidrata el cuscús con caldo hirviendo en vez de agua: cambia bastante el resultado. Tapado 5 min y suéltalo con un tenedor.','Saltea el ajo, la cebolla, el pimiento y la zanahoria, 6-8 min.','Las gambas, 1-2 min.','El calamar, al final y 2-3 min a fuego muy fuerte.','Mezcla con el cuscús, el pimentón y el perejil.']},
-    {title:'Wok de pescado blanco con noodles', macros:'P 57 · C 48 · G 10 · 510 kcal',
-     ing:'100 g de noodles frescos · 175 g de rosada o corvina en dados · 70 g de gambas peladas · 60 g de champiñones laminados · 60 g de guisantes · 40 g de zanahoria en juliana · 60 g de pimiento rojo · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g) · sésamo',
+    {title:'Wok de pescado blanco con noodles', macros:'P 56 · C 48 · G 10 · 506 kcal',
+     ing:'100 g de noodles frescos · 170 g de rosada o corvina en dados · 70 g de gambas peladas · 60 g de champiñones laminados · 60 g de guisantes · 40 g de zanahoria en juliana · 60 g de pimiento rojo · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g) · sésamo',
      tip:['Los guisantes, primero: bol con agua hirviendo 2 min, escurre y SÉCALOS con papel. Echados congelados al wok bajan la temperatura y todo se cuece al vapor en vez de saltearse.','El pescado en dados grandes y seco con papel; la zanahoria en juliana fina y el pimiento en tiras.','Champiñones solos a fuego fuerte, 4-5 min, hasta que suelten el agua y empiecen a dorarse. No te saltes este paso: si van con el resto, el agua que sueltan cuece todo lo demás.','Zanahoria y pimiento, otros 4-5 min a fuego fuerte y moviendo.','Pescado y gambas, 2-3 min. Una sola vuelta al pescado: si lo remueves como la carne, se deshace en hebras.','Al final y todo junto 1-2 min: noodles, guisantes, soja y el ajo rallado. Los noodles van directos de la bolsa, sin cocer ni enjuagar.','Sésamo fuera del fuego.']},
-    {title:'Wok de gambas con arroz', macros:'P 55 · C 47 · G 8 · 480 kcal',
-     ing:'40 g de arroz en seco · 140 g de gambas peladas · 80 g de pollo en tiras · 60 g de guisantes · 60 g de pimiento rojo · 40 g de cebolla · 15 g de salsa de soja · 5 g de AOVE · 1 diente de ajo (5 g) · cebollino',
+    {title:'Wok de gambas con arroz', macros:'P 57 · C 47 · G 8 · 488 kcal',
+     ing:'40 g de arroz en seco · 140 g de gambas peladas · 90 g de pollo en tiras · 60 g de guisantes · 60 g de pimiento rojo · 40 g de cebolla · 15 g de salsa de soja · 5 g de AOVE · 1 diente de ajo (5 g) · cebollino',
      tip:['Cuece el arroz el día anterior y déjalo frío en la nevera. El recién hecho suelta almidón y apelmaza el wok; el frío se suelta en granos.','Los guisantes, escaldados 2 min en agua hirviendo y bien secos.','Wok a fuego muy fuerte con el aceite y el ajo: el pimiento y la cebolla, 3-4 min.','El pollo en tiras, 4-5 min, hasta que esté dorado.','Las gambas, 1-2 min.','El arroz frío, los guisantes y la soja, 2 min removiendo para que se suelte. Cebollino por encima.']},
-    {title:'Wok de salmón con noodles ⚠️', macros:'P 50 · C 47 · G 16 · 532 kcal',
-     ing:'100 g de noodles frescos · 110 g de salmón en dados · 70 g de gambas · 60 g de guisantes · 40 g de zanahoria · 120 g de champiñones · 15 g de salsa de soja · sin aceite añadido · sésamo, lima',
+    {title:'Wok de salmón con noodles ⚠️', macros:'P 53 · C 47 · G 18 · 562 kcal',
+     ing:'100 g de noodles frescos · 125 g de salmón en dados · 70 g de gambas · 60 g de guisantes · 40 g de zanahoria · 120 g de champiñones · 15 g de salsa de soja · sin aceite añadido · sésamo, lima',
      tip:['Los guisantes, primero: bol con agua hirviendo 2 min, escurre y SÉCALOS con papel. Echados congelados al wok bajan la temperatura y todo se cuece al vapor en vez de saltearse.','Wok a fuego muy fuerte, sin aceite: los champiñones solos hasta que suelten el agua y se doren, 4-5 min.','Añade la zanahoria, 4-5 min.','El salmón en dados, 2-3 min y una sola vuelta: si lo remueves se deshace en hebras.','Las gambas, 1-2 min.','Los noodles, los guisantes y la soja al final, 1-2 min. Sésamo y lima al servir.','Sin AOVE: el salmón suelta su propia grasa en el wok. Con 110 g se queda justo en los 16 g de presupuesto del almuerzo, pero aun así esa noche cena sin aceite añadido.','Nada de salsas cremosas con este: solo las de base soja.']},
     {title:'Papas con choco', macros:'P 57 · C 52 · G 10 · 526 kcal',
      ing:'300 g de choco o sepia limpios, en dados de bocado · 180 g de patata cruda pelada · 50 g de cebolla · 70 g de pimiento verde · 60 g de tomate rallado · 50 g de guisantes · 5 g de AOVE · 2 dientes de ajo (10 g) · 400 ml de caldo de pescado · 3 g de pimentón dulce · 1 hoja de laurel · unas hebras de azafrán · perejil',
      tip:['Sofríe en la propia olla el ajo, la cebolla y el pimiento con el aceite, 5 min. Añade el pimentón y remueve 10 segundos FUERA DEL FUEGO: si se quema, amarga todo el guiso.','Añade el tomate rallado y deja que reduzca 2-3 min. Echa el choco en dados y rehógalo 2 min.','La patata va chascada: clava el cuchillo y arranca el trozo haciendo palanca, sin cortar del todo. Así suelta almidón y espesa el caldo sola.','Con los guisantes, el caldo, el laurel y el azafrán dentro, cierra la olla: 8 min desde que coge presión. Despresuriza, quita el laurel y deja reposar 5 min.','Sin olla express: rehoga el choco 15 min con el caldo antes de echar la patata, y luego 20 min más destapado. El choco necesita bastante más tiempo que la patata, por eso va primero.','Para espesar sin añadir nada: saca 3-4 trozos de patata ya cocida, tritúralos con un poco del caldo y devuélvelos a la olla.','El choco es de las proteínas más magras que existen (16 g de proteína y 1,5 de grasa por 100 g). Por eso esta receta admite una ración generosa de patata sin descuadrarse.']},
-    {title:'Crema de calabaza con pollo', macros:'P 50 · C 46 · G 9 · 465 kcal',
-     ing:'250 g de calabaza en dados · 110 g de patata cruda pelada · 180 g de pollo · 40 g de cebolla · 50 ml de leche evaporada · 5 g de AOVE · 300 ml de agua · nuez moscada, pimienta',
+    {title:'Crema de calabaza con pollo', macros:'P 49 · C 46 · G 9 · 461 kcal',
+     ing:'250 g de calabaza en dados · 110 g de patata cruda pelada · 175 g de pollo · 40 g de cebolla · 50 ml de leche evaporada · 5 g de AOVE · 300 ml de agua · nuez moscada, pimienta',
      tip:['Calabaza, patata y cebolla en olla express, 5 min desde que coge presión. Tritura con la leche evaporada.','El pollo a la plancha aparte, cortado en tiras y POR ENCIMA, no triturado: si lo metes en la crema no notas que hay proteína en el plato y acabas con sensación de haber comido solo puré.','La crema aguanta dos días; el pollo hazlo al momento.']},
     {title:'Calabaza con choco y patata', macros:'P 54 · C 49 · G 11 · 511 kcal',
      ing:'200 g de calabaza en dados · 300 g de choco en dados · 150 g de patata cruda pelada · 40 g de cebolla · 6 g de AOVE · 1 diente de ajo (5 g) · 350 ml de caldo de pescado · pimentón, laurel',
      tip:['Mismo método que las papas con choco, cambiando parte de la patata por calabaza. Queda más dulce y algo más ligero.','La calabaza se deshace antes que la patata, así que en olla express bastan 6 min.','Mejora de un día para otro: es de los platos que aguantan bien los dos días.']},
-    {title:'Calabaza asada con pollo y noodles', macros:'P 48 · C 45 · G 8 · 442 kcal',
-     ing:'180 g de calabaza en dados de 2 cm · 170 g de pollo en tiras · 100 g de noodles frescos · 40 g de cebolla · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g)',
+    {title:'Calabaza asada con pollo y noodles', macros:'P 49 · C 45 · G 8 · 448 kcal',
+     ing:'180 g de calabaza en dados de 2 cm · 175 g de pollo en tiras · 100 g de noodles frescos · 40 g de cebolla · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g)',
      tip:['Calabaza en dados de 2 cm a la air fryer, 180°C, 15-18 min, hasta que los bordes se caramelicen. Asada y no hervida: cambia por completo el plato.','Wok bien caliente: la cebolla y el ajo, 2 min.','El pollo en tiras, 4-5 min, hasta que esté dorado.','Añade la calabaza asada, los noodles y la soja, y saltea todo junto 2 min.','Los noodles frescos van directos de la bolsa, sin cocer ni enjuagar.']},
-    {title:'Wok de pollo con noodles', macros:'P 55 · C 43 · G 8 · 458 kcal',
-     ing:'100 g de noodles frescos · 190 g de pollo en tiras · 60 g de guisantes · 60 g de pimiento rojo · 40 g de cebolla · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g)',
+    {title:'Wok de pollo con noodles', macros:'P 52 · C 43 · G 8 · 452 kcal',
+     ing:'100 g de noodles frescos · 175 g de pollo en tiras · 60 g de guisantes · 60 g de pimiento rojo · 40 g de cebolla · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g)',
      tip:['Los guisantes, escaldados 2 min en agua hirviendo y bien secos.','Wok a fuego muy fuerte con el aceite y el ajo: el pimiento y la cebolla, 3-4 min.','El pollo en tiras, 4-5 min, hasta que esté dorado.','Los noodles, los guisantes y la soja al final, 1-2 min. Van directos de la bolsa, sin cocer.','Es el wok con más margen de grasa, así que admite las salsas cremosas.']},
     {title:'Guiso de cerdo con patata 🥫', macros:'P 43 · C 41 · G 17 · 489 kcal',
      ing:'175 g de lomo de cerdo en dados (1 bolsa) · 160 g de patata cruda pelada · 60 g de zanahoria · 50 g de pimiento verde · 40 g de cebolla · 50 g de tomate triturado · 250 ml de caldo · 50 ml de vino blanco · 8 g de AOVE · 1 diente de ajo (5 g) · pimentón y laurel al gusto',
@@ -810,14 +816,14 @@ let recetario = {
     {title:'Lentejas estofadas con pollo 🥫', macros:'P 52 · C 47 · G 10 · 486 kcal',
      ing:'65 g de lentejas en seco · 140 g de pollo en taquitos · 60 g de zanahoria · 50 g de pimiento rojo · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo · 6 g de AOVE · 1 diente de ajo (5 g) · pimentón, laurel y comino',
      tip:['Sofríe la cebolla, la zanahoria, el pimiento y el ajo en la propia olla, 6 min. El pimentón, 10 segundos fuera del fuego.','Añade el tomate triturado, 2 min.','Echa las lentejas, el caldo y el laurel. Cierra: 8-10 min desde que coge presión.','El pollo, sellado aparte 3-4 min y añadido al abrir la olla, para que no se reseque.','Las lentejas no llevan remojo. Son la legumbre de recurso cuando se te olvidó poner los garbanzos la noche antes.','Aguanta tres días en nevera y mejora de un día para otro.']},
-    {title:'Potaje de garbanzos con calabaza y pollo ⏰🥫', macros:'P 51 · C 51 · G 10 · 498 kcal',
-     ing:'55 g de garbanzos en seco (⏰ a remojo la noche antes) · 150 g de pollo en taquitos · 120 g de calabaza en dados · 60 g de zanahoria · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo · 4 g de AOVE · 1 diente de ajo (5 g) · pimentón, comino y laurel',
+    {title:'Potaje de garbanzos con calabaza y pollo ⏰🥫', macros:'P 49 · C 51 · G 10 · 490 kcal',
+     ing:'55 g de garbanzos en seco (⏰ a remojo la noche antes) · 140 g de pollo en taquitos · 120 g de calabaza en dados · 60 g de zanahoria · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo · 4 g de AOVE · 1 diente de ajo (5 g) · pimentón, comino y laurel',
      tip:['Los garbanzos a remojo la noche antes, cubiertos de agua fría con un poco de sal. Si se te olvida, haz las lentejas: van sin remojo.','Sofrito de cebolla, zanahoria y ajo con el pimentón y el comino, 6 min, y el tomate 2 min.','Añade los garbanzos escurridos, el caldo, el laurel y la calabaza en dados grandes. Cierra: 15-18 min desde que coge presión.','La calabaza entra con los garbanzos: parte se deshace y espesa el caldo sola, que es lo que le da cuerpo al potaje sin harina.','El pollo, sellado aparte y añadido al abrir.','Uno de los platos con más proteína del recetario, 51 g. Buen día de entreno.']},
-    {title:'Arroz caldoso de rosada y gambas', macros:'P 51 · C 45 · G 12 · 492 kcal',
-     ing:'175 g de rosada en dados (1 bolsa) · 70 g de gambas peladas (1 bolsa) · 45 g de arroz en seco · 60 g de pimiento rojo · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo de pescado · 7 g de AOVE · 1 diente de ajo (5 g) · pimentón, azafrán y perejil',
+    {title:'Arroz caldoso de rosada y gambas', macros:'P 50 · C 45 · G 12 · 488 kcal',
+     ing:'170 g de rosada en dados (1 bolsa) · 70 g de gambas peladas (1 bolsa) · 45 g de arroz en seco · 60 g de pimiento rojo · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo de pescado · 7 g de AOVE · 1 diente de ajo (5 g) · pimentón, azafrán y perejil',
      tip:['Sofrito de cebolla, pimiento, ajo y tomate, 6-7 min. El pimentón, fuera del fuego.','Caldo caliente y el azafrán, y cuando rompa a hervir, el arroz: 16-18 min sin tapar, a fuego medio.','El pescado y las gambas en los últimos 4 minutos, nunca antes: la rosada se deshace si la cueces desde el principio.','El caldoso no va en olla express. Necesitas verlo para controlar el punto de caldo, y el arroz solo tarda 18 min.','Tiene que quedar más líquido de lo que crees, porque el arroz sigue absorbiendo en el plato. Si al apagar parece una sopa, está bien; si parece un arroz meloso, en dos minutos lo tienes seco.','Si has guardado las cabezas de las gambas, úsalas para el caldo: sofríelas 2 min aplastándolas, cubre con agua, 20 min a fuego suave y cuela apretando. Cambia el plato por completo.','Este se come recién hecho: de un día para otro el arroz se pasa.']},
-    {title:'Rosada en salsa verde con patata', macros:'P 50 · C 43 · G 12 · 480 kcal',
-     ing:'175 g de rosada (1 bolsa) · 220 g de patata cruda pelada en rodajas gruesas · 70 g de gambas peladas (1 bolsa) · 40 g de cebolla · 20 g de perejil fresco · 30 ml de vino blanco · 150 ml de caldo de pescado · 7 g de AOVE · 1 diente de ajo (5 g)',
+    {title:'Rosada en salsa verde con patata', macros:'P 49 · C 43 · G 12 · 476 kcal',
+     ing:'170 g de rosada (1 bolsa) · 220 g de patata cruda pelada en rodajas gruesas · 70 g de gambas peladas (1 bolsa) · 40 g de cebolla · 20 g de perejil fresco · 30 ml de vino blanco · 150 ml de caldo de pescado · 7 g de AOVE · 1 diente de ajo (5 g)',
      tip:['Cuece la patata en rodajas gruesas, 4 min en olla express o 12 en cazuela, y guarda un poco del agua.','Pocha la cebolla y el ajo laminado en la cazuela ancha, 4 min, sin que el ajo coja color.','Moja con el vino, 1 min, añade el caldo y el perejil muy picado y mueve la cazuela en círculos: la salsa verde liga con el almidón de la patata y el movimiento, no con harina.','Mete la patata, y encima la rosada y las gambas. Tapa y 5-6 min a fuego suave, sin remover: solo moviendo la cazuela.','Si queda suelta, machaca dos rodajas de patata contra el fondo y sigue moviendo.']},
     {title:'Cerdo a la plancha con cuscús y pisto', macros:'P 45 · C 44 · G 16 · 500 kcal',
      ing:'175 g de lomo de cerdo en filetes (1 bolsa) · 45 g de cuscús en seco · 100 g de calabacín en dados · 70 g de pimiento rojo · 80 g de tomate triturado · 40 g de cebolla · 7 g de AOVE · orégano al gusto',
@@ -830,14 +836,14 @@ let recetario = {
      tip:['Patata en gajos a la air fryer, 200°C, 18-20 min, hasta que los bordes se caramelicen.','Los pimientos en tiras anchas a fuego medio con la cebolla, 12-15 min, hasta que se deshagan un poco. Con prisa no salen.','Los filetes al final, 3-4 min por lado, en la misma sartén de los pimientos para que coja el fondo.']},
   ],
   cena: [
-    {title:'Merluza en salsa verde con patata', macros:'P 33 · C 25 · G 6 · 286 kcal',
-     ing:'175 g merluza · 115 g patata cruda pelada · 30 g cebolla · 4 g AOVE · 1 diente de ajo (5 g) · 20 g de perejil fresco · 30 ml de vino blanco',
+    {title:'Merluza en salsa verde con patata', macros:'P 32 · C 25 · G 6 · 282 kcal',
+     ing:'170 g merluza · 115 g patata cruda pelada · 30 g cebolla · 4 g AOVE · 1 diente de ajo (5 g) · 20 g de perejil fresco · 30 ml de vino blanco',
      tip:['Cuece la patata en rodajas gruesas, 4 min en olla express o 12 min en cazuela. Guarda un poco del agua.','Dora el ajo laminado con el aceite a fuego suave, sin que coja color oscuro: quemado amarga la salsa.','Añade la cebolla picada muy fina, 4 min.','Moja con el vino, deja evaporar 1 min y añade un cucharón del agua de la patata.','Pon la merluza y el perejil picado: 5 min a fuego medio-bajo moviendo la cazuela en vaivén, sin cuchara. Ese movimiento es lo que liga la salsa.','Una sola vuelta al pescado, a los 3 min.']},
     {title:'Marmitako ligero de atún', macros:'P 28 · C 28 · G 8 · 295 kcal',
      ing:'110 g atún fresco en dados · 115 g patata cruda pelada · 50 g pimiento verde · 30 g cebolla · 300 ml de agua o caldo · 2 g AOVE · 3 g de pimentón',
      tip:['Rehoga la cebolla y el pimiento verde con el aceite, 6-8 min.','Añade el pimentón y remueve 30 segundos fuera del fuego.','Echa la patata chascada y los 300 ml de agua: 15-18 min a fuego medio, hasta que la patata esté tierna.','Apaga el fuego, añade el atún en dados y tapa 2 min: se hace con el calor residual. Si lo cueces, se seca.','Otra opción: márcalo a la plancha 1 min por lado y échalo al final.']},
-    {title:'Pescado a la plancha con puerro', macros:'P 33 · C 27 · G 5 · 285 kcal',
-     ing:'175 g merluza, rosada o lenguado · 115 g patata cruda pelada en rodajas finas · 80 g puerro · 3 g AOVE · unas gotas de limón',
+    {title:'Pescado a la plancha con puerro', macros:'P 32 · C 27 · G 5 · 281 kcal',
+     ing:'170 g merluza, rosada o lenguado · 115 g patata cruda pelada en rodajas finas · 80 g puerro · 3 g AOVE · unas gotas de limón',
      tip:['Patata en rodajas finas y puerro a la air fryer, 180°C, 15 min.','Mientras, el pescado a la plancha bien caliente: 3-4 min por lado, empezando por el lado de la piel.','Una sola vuelta: el pescado blanco se deshace si lo mueves mucho.','Unas gotas de limón al sacarlo.']},
     {title:'Cuscús templado de tomate y atún', macros:'P 35 · C 34 · G 5 · 321 kcal',
      ing:'120 g de atún al natural escurrido (2 latas) · 35 g de cuscús en seco · 200 g de tomate muy maduro en dados · 40 g de cebolleta picada fina · 3 g de AOVE · 1 diente de ajo pequeño (3 g) rallado · 10 g de vinagre de Jerez · sal, albahaca o hierbabuena',
@@ -851,8 +857,8 @@ let recetario = {
     {title:'Ensalada de brotes con gambas y queso fresco', macros:'P 40 · C 23 · G 10 · 342 kcal',
      ing:'80 g brotes o canónigos · 100 g tomate · 140 g gambas peladas · 62,5 g de queso fresco (¼ de la tarrina de 250 g) · 25 g de cuscús en seco · 2 g AOVE · unas gotas de limón · cebollino',
      tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','Las gambas a la plancha, 1-2 min por lado: pasadas de ahí se ponen duras.','Monta sobre los brotes el tomate y el cuscús, y las gambas templadas encima.','El queso fresco en dados por encima.','Aceite, limón y cebollino al servir.']},
-    {title:'Noodles en caldo con pescado', macros:'P 37 · C 24 · G 5 · 289 kcal',
-     ing:'50 g de noodles frescos · 175 g de merluza o rosada · 60 g de puerro · 60 g de champiñones · 40 g de zanahoria · 400 ml de caldo · 12 g de salsa de soja · 2 g de AOVE',
+    {title:'Noodles en caldo con pescado', macros:'P 36 · C 24 · G 5 · 285 kcal',
+     ing:'50 g de noodles frescos · 170 g de merluza o rosada · 60 g de puerro · 60 g de champiñones · 40 g de zanahoria · 400 ml de caldo · 12 g de salsa de soja · 2 g de AOVE',
      tip:['Pocha el puerro, la zanahoria y los champiñones con el aceite, 6-8 min.','Añade el caldo y la soja y lleva a hervor suave, 5 min.','Echa los noodles: 1-2 min y fuera.','Apaga el fuego, añade el pescado en dados y tapa 3-4 min: con el calor residual basta para que se haga sin deshacerse.']},
     {title:'Choco con patata y pimentón', macros:'P 39 · C 24 · G 7 · 315 kcal',
      ing:'150 g de choco o sepia limpia · 70 g de gambas · 105 g de patata cruda pelada · 30 g de cebolla · 4 g de AOVE · 2 g de pimentón',
@@ -863,14 +869,14 @@ let recetario = {
     {title:'Choco a la plancha con calabaza', macros:'P 28 · C 25 · G 6 · 266 kcal',
      ing:'150 g de choco limpio · 150 g de calabaza en dados · 20 g de cuscús en seco · 3 g de AOVE · 1 diente de ajo (5 g) · perejil, limón',
      tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','El choco a la plancha muy caliente, 2-3 min por lado y ni uno más: pasado de ahí se vuelve gomoso y se vuelve gomoso.','Ajo y perejil picados al sacarlo.']},
-    {title:'Wok ligero de pescado', macros:'P 40 · C 30 · G 6 · 334 kcal',
-     ing:'50 g de noodles frescos · 175 g de rosada o merluza en dados · 50 g de guisantes · 30 g de zanahoria · 110 g de champiñones · 12 g de salsa de soja · 2 g de AOVE',
+    {title:'Wok ligero de pescado', macros:'P 39 · C 30 · G 6 · 330 kcal',
+     ing:'50 g de noodles frescos · 170 g de rosada o merluza en dados · 50 g de guisantes · 30 g de zanahoria · 110 g de champiñones · 12 g de salsa de soja · 2 g de AOVE',
      tip:['Los guisantes, primero: bol con agua hirviendo 2 min, escurre y SÉCALOS con papel. Echados congelados al wok bajan la temperatura y todo se cuece al vapor en vez de saltearse.','Wok a fuego muy fuerte: los champiñones solos hasta que suelten el agua y se doren, 4-5 min.','Añade la zanahoria, 4-5 min.','El pescado en dados grandes, 2-3 min, y una sola vuelta: si lo remueves se deshace en hebras.','Los noodles, los guisantes y la soja al final, 1-2 min.','Es la versión de cena de los woks: la mitad de noodles que un almuerzo y sin apenas aceite.']},
-    {title:'Ñoquis con pescado y tomate', macros:'P 33 · C 21 · G 8 · 288 kcal',
-     ing:'50 g de ñoquis · 175 g de merluza o rosada · 100 g de tomate triturado · 30 g de cebolla · 5 g de AOVE · albahaca',
+    {title:'Ñoquis con pescado y tomate', macros:'P 32 · C 21 · G 8 · 284 kcal',
+     ing:'50 g de ñoquis · 170 g de merluza o rosada · 100 g de tomate triturado · 30 g de cebolla · 5 g de AOVE · albahaca',
      tip:['Saltea los ñoquis con parte del aceite hasta dorarse, 5-6 min, y resérvalos. Pocha la cebolla con el aceite que queda, 5 min.','Añade el tomate triturado y deja reducir 8-10 min a fuego suave.','Apaga el fuego, añade el pescado en dados y tapa 4 min.','Devuelve los ñoquis al final, mezclando solo lo justo para que no se ablanden.','Albahaca fresca fuera del fuego.']},
-    {title:'Cuscús con pescado y limón', macros:'P 35 · C 28 · G 5 · 297 kcal',
-     ing:'28 g de cuscús (seco) · 175 g de merluza o rosada · 50 g de zanahoria · 30 g de cebolla · 3 g de AOVE · unas gotas de limón · cilantro',
+    {title:'Cuscús con pescado y limón', macros:'P 34 · C 28 · G 5 · 293 kcal',
+     ing:'28 g de cuscús (seco) · 170 g de merluza o rosada · 50 g de zanahoria · 30 g de cebolla · 3 g de AOVE · unas gotas de limón · cilantro',
      tip:['Hidrata el cuscús con el mismo volumen de caldo hirviendo, tapado 5 min y sin fuego. Suéltalo con un tenedor.','Mientras, saltea la cebolla y la zanahoria en juliana con el aceite, 6 min.','El pescado a la plancha bien caliente, 3-4 min por lado según el grosor.','Mezcla el cuscús con la verdura, el limón y el cilantro, y el pescado encima.']},
     {title:'Tortilla de patata ligera 🥚', macros:'P 27 · C 27 · G 9 · 298 kcal',
      ing:'1 huevo + 150 ml de claras pasteurizadas · 115 g de patata cruda pelada · 40 g de cebolla · 3 g de AOVE · sal',
@@ -878,14 +884,14 @@ let recetario = {
     {title:'Pollo a la plancha con pisto', macros:'P 35 · C 30 · G 6 · 314 kcal',
      ing:'140 g de pollo · 100 g de calabacín · 70 g de pimiento rojo · 80 g de tomate triturado · 25 g de arroz en seco · 3 g de AOVE · orégano',
      tip:['Pisto: pocha el pimiento 6 min, añade el calabacín en dados 6 min más y el tomate triturado, y deja 15 min a fuego suave.','Cuece el arroz en olla express, 4 min, y resérvalo.','El pollo a la plancha bien caliente, 4-5 min por lado, con el orégano.','El pisto lo puedes tener hecho de antes: aguanta 4 días y mejora de un día para otro.']},
-    {title:'Crema de verduras con pollo', macros:'P 34 · C 31 · G 5 · 306 kcal',
-     ing:'130 g de pollo · 150 g de calabaza · 60 g de zanahoria · 50 g de puerro · 65 g de patata cruda pelada · 300 ml de agua · 3 g de AOVE · nuez moscada',
+    {title:'Crema de verduras con pollo', macros:'P 36 · C 31 · G 5 · 313 kcal',
+     ing:'140 g de pollo · 150 g de calabaza · 60 g de zanahoria · 50 g de puerro · 65 g de patata cruda pelada · 300 ml de agua · 3 g de AOVE · nuez moscada',
      tip:['Calabaza, zanahoria, puerro y patata con los 300 ml de agua: olla express, 5 min desde que coge presión.','Tritura con la nuez moscada.','El pollo a la plancha aparte, 4-5 min por lado, y desmenúzalo.','Ponlo por encima, no triturado con el resto: si lo trituras todo junto no notas que hay proteína y queda sensación de haber cenado solo puré.']},
     {title:'Tortilla de calabacín con claras 🥚', macros:'P 28 · C 26 · G 8 · 290 kcal',
      ing:'1 huevo + 150 ml de claras pasteurizadas · 200 g de calabacín en rodajas finas · 40 g de cebolla · 20 g de arroz en seco · 2 g de AOVE · sal, pimienta',
-     tip:['Pocha el calabacín en rodajas finas y la cebolla, 8-10 min, y ESCÚRRELOS BIEN: el calabacín suelta mucha agua y es la razón habitual de que este tipo de tortilla no cuaje.','Cuece el arroz en olla express, 4 min, y resérvalo.','Mezcla todo con el huevo y las claras, y deja reposar 5 min.','Cuaja a fuego bajo, 3-4 min por lado. Sal y pimienta.']},
-    {title:'Bol de pollo, tomate y parmesano', macros:'P 34 · C 25 · G 9 · 317 kcal',
-     ing:'25 g de cuscús en seco · 110 g de pollo a la plancha · 100 g de tomate rallado · 20 g de parmesano en virutas · 3 g de AOVE · orégano',
+     tip:['Pocha el calabacín en rodajas finas y la cebolla, 8-10 min, y ESCÚRRELOS BIEN: el calabacín suelta mucha agua y es la razón habitual de que este tipo de tortilla no cuaje.','Si usas el calabacín del congelador vale igual, pero échalo congelado a la sartén caliente y déjalo hasta que se evapore TODA el agua, unos 12-15 min, antes de juntarlo con el huevo. Aquí no hay atajo: si queda agua, la tortilla no cuaja.','Cuece el arroz en olla express, 4 min, y resérvalo.','Mezcla todo con el huevo y las claras, y deja reposar 5 min.','Cuaja a fuego bajo, 3-4 min por lado. Sal y pimienta.']},
+    {title:'Bol de pollo, tomate y parmesano', macros:'P 29 · C 25 · G 9 · 297 kcal',
+     ing:'25 g de cuscús en seco · 90 g de pollo a la plancha · 100 g de tomate rallado · 20 g de parmesano en virutas · 3 g de AOVE · orégano',
      tip:['Hidrata el cuscús con 25 ml de agua hirviendo, tapado 5 min, mientras el pollo está en la plancha.','El pollo a la plancha, 4-5 min por lado, y córtalo en tiras.','Ahueca el cuscús con un tenedor y pon el tomate rallado por encima, sin cocinar.','El pollo al final y el parmesano en virutas con el pelador, no rallado, con el aceite y el orégano.','La cena más rápida del recetario: el cuscús se hidrata en los mismos 5 minutos que tarda el pollo. Lleva parmesano y no queso fresco a propósito: el parmesano aguanta semanas y así no se abre una tarrina para una sola cena.']},
     {title:'Revuelto de gambas y calabacín 🥚', macros:'P 35 · C 20 · G 9 · 301 kcal',
      ing:'1 huevo + 90 ml de claras · 70 g de gambas peladas (1 bolsa) · 150 g de calabacín · 20 g de cuscús en seco · 2 g de AOVE · ajo, perejil',
@@ -893,8 +899,8 @@ let recetario = {
     {title:'Hamburguesa de ternera con ensalada', macros:'P 29 · C 27 · G 6 · 281 kcal',
      ing:'120 g de ternera picada de cadera · 100 g de tomate · 50 g de lechuga · 100 g de boniato crudo pelado · 30 g de cebolla · sin aceite añadido',
      tip:['Boniato en gajos a la air fryer, 200°C, 18-20 min, hasta que los bordes se caramelicen.','Forma la hamburguesa y déjala 10 min en la nevera para que agarre.','Plancha bien caliente, 3-4 min por lado, y sala al final: salada antes suelta agua y queda seca.','La lechuga, el tomate y la cebolla en crudo al lado.','Va sin aceite porque la ternera picada ya aporta 6,5 g de grasa por cada 130 g, frente a los 2 g del pollo.','Versión con pollo: 130 g de pollo picado + 2 g de AOVE, queda en P 32 · C 26 · G 4 · 273 kcal.']},
-    {title:'Ensalada templada de tomate, pollo y jamón', macros:'P 33 · C 24 · G 8 · 301 kcal',
-     ing:'95 g de pollo a la plancha en tiras · 20 g de jamón serrano picado · 250 g de tomate maduro en dados · 25 g de cuscús en seco · 3 g de AOVE · 1 diente de ajo (5 g) · 10 g de vinagre · albahaca',
+    {title:'Ensalada templada de tomate, pollo y jamón', macros:'P 32 · C 24 · G 8 · 296 kcal',
+     ing:'90 g de pollo a la plancha en tiras · 20 g de jamón serrano picado · 250 g de tomate maduro en dados · 25 g de cuscús en seco · 3 g de AOVE · 1 diente de ajo (5 g) · 10 g de vinagre · albahaca',
      tip:['Hidrata el cuscús con 30 ml de agua hirviendo, tapado 5 min, mientras el pollo está en la plancha.','El pollo a la plancha bien caliente, 4-5 min por lado, y córtalo en tiras.','Trocea el tomate en dados y mézclalo con el cuscús, el ajo rallado, el aceite y el vinagre.','El pollo templado por encima y el jamón picado al final, en crudo: es donde da sabor.','Albahaca fresca al servir. Se come templada y al momento.']},
     {title:'Queso fresco con tomate y pollo', macros:'P 31 · C 27 · G 8 · 300 kcal',
      ing:'62,5 g de queso fresco (¼ de la tarrina de 250 g) · 90 g de pollo a la plancha en tiras · 150 g de tomate en rodajas · 100 g de patata cruda pelada · 1 g de AOVE · orégano, sal',
@@ -902,14 +908,14 @@ let recetario = {
     {title:'Rollitos de calabacín con fiambre de pavo', macros:'P 32 · C 22 · G 12 · 327 kcal',
      ing:'250 g de calabacín crudo (unos 200 g ya cocido y triturado) · 1 huevo batido · 8 g de almendras molidas (5 unidades) · 100 g de fiambre de pavo · 18 g de cuscús en seco',
      tip:['Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.','Mezcla el calabacín cocido y bien escurrido con el huevo y las almendras molidas.','Extiende la masa fina sobre papel de horno y hornea 15 min a 180°C.','Coloca el fiambre encima y enrolla con cuidado mientras la masa sigue templada: fría se resquebraja.','Del menú de Vitasane. Escurrir bien el calabacín es lo que decide si la masa se sostiene o no.']},
-    {title:'Pollo a la plancha con patata y verdura · ración de prueba', macros:'P 57 · C 36 · G 8 · 444 kcal',
-     ing:'200 g de pechuga de pollo · 140 g de patata cruda pelada · 160 g de la verdura que toque · 60 g de lechuga · 30 g de queso fresco · 4 g de AOVE',
+    {title:'Pollo a la plancha con patata y verdura · ración de prueba', macros:'P 51 · C 36 · G 8 · 420 kcal',
+     ing:'175 g de pechuga de pollo · 140 g de patata cruda pelada · 160 g de la verdura que toque · 60 g de lechuga · 30 g de queso fresco · 4 g de AOVE',
      tip:['En el plato son unos 485 g ya cocinado, frente a los 300 de la cena base. Es un 60% más, así que es una prueba de verdad.','Pollo a la plancha 4-5 min por lado (la pieza es más gruesa), patata en gajos a la air fryer 200°C 20-22 min, y la verdura en la misma tanda.','Empieza por el pollo y deja la patata para el final: si te llenas antes de terminar, lo que sobra es hidrato y no proteína.','IMPORTANTE: si notas presión, náuseas o que te cuesta tragar, para. No fuerces el plato. El objetivo es encontrar el techo, no superarlo — y saber dónde está es el resultado de la prueba, tanto si terminas como si no.','Anota hasta dónde llegaste: plato entero, tres cuartos, la mitad. Con eso ajusto el resto de recetas.','Ese día sumas unas 135 kcal de más. En una semana es irrelevante, no hay que compensar nada.']},
     {title:'Sopa de picadillo 🥚', macros:'P 33 · C 24 · G 7 · 291 kcal',
      ing:'90 g de pollo en taquitos · 1 huevo duro picado · 25 g de fideos finos · 50 g de zanahoria en dados · 400 ml de caldo de pollo · hierbabuena fresca · sin aceite añadido',
      tip:['Cuece el pollo en el caldo 10 min y sácalo para desmenuzarlo.','La zanahoria en dados pequeños y los fideos al caldo, 5 min.','Devuelve el pollo y el huevo duro picado.','La hierbabuena al servir, fuera del fuego: es lo que la convierte en sopa de picadillo y no en sopa de fideos.','Va sin aceite porque el huevo ya pone la grasa.']},
-    {title:'Pollo a la cerveza', macros:'P 34 · C 28 · G 6 · 318 kcal',
-     ing:'130 g de pechuga de pollo en dados · 60 g de puerro · 40 g de cebolla · 50 g de zanahoria · 40 g de patata cruda pelada · 200 ml de cerveza · 150 ml de agua · 4 g de AOVE · 10 g de salsa de soja · 1 hoja de laurel',
+    {title:'Pollo a la cerveza', macros:'P 36 · C 28 · G 6 · 310 kcal',
+     ing:'140 g de pechuga de pollo en dados · 60 g de puerro · 40 g de cebolla · 50 g de zanahoria · 40 g de patata cruda pelada · 200 ml de cerveza · 150 ml de agua · 4 g de AOVE · 10 g de salsa de soja · 1 hoja de laurel',
      tip:['Sella el pollo en la cazuela bien caliente 3-4 min y resérvalo.','Pocha la cebolla, el puerro y la zanahoria 5 min en la misma cazuela sin lavarla: lo que se ha pegado del pollo es la base del sabor.','Moja con la cerveza, rasca el fondo y deja hervir 2 min para que evapore el alcohol y se vaya el amargor.','Devuelve el pollo con la patata, el agua, la soja y el laurel. 20 min sin tapa hasta que la salsa reduzca a la mitad. En olla express: 6 min desde que coge presión y 3-4 min destapada para espesar.','Aguanta bien dos días y mejora de un día para otro.']},
   ]
 };
@@ -949,8 +955,8 @@ let menuVitasane = {
       },
       {
        "t": "Arroz caldoso con pollo",
-       "m": "P 50 · C 46 · G 12 · 492 kcal",
-       "i": "170 g de pollo en taquitos · 45 g de arroz en seco · 100 g de champiñones laminados · 60 g de pimiento rojo · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo de pollo · 8 g de AOVE · 1 diente de ajo (5 g) · pimentón, azafrán y laurel",
+       "m": "P 51 · C 46 · G 12 · 496 kcal",
+       "i": "175 g de pollo en taquitos · 45 g de arroz en seco · 100 g de champiñones laminados · 60 g de pimiento rojo · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo de pollo · 8 g de AOVE · 1 diente de ajo (5 g) · pimentón, azafrán y laurel",
        "p": [
         "Sella el pollo 3-4 min en la cazuela destapada y resérvalo.",
         "Sofríe la cebolla, el pimiento y los champiñones, 5 min. Añade el ajo y el pimentón FUERA DEL FUEGO para que no amargue, y luego el tomate, 2 min.",
@@ -964,8 +970,8 @@ let menuVitasane = {
      "cena": [
       {
        "t": "Cuscús con pescado y limón",
-       "m": "P 35 · C 28 · G 5 · 297 kcal",
-       "i": "28 g de cuscús (seco) · 175 g de merluza o rosada · 50 g de zanahoria · 30 g de cebolla · 3 g de AOVE · unas gotas de limón · cilantro",
+       "m": "P 34 · C 28 · G 5 · 293 kcal",
+       "i": "28 g de cuscús (seco) · 170 g de merluza o rosada · 50 g de zanahoria · 30 g de cebolla · 3 g de AOVE · unas gotas de limón · cilantro",
        "p": [
         "Hidrata el cuscús con el mismo volumen de caldo hirviendo, tapado 5 min y sin fuego. Suéltalo con un tenedor.",
         "Mientras, saltea la cebolla y la zanahoria en juliana con el aceite, 6 min.",
@@ -1046,21 +1052,23 @@ let menuVitasane = {
      "dias": "Viernes y sábado",
      "alm": [
       {
-       "t": "Pollo a la mostaza con arroz 🥫",
-       "m": "P 48 · C 39 · G 8 · 420 kcal",
-       "i": "40 g de arroz en seco · 180 g pollo · 50 ml leche evaporada · 15 g mostaza (a la antigua queda mejor) · 40 g cebolla · 3 g AOVE",
+       "t": "Pollo en salsa de cebolla con arroz 🥫",
+       "m": "P 47 · C 41 · G 10 · 442 kcal",
+       "i": "35 g de arroz en seco · 175 g pollo · 120 g cebolla en juliana · 50 ml leche evaporada · 5 g AOVE · 2 g de pimentón dulce · laurel, pimienta",
        "p": [
         "Cuece el arroz en olla express, 4 min, y resérvalo.",
-        "Sella el pollo a la plancha, 4-5 min por lado, y resérvalo.",
-        "Sofríe la cebolla 5 min en la misma sartén.",
-        "Añade la mostaza y la leche evaporada y deja reducir 5 min a fuego suave, sin que hierva o se corta.",
-        "Devuelve el pollo a la salsa 2 min para que se impregne. La mostaza a la antigua queda mejor."
+        "Sella el pollo 2-3 min, solo para que coja color por fuera, y resérvalo. No lo hagas del todo aquí: termina en la salsa.",
+        "La cebolla, muy despacio: en la misma sartén, con el jugo que ha soltado el pollo, fuego medio-bajo y 10 min. Tiene que quedar dorada y dulce, no transparente. Este paso es el plato entero; si lo haces en tres minutos, la salsa no sabe a nada.",
+        "Si ves que se seca, una cucharada de agua y sigues.",
+        "El pimentón, con el fuego apagado: remueve 15 segundos con el calor residual y vuelve al fuego. Si cae sobre aceite caliente, amarga.",
+        "Devuelve el pollo con la leche evaporada y el laurel, fuego al mínimo, 5 min. QUE NO HIERVA: la leche evaporada se corta y se queda con grumos.",
+        "Fuera la mostaza: se quitó porque comprar un bote para 15 g no merecía la pena. La cebolla pochada despacio hace el mismo papel."
        ]
       },
       {
        "t": "Wok de pescado blanco con noodles",
-       "m": "P 57 · C 48 · G 10 · 510 kcal",
-       "i": "100 g de noodles frescos · 175 g de rosada o corvina en dados · 70 g de gambas peladas · 60 g de champiñones laminados · 60 g de guisantes · 40 g de zanahoria en juliana · 60 g de pimiento rojo · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g) · sésamo",
+       "m": "P 56 · C 48 · G 10 · 506 kcal",
+       "i": "100 g de noodles frescos · 170 g de rosada o corvina en dados · 70 g de gambas peladas · 60 g de champiñones laminados · 60 g de guisantes · 40 g de zanahoria en juliana · 60 g de pimiento rojo · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g) · sésamo",
        "p": [
         "Los guisantes, primero: bol con agua hirviendo 2 min, escurre y SÉCALOS con papel. Echados congelados al wok bajan la temperatura y todo se cuece al vapor en vez de saltearse.",
         "El pescado en dados grandes y seco con papel; la zanahoria en juliana fina y el pimiento en tiras.",
@@ -1075,8 +1083,8 @@ let menuVitasane = {
      "cena": [
       {
        "t": "Ñoquis con pescado y tomate",
-       "m": "P 33 · C 21 · G 8 · 288 kcal",
-       "i": "50 g de ñoquis · 175 g de merluza o rosada · 100 g de tomate triturado · 30 g de cebolla · 5 g de AOVE · albahaca",
+       "m": "P 32 · C 21 · G 8 · 284 kcal",
+       "i": "50 g de ñoquis · 170 g de merluza o rosada · 100 g de tomate triturado · 30 g de cebolla · 5 g de AOVE · albahaca",
        "p": [
         "Saltea los ñoquis con parte del aceite hasta dorarse, 5-6 min, y resérvalos. Pocha la cebolla con el aceite que queda, 5 min.",
         "Añade el tomate triturado y deja reducir 8-10 min a fuego suave.",
@@ -1105,8 +1113,8 @@ let menuVitasane = {
      "dias": "Domingo",
      "alm": {
       "t": "Potaje de garbanzos con calabaza y pollo ⏰🥫",
-      "m": "P 51 · C 51 · G 10 · 498 kcal",
-      "i": "55 g de garbanzos en seco (⏰ a remojo la noche antes) · 150 g de pollo en taquitos · 120 g de calabaza en dados · 60 g de zanahoria · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo · 4 g de AOVE · 1 diente de ajo (5 g) · pimentón, comino y laurel",
+      "m": "P 49 · C 51 · G 10 · 490 kcal",
+      "i": "55 g de garbanzos en seco (⏰ a remojo la noche antes) · 140 g de pollo en taquitos · 120 g de calabaza en dados · 60 g de zanahoria · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo · 4 g de AOVE · 1 diente de ajo (5 g) · pimentón, comino y laurel",
       "p": [
        "Los garbanzos a remojo la noche antes, cubiertos de agua fría con un poco de sal. Si se te olvida, haz las lentejas: van sin remojo.",
        "Sofrito de cebolla, zanahoria y ajo con el pimentón y el comino, 6 min, y el tomate 2 min.",
@@ -1118,8 +1126,8 @@ let menuVitasane = {
      },
      "cena": {
       "t": "Pollo a la cerveza",
-      "m": "P 34 · C 28 · G 6 · 318 kcal",
-      "i": "130 g de pechuga de pollo en dados · 60 g de puerro · 40 g de cebolla · 50 g de zanahoria · 40 g de patata cruda pelada · 200 ml de cerveza · 150 ml de agua · 4 g de AOVE · 10 g de salsa de soja · 1 hoja de laurel",
+      "m": "P 36 · C 28 · G 6 · 310 kcal",
+      "i": "140 g de pechuga de pollo en dados · 60 g de puerro · 40 g de cebolla · 50 g de zanahoria · 40 g de patata cruda pelada · 200 ml de cerveza · 150 ml de agua · 4 g de AOVE · 10 g de salsa de soja · 1 hoja de laurel",
       "p": [
        "Sella el pollo en la cazuela bien caliente 3-4 min y resérvalo.",
        "Pocha la cebolla, el puerro y la zanahoria 5 min en la misma cazuela sin lavarla: lo que se ha pegado del pollo es la base del sabor.",
@@ -1194,8 +1202,8 @@ let menuVitasane = {
      "alm": [
       {
        "t": "Pollo al curry con arroz 🥫",
-       "m": "P 49 · C 48 · G 6 · 443 kcal",
-       "i": "170 g pollo en dados · 90 ml leche evaporada · 40 g arroz en seco · 50 g cebolla · 60 g pimiento rojo · 5 g de curry en polvo · 1 diente de ajo (5 g) · comino al gusto",
+       "m": "P 50 · C 48 · G 6 · 446 kcal",
+       "i": "175 g pollo en dados · 90 ml leche evaporada · 40 g arroz en seco · 50 g cebolla · 60 g pimiento rojo · 5 g de curry en polvo · 1 diente de ajo (5 g) · comino al gusto",
        "p": [
         "Tritura el tomate pelado, el vino y la leche evaporada: esa es la base de la salsa.",
         "Rehoga la cebolla 4 min, añade el pollo troceado y séllalo 4-5 min.",
@@ -1207,8 +1215,8 @@ let menuVitasane = {
       },
       {
        "t": "Boloñesa con macarrones integrales 🍝",
-       "m": "P 46 · C 43 · G 14 · 482 kcal",
-       "i": "50 g macarrones integrales (seco) · 180 g ternera picada de cadera · 120 g tomate triturado · 40 g cebolla · 40 g zanahoria rallada · 3 g AOVE · orégano y laurel al gusto",
+       "m": "P 45 · C 43 · G 14 · 478 kcal",
+       "i": "50 g macarrones integrales (seco) · 175 g ternera picada de cadera · 120 g tomate triturado · 40 g cebolla · 40 g zanahoria rallada · 3 g AOVE · orégano y laurel al gusto",
        "p": [
         "Sofríe la cebolla y la zanahoria rallada con el aceite, 6-8 min. La zanahoria aporta dulzor natural sin añadir azúcar.",
         "Añade la ternera picada y deshazla con la cuchara, 6-8 min, hasta que pierda el color rosado.",
@@ -1250,8 +1258,8 @@ let menuVitasane = {
      "alm": [
       {
        "t": "Ñoquis cremosos con pollo y champiñones 🥫",
-       "m": "P 48 · C 40 · G 13 · 469 kcal",
-       "i": "100 g de ñoquis · 160 g de pollo en taquitos · 75 ml de leche evaporada · 80 g de champiñones laminados · 40 g de cebolla · 7 g de AOVE · nuez moscada y pimienta negra",
+       "m": "P 51 · C 40 · G 13 · 481 kcal",
+       "i": "100 g de ñoquis · 175 g de pollo en taquitos · 75 ml de leche evaporada · 80 g de champiñones laminados · 40 g de cebolla · 7 g de AOVE · nuez moscada y pimienta negra",
        "p": [
         "Saltea los ñoquis con parte del aceite hasta dorarse, 5-6 min, y resérvalos: no se cuecen. Después, el pollo en taquitos a la plancha, 5-6 min, también aparte.",
         "Saltea la cebolla 4 min y los champiñones laminados 6-8 min, hasta que suelten el agua y se evapore.",
@@ -1261,8 +1269,8 @@ let menuVitasane = {
       },
       {
        "t": "Salmón con champiñones y nueces ⚠️",
-       "m": "P 44 · C 38 · G 19 · 499 kcal",
-       "i": "110 g salmón · 70 g gambas · 120 g champiñones · 40 g cebolla · 40 g de arroz en seco · 6 g nueces · sin aceite añadido",
+       "m": "P 47 · C 38 · G 21 · 529 kcal",
+       "i": "125 g salmón · 70 g gambas · 120 g champiñones · 40 g cebolla · 40 g de arroz en seco · 6 g nueces · sin aceite añadido",
        "p": [
         "Cuece el arroz en olla express, 4 min, y resérvalo.",
         "Salmón a la plancha: piel abajo 3-4 min, vuelta y 1-2 min más. Las nueces, tostadas 2 min en seco antes de añadirlas.",
@@ -1274,8 +1282,8 @@ let menuVitasane = {
      "cena": [
       {
        "t": "Merluza en salsa verde con patata",
-       "m": "P 33 · C 25 · G 6 · 286 kcal",
-       "i": "175 g merluza · 115 g patata cruda pelada · 30 g cebolla · 4 g AOVE · 1 diente de ajo (5 g) · 20 g de perejil fresco · 30 ml de vino blanco",
+       "m": "P 32 · C 25 · G 6 · 282 kcal",
+       "i": "170 g merluza · 115 g patata cruda pelada · 30 g cebolla · 4 g AOVE · 1 diente de ajo (5 g) · 20 g de perejil fresco · 30 ml de vino blanco",
        "p": [
         "Cuece la patata en rodajas gruesas, 4 min en olla express o 12 min en cazuela. Guarda un poco del agua.",
         "Dora el ajo laminado con el aceite a fuego suave, sin que coja color oscuro: quemado amarga la salsa.",
@@ -1287,8 +1295,8 @@ let menuVitasane = {
       },
       {
        "t": "Pescado a la plancha con puerro",
-       "m": "P 33 · C 27 · G 5 · 285 kcal",
-       "i": "175 g merluza, rosada o lenguado · 115 g patata cruda pelada en rodajas finas · 80 g puerro · 3 g AOVE · unas gotas de limón",
+       "m": "P 32 · C 27 · G 5 · 281 kcal",
+       "i": "170 g merluza, rosada o lenguado · 115 g patata cruda pelada en rodajas finas · 80 g puerro · 3 g AOVE · unas gotas de limón",
        "p": [
         "Patata en rodajas finas y puerro a la air fryer, 180°C, 15 min.",
         "Mientras, el pescado a la plancha bien caliente: 3-4 min por lado, empezando por el lado de la piel.",
@@ -1335,8 +1343,8 @@ let menuVitasane = {
      "alm": [
       {
        "t": "Pollo asado con boniato",
-       "m": "P 47 · C 41 · G 8 · 423 kcal",
-       "i": "190 g de pechuga entera (sin filetear) · 170 g de boniato crudo pelado · 60 g zanahoria · 40 g cebolla · 5 g AOVE · 1 diente de ajo (5 g) · 3 g de pimentón · tomillo · unas gotas de limón",
+       "m": "P 44 · C 41 · G 8 · 412 kcal",
+       "i": "175 g de pechuga entera (sin filetear) · 170 g de boniato crudo pelado · 60 g zanahoria · 40 g cebolla · 5 g AOVE · 1 diente de ajo (5 g) · 3 g de pimentón · tomillo · unas gotas de limón",
        "p": [
         "Boniato en gajos a la air fryer, 200°C, 18-20 min, hasta que los bordes se caramelicen.",
         "Esta es la excepción a hacer la carne a la plancha: una pechuga entera necesita calor envolvente para hacerse por dentro sin quemarse por fuera.",
@@ -1345,8 +1353,8 @@ let menuVitasane = {
       },
       {
        "t": "Wok de pollo con noodles",
-       "m": "P 55 · C 43 · G 8 · 458 kcal",
-       "i": "100 g de noodles frescos · 190 g de pollo en tiras · 60 g de guisantes · 60 g de pimiento rojo · 40 g de cebolla · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g)",
+       "m": "P 52 · C 43 · G 8 · 452 kcal",
+       "i": "100 g de noodles frescos · 175 g de pollo en tiras · 60 g de guisantes · 60 g de pimiento rojo · 40 g de cebolla · 15 g de salsa de soja · 4 g de AOVE · 1 diente de ajo (5 g)",
        "p": [
         "Los guisantes, escaldados 2 min en agua hirviendo y bien secos.",
         "Wok a fuego muy fuerte con el aceite y el ajo: el pimiento y la cebolla, 3-4 min.",
@@ -1413,8 +1421,8 @@ let menuVitasane = {
      "cena": [
       {
        "t": "Crema de verduras con pollo",
-       "m": "P 34 · C 31 · G 5 · 306 kcal",
-       "i": "130 g de pollo · 150 g de calabaza · 60 g de zanahoria · 50 g de puerro · 65 g de patata cruda pelada · 300 ml de agua · 3 g de AOVE · nuez moscada",
+       "m": "P 36 · C 31 · G 5 · 313 kcal",
+       "i": "140 g de pollo · 150 g de calabaza · 60 g de zanahoria · 50 g de puerro · 65 g de patata cruda pelada · 300 ml de agua · 3 g de AOVE · nuez moscada",
        "p": [
         "Calabaza, zanahoria, puerro y patata con los 300 ml de agua: olla express, 5 min desde que coge presión.",
         "Tritura con la nuez moscada.",
@@ -1441,8 +1449,8 @@ let menuVitasane = {
      "alm": [
       {
        "t": "Dorada con pisto",
-       "m": "P 58 · C 45 · G 12 · 520 kcal",
-       "i": "180 g dorada · 70 g gambas · 150 g calabacín · 80 g pimiento rojo · 100 g tomate triturado · 40 g de cuscús en seco · 40 g cebolla · 3 g AOVE",
+       "m": "P 56 · C 45 · G 12 · 512 kcal",
+       "i": "170 g dorada · 70 g gambas · 150 g calabacín · 80 g pimiento rojo · 100 g tomate triturado · 40 g de cuscús en seco · 40 g cebolla · 3 g AOVE",
        "p": [
         "Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min y fuera del fuego. Suéltalo con un tenedor.",
         "La dorada a la plancha, 3-4 min piel abajo y 1-2 min el otro lado.",
@@ -1452,8 +1460,8 @@ let menuVitasane = {
       },
       {
        "t": "Wok de salmón con noodles ⚠️",
-       "m": "P 50 · C 47 · G 16 · 532 kcal",
-       "i": "100 g de noodles frescos · 110 g de salmón en dados · 70 g de gambas · 60 g de guisantes · 40 g de zanahoria · 120 g de champiñones · 15 g de salsa de soja · sin aceite añadido · sésamo, lima",
+       "m": "P 53 · C 47 · G 18 · 562 kcal",
+       "i": "100 g de noodles frescos · 125 g de salmón en dados · 70 g de gambas · 60 g de guisantes · 40 g de zanahoria · 120 g de champiñones · 15 g de salsa de soja · sin aceite añadido · sésamo, lima",
        "p": [
         "Los guisantes, primero: bol con agua hirviendo 2 min, escurre y SÉCALOS con papel. Echados congelados al wok bajan la temperatura y todo se cuece al vapor en vez de saltearse.",
         "Wok a fuego muy fuerte, sin aceite: los champiñones solos hasta que suelten el agua y se doren, 4-5 min.",
@@ -1469,8 +1477,8 @@ let menuVitasane = {
      "cena": [
       {
        "t": "Noodles en caldo con pescado",
-       "m": "P 37 · C 24 · G 5 · 289 kcal",
-       "i": "50 g de noodles frescos · 175 g de merluza o rosada · 60 g de puerro · 60 g de champiñones · 40 g de zanahoria · 400 ml de caldo · 12 g de salsa de soja · 2 g de AOVE",
+       "m": "P 36 · C 24 · G 5 · 285 kcal",
+       "i": "50 g de noodles frescos · 170 g de merluza o rosada · 60 g de puerro · 60 g de champiñones · 40 g de zanahoria · 400 ml de caldo · 12 g de salsa de soja · 2 g de AOVE",
        "p": [
         "Pocha el puerro, la zanahoria y los champiñones con el aceite, 6-8 min.",
         "Añade el caldo y la soja y lleva a hervor suave, 5 min.",
@@ -1507,8 +1515,8 @@ let menuVitasane = {
      },
      "cena": {
       "t": "Bol de pollo, tomate y parmesano",
-      "m": "P 34 · C 25 · G 9 · 317 kcal",
-      "i": "25 g de cuscús en seco · 110 g de pollo a la plancha · 100 g de tomate rallado · 20 g de parmesano en virutas · 3 g de AOVE · orégano",
+      "m": "P 29 · C 25 · G 9 · 297 kcal",
+      "i": "25 g de cuscús en seco · 90 g de pollo a la plancha · 100 g de tomate rallado · 20 g de parmesano en virutas · 3 g de AOVE · orégano",
       "p": [
        "Hidrata el cuscús con 25 ml de agua hirviendo, tapado 5 min, mientras el pollo está en la plancha.",
        "El pollo a la plancha, 4-5 min por lado, y córtalo en tiras.",
@@ -1528,8 +1536,8 @@ let menuVitasane = {
      "alm": [
       {
        "t": "Arroz caldoso de rosada y gambas",
-       "m": "P 51 · C 45 · G 12 · 492 kcal",
-       "i": "175 g de rosada en dados (1 bolsa) · 70 g de gambas peladas (1 bolsa) · 45 g de arroz en seco · 60 g de pimiento rojo · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo de pescado · 7 g de AOVE · 1 diente de ajo (5 g) · pimentón, azafrán y perejil",
+       "m": "P 50 · C 45 · G 12 · 488 kcal",
+       "i": "170 g de rosada en dados (1 bolsa) · 70 g de gambas peladas (1 bolsa) · 45 g de arroz en seco · 60 g de pimiento rojo · 40 g de cebolla · 50 g de tomate triturado · 500 ml de caldo de pescado · 7 g de AOVE · 1 diente de ajo (5 g) · pimentón, azafrán y perejil",
        "p": [
         "Sofrito de cebolla, pimiento, ajo y tomate, 6-7 min. El pimentón, fuera del fuego.",
         "Caldo caliente y el azafrán, y cuando rompa a hervir, el arroz: 16-18 min sin tapar, a fuego medio.",
@@ -1542,8 +1550,8 @@ let menuVitasane = {
       },
       {
        "t": "Ñoquis con boloñesa de ternera",
-       "m": "P 44 · C 40 · G 16 · 480 kcal",
-       "i": "100 g de ñoquis · 180 g de ternera picada de cadera · 140 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 6 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto",
+       "m": "P 43 · C 40 · G 16 · 476 kcal",
+       "i": "100 g de ñoquis · 175 g de ternera picada de cadera · 140 g de tomate triturado · 40 g de cebolla · 40 g de zanahoria rallada · 6 g de AOVE · 1 diente de ajo (5 g) · orégano y laurel al gusto",
        "p": [
         "Los ñoquis primero: saltéalos en la sartén con la mitad del aceite hasta dorarse, 5-6 min, y resérvalos. No se cuecen.",
         "En la misma sartén, sofríe la cebolla, el ajo y la zanahoria rallada con el aceite que queda, 6-8 min, y añade la ternera picada otros 6-8, hasta que pierda el color rosado.",
@@ -1568,8 +1576,8 @@ let menuVitasane = {
       },
       {
        "t": "Ensalada templada de tomate, pollo y jamón",
-       "m": "P 33 · C 24 · G 8 · 301 kcal",
-       "i": "95 g de pollo a la plancha en tiras · 20 g de jamón serrano picado · 250 g de tomate maduro en dados · 25 g de cuscús en seco · 3 g de AOVE · 1 diente de ajo (5 g) · 10 g de vinagre · albahaca",
+       "m": "P 32 · C 24 · G 8 · 296 kcal",
+       "i": "90 g de pollo a la plancha en tiras · 20 g de jamón serrano picado · 250 g de tomate maduro en dados · 25 g de cuscús en seco · 3 g de AOVE · 1 diente de ajo (5 g) · 10 g de vinagre · albahaca",
        "p": [
         "Hidrata el cuscús con 30 ml de agua hirviendo, tapado 5 min, mientras el pollo está en la plancha.",
         "El pollo a la plancha bien caliente, 4-5 min por lado, y córtalo en tiras.",
@@ -1585,8 +1593,8 @@ let menuVitasane = {
      "alm": [
       {
        "t": "Pasta de lentejas cremosa con pollo 🥫🔴",
-       "m": "P 48 · C 50 · G 9 · 473 kcal",
-       "i": "70 g tirabuzones de lentejas (seco) · 110 g pollo en taquitos · 75 ml leche evaporada · 70 g pimiento rojo · 40 g cebolla · 3 g AOVE · nuez moscada y pimienta al gusto",
+       "m": "P 43 · C 50 · G 9 · 453 kcal",
+       "i": "70 g tirabuzones de lentejas (seco) · 90 g pollo en taquitos · 75 ml leche evaporada · 70 g pimiento rojo · 40 g cebolla · 3 g AOVE · nuez moscada y pimienta al gusto",
        "p": [
         "Cuece los tirabuzones el tiempo del paquete, 7-9 min.",
         "El pollo en taquitos y el pimiento a la plancha, 5-6 min, hasta que el pollo esté dorado.",
@@ -1637,8 +1645,8 @@ let menuVitasane = {
      "alm": [
       {
        "t": "Sopa de noodles con pollo",
-       "m": "P 56 · C 37 · G 7 · 435 kcal",
-       "i": "100 g de noodles frescos · 200 g de pollo troceado · 50 g de zanahoria · 50 g de puerro · 60 g de champiñones · 500 ml de caldo · 15 g de salsa de soja · 3 g de AOVE · cebollino",
+       "m": "P 50 · C 37 · G 7 · 411 kcal",
+       "i": "100 g de noodles frescos · 175 g de pollo troceado · 50 g de zanahoria · 50 g de puerro · 60 g de champiñones · 500 ml de caldo · 15 g de salsa de soja · 3 g de AOVE · cebollino",
        "p": [
         "Sella el pollo troceado a la plancha, 4-5 min, para que no suelte espuma en el caldo.",
         "Cuece el caldo con la zanahoria y el puerro, 10 min.",
@@ -1649,8 +1657,8 @@ let menuVitasane = {
       },
       {
        "t": "Rosada en salsa verde con patata",
-       "m": "P 50 · C 43 · G 12 · 480 kcal",
-       "i": "175 g de rosada (1 bolsa) · 220 g de patata cruda pelada en rodajas gruesas · 70 g de gambas peladas (1 bolsa) · 40 g de cebolla · 20 g de perejil fresco · 30 ml de vino blanco · 150 ml de caldo de pescado · 7 g de AOVE · 1 diente de ajo (5 g)",
+       "m": "P 49 · C 43 · G 12 · 476 kcal",
+       "i": "170 g de rosada (1 bolsa) · 220 g de patata cruda pelada en rodajas gruesas · 70 g de gambas peladas (1 bolsa) · 40 g de cebolla · 20 g de perejil fresco · 30 ml de vino blanco · 150 ml de caldo de pescado · 7 g de AOVE · 1 diente de ajo (5 g)",
        "p": [
         "Cuece la patata en rodajas gruesas, 4 min en olla express o 12 en cazuela, y guarda un poco del agua.",
         "Pocha la cebolla y el ajo laminado en la cazuela ancha, 4 min, sin que el ajo coja color.",
@@ -1676,8 +1684,8 @@ let menuVitasane = {
       },
       {
        "t": "Wok ligero de pescado",
-       "m": "P 40 · C 30 · G 6 · 334 kcal",
-       "i": "50 g de noodles frescos · 175 g de rosada o merluza en dados · 50 g de guisantes · 30 g de zanahoria · 110 g de champiñones · 12 g de salsa de soja · 2 g de AOVE",
+       "m": "P 39 · C 30 · G 6 · 330 kcal",
+       "i": "50 g de noodles frescos · 170 g de rosada o merluza en dados · 50 g de guisantes · 30 g de zanahoria · 110 g de champiñones · 12 g de salsa de soja · 2 g de AOVE",
        "p": [
         "Los guisantes, primero: bol con agua hirviendo 2 min, escurre y SÉCALOS con papel. Echados congelados al wok bajan la temperatura y todo se cuece al vapor en vez de saltearse.",
         "Wok a fuego muy fuerte: los champiñones solos hasta que suelten el agua y se doren, 4-5 min.",
@@ -1693,8 +1701,8 @@ let menuVitasane = {
      "dias": "Domingo",
      "alm": {
       "t": "Tabulé con pollo y garbanzos",
-      "m": "P 48 · C 52 · G 10 · 490 kcal",
-      "i": "40 g de cuscús (seco) · 150 g de pollo a la plancha en tiras · 30 g de garbanzos en seco (puestos a remojo la noche antes) · 120 g de tomate en dados · 40 g de cebolla morada · 6 g de AOVE · 10 g de zumo de limón · perejil y hierbabuena abundantes",
+      "m": "P 46 · C 52 · G 10 · 482 kcal",
+      "i": "40 g de cuscús (seco) · 140 g de pollo a la plancha en tiras · 30 g de garbanzos en seco (puestos a remojo la noche antes) · 120 g de tomate en dados · 40 g de cebolla morada · 6 g de AOVE · 10 g de zumo de limón · perejil y hierbabuena abundantes",
       "p": [
        "Los garbanzos, a remojo la noche antes 8-12 h, y luego 10 min en olla express. Déjalos enfriar.",
        "Hidrata el cuscús con el mismo volumen de agua hirviendo, tapado 5 min, y déjalo enfriar.",
@@ -1759,10 +1767,10 @@ let ingredientNotes = [
   {t:'Choco (sepia)', d:'16 g de proteína y 1,5 de grasa por 100 g, de lo más magro que puedes comprar. Dos formas de cocinarlo y ninguna intermedia: muy poco (2-3 min a la plancha) o mucho (guisado 25-30 min, u 8 en olla express). En el término medio queda correoso. Congelado va perfectamente para guisos, y además congelarlo rompe la fibra y lo ablanda.'},
   {t:'Calabaza', d:'7 g de hidrato por 100 g, así que cuenta algo como carbohidrato, pero menos que la patata (20 g). Hervida se deshace rápido y va bien para cremas; asada en air fryer es otro plato, porque caramelizan los azúcares. Para cremas, la cacahuete (butternut) es la más fiable.'},
   {t:'Formatos de Mercadona: comprar y gastar', d:'Las raciones están puestas para que los envases se acaben y los platos que comparten producto caigan en la misma semana. Cuadran exactos: los noodles de la semana 1 (200 g, un paquete), los mejillones en lata de 69 g escurridos (semana 3), el atún al natural en latas de 60 g escurridos —todas las raciones son múltiplo de 60—, y las legumbres, que en seco duran meses. No cuadran y se congela el resto: la leche evaporada en cubitos de 25 ml, el tomate triturado en porciones de 100 g, los ñoquis en porciones de 50 y el caldo en bolsa plana. Comprueba el envase al comprar, que los formatos cambian. La tabla con las cifras del ciclo completo está en la pestaña Envases.'},
-  {t:'Las bolsas del congelador', d:'Lo que se compra a granel se parte al llegar a casa en bolsas de un peso fijo, para sacar la cantidad justa y no descongelar de más. Gambas en bolsas de 70 g, ternera picada de 60, cadera de ternera en pieza, lomo de cerdo y pescado blanco de 175, salmón y atún fresco de 110, choco en medios paquetes de 150. Las raciones de todas las recetas están ajustadas a múltiplos de esas bolsas, así que cada plato se lleva 1, 2 o 3 enteras. La pechuga es la excepción: va entera y, descongelada, se gasta en el día. En un ciclo de 4 semanas salen 5 bolsas de cerdo (875 g), 3 de cadera más 10 de picada (una pieza de 1,125 kg), 9 de pescado blanco y 13 de gambas. La tabla completa está en la pestaña Envases.'},
+  {t:'Las bolsas del congelador', d:'Lo que se compra a granel se parte al llegar a casa en bolsas de un peso fijo, para sacar la cantidad justa y no descongelar de más. Son SIETE MEDIDAS para todo, no un peso por receta: 175 g para toda la carne en pieza y la picada grande, 170 para el pescado blanco, 140 y 90 para las raciones medianas y pequeñas de pollo, 125 para el salmón, 120 para la picada de la hamburguesa y 70 para las gambas. Pesas una vez, lo escribes en la bolsa y no vuelves a mirar la receta. En un ciclo de 4 semanas salen 5 bolsas de cerdo (875 g), 3 de cadera en pieza más 2 de picada grande y 2 pequeñas (una pieza de 1,115 kg), 9 de pescado blanco y 13 de gambas. La pechuga se compra entera: una de unos 315 g da una bolsa de 175 y una de 140. La tabla completa está en la pestaña Envases.'},
   {t:'Los ñoquis, salteados y no cocidos', d:'Los cinco platos de ñoquis van salteados en sartén hasta dorarse, 5-6 minutos, en lugar de hervidos: crujientes por fuera y tiernos dentro. Dos reglas para que salga bien: se hacen los primeros y se reservan, y vuelven al final mezclando solo lo justo, porque si entran antes en la salsa se ablandan y pierden la costra. Solo la boloñesa necesitó subir el aceite de 3 a 6 g para poder dorarlos; los demás ya llevaban bastante.'},
   {t:'Burrata: gastarla la semana que la compres', d:'Vuelve al plan con una condición, que es justo lo que la sacó la primera vez: la tarrina de 250 g deja unos 150 g escurridos y 30 g de grasa, más de lo que suman tres cenas. Así que va a 50 g por cena, en tres cenas de la misma semana, y en platos sin aceite añadido y con proteína magra, porque la grasa la pone ella. Escúrrela y sécala con papel antes de trocearla.'},
-  {t:'Queso fresco: la tarrina son 250 g', d:'Hay que acabarla en la semana o se pone mala, y con plato propio cada día ya no hay dos cenas iguales que la gasten de golpe: entra en una cena de la semana 1 y en otra de la 2. Si ves que se te va a quedar a medias, la alternativa es la burrata, que se compra y se gasta la misma semana. Donde antes había una tercera cena con queso fresco ahora va parmesano, que aguanta semanas abierto.'},
+  {t:'Queso fresco: la tarrina son 250 g', d:'Hay que acabarla en la semana o se pone mala, y con plato propio cada día ya no hay dos cenas iguales que la gasten de golpe: entra en una cena de la semana 1 y en otra de la 2. Si ves que se te va a quedar a medias, agrupa las dos cenas en días seguidos. Donde antes había una tercera cena con queso fresco ahora va parmesano, que aguanta semanas abierto.'},
   {t:'Noodles: el paquete son 200 g', d:'Las raciones están ajustadas para que el paquete cuadre siempre: 100 g en el almuerzo y 50 g en la cena. Un paquete da dos almuerzos, o un almuerzo y dos cenas, o cuatro cenas. Empareja los platos de noodles dentro de la misma semana y con 2-3 días de margen como mucho, porque la bolsa abierta aguanta poco en la nevera. Lo que sobre, al congelador: se congela bien y pasa directo de congelador al wok.'},
   {t:'Guisantes congelados en el wok', d:'No los eches congelados al principio: el hielo baja la temperatura del wok y todo se cuece al vapor en lugar de saltearse. Escáldalos 2 min en un bol con agua hirviendo, escúrrelos y SÉCALOS con papel; van al final, con los noodles y la soja, 1-2 min solo para calentarlos. Si vas con prisa, échalos congelados al final, tapa 2 min y destapa otro minuto a fuego fuerte para evaporar el agua. Lo que no conviene es descongelarlos del todo y dejarlos reposar: se arrugan y pierden el verde.'},
   {t:'Nada hay que cocinar con antelación', d:'Ningún plato del recetario obliga a prepararse el día antes. Hay varios que mejoran de un día para otro — el salpicón, la ensalada de garbanzos, la ensalada campera, el pisto, el estofado y la lasaña — pero todos se pueden hacer y comer en el momento. El salmorejo, que sí pedía dos horas de nevera, está fuera del plan.'},
@@ -1811,40 +1819,225 @@ let dejarHechoAntes = [
   'Legumbres a remojo si toca garbanzos al día siguiente.',
 ];
 
+// ---------------------------------------------------------------------------
+// CIFRAS DEL CICLO, CALCULADAS
+// Las cantidades del mes salen del menú, no escritas a mano: cada vez que cambia
+// una receta o se reordena la rotación, las cifras de la pestaña Envases se
+// recalculan solas. Antes iban en el texto y se quedaban desfasadas en cuanto
+// se tocaba un plato.
+// ---------------------------------------------------------------------------
+const PRODUCTOS_CICLO = [
+  ['Ternera picada',  /ternera picada/i],
+  ['Cadera en pieza', /cadera de ternera/i, /picada/i],
+  ['Lomo de cerdo',   /lomo de cerdo/i],
+  ['Pollo',           /pechuga|pollo/i, /caldo/i],
+  ['Salmón',          /salmón/i],
+  ['Atún fresco',     /atún fresco/i],
+  ['Gambas',          /gambas/i],
+  ['Choco',           /choco|sepia/i],
+  ['Pescado blanco',  /rosada|merluza|lenguado|pescado blanco/i],
+  ['Cebolla',         /cebolla/i],
+  ['Pimiento',        /pimiento/i],
+  ['Zanahoria',       /zanahoria/i],
+  ['Champiñones',     /champiñones/i],
+  ['Calabaza',        /calabaza/i],
+  ['Puerro',          /puerro/i],
+  ['Calabacín',       /calabacín/i],
+  ['Berenjena',       /berenjena/i],
+  ['Guisantes',       /guisantes/i],
+  ['Tomate triturado',/tomate triturado/i],
+  ['Leche evaporada', /leche evaporada/i],
+  ['Caldo',           /caldo/i],
+  ['Noodles',         /noodles/i],
+  ['Ñoquis',          /ñoquis/i],
+  ['Lentejas',        /lentejas en seco/i],
+  ['Garbanzos',       /garbanzos en seco/i],
+  ['Claras',          /claras/i],
+];
+
+let _resumenCache = null;
+function resumenCiclo(){
+  if(_resumenCache) return _resumenCache;
+  const r = {};
+  const nSem = menuVitasane.semanas.length;
+  for(let sem = 1; sem <= nSem; sem++){
+    for(let idx = 0; idx < 7; idx++){
+      for(const slot of ['alm','cena']){
+        let plato;
+        try{ plato = platoDelDia(slot, {semana:sem, idx, key:'1900-01-01', d:new Date()}); }
+        catch(e){ continue; }
+        for(const trozo of String(plato && plato.ing || '').split('·')){
+          const t = trozo.trim();
+          const m = /(\d+)\s*(g|ml)\b/.exec(t);
+          if(!m) continue;
+          for(const [nombre, re, excluye] of PRODUCTOS_CICLO){
+            if(!re.test(t)) continue;
+            if(excluye && excluye.test(t)) break;
+            if(!r[nombre]) r[nombre] = {total:0, un:m[2], semanas:new Array(nSem).fill(0), raciones:[]};
+            r[nombre].total += +m[1];
+            r[nombre].semanas[sem-1] += +m[1];
+            r[nombre].raciones.push(+m[1]);
+            break;
+          }
+        }
+      }
+    }
+  }
+  _resumenCache = r;
+  return r;
+}
+
+const _kg = (v, un) => v >= 1000 ? (v/1000).toFixed(3).replace(/0+$/,'').replace(/\.$/,'').replace('.', ',') + (un === 'ml' ? ' l' : ' kg')
+                                 : v + ' ' + un;
+// {tot:X} -> total del ciclo · {sem:X} -> reparto por semana · {n:X} -> nº de raciones
+function cifrasCiclo(txt){
+  const r = resumenCiclo();
+  return String(txt).replace(/\{(tot|sem|n):([^}]+)\}/g, (_, tipo, nombre) => {
+    const d = r[nombre];
+    if(!d) return '—';
+    if(tipo === 'tot') return _kg(d.total, d.un);
+    if(tipo === 'n')   return String(d.raciones.length);
+    return d.semanas.map((v,i) => `${v || 'nada'} la ${i+1}.ª`).join(', ');
+  });
+}
+
+// ---------------------------------------------------------------------------
+// ROTACIÓN DEL PRÓXIMO CICLO
+// Se guarda solo con los títulos: el menú se construye desde el recetario al
+// activarla, así que no puede quedar desincronizada si se toca una receta.
+// Dos reglas nuevas, que vienen de haber tirado media bolsa de patatas por 40 g:
+//   1. De lunes a viernes van los platos que abren envase, agrupados en días
+//      seguidos para cerrarlo. Repetir plato dentro de la semana deja de ser un
+//      defecto y pasa a ser la forma de no tirar nada.
+//   2. Sábado y domingo, solo congelador y despensa. Nada de queso fresco,
+//      claras, leche evaporada, champiñones ni hoja de ensalada: si come fuera, no hay
+//      ningún envase abierto esperándole.
+// ---------------------------------------------------------------------------
+const ROTACION_NUEVA = {
+  titulo: 'Rotación del próximo ciclo',
+  intro: 'Los mismos platos y el mismo reparto de carnes (8 pollo, 5 ternera, 5 cerdo, 6 pescado y 4 legumbre), reordenados para que los envases se cierren entre semana y el fin de semana salga entero del congelador.',
+  cierra: [
+    'Semana 1 · queso fresco (250 g de lunes a miércoles) · leche evaporada (175 de 200 ml) · claras (220 de 300) · noodles (150 de 200)',
+    'Semana 2 · tomate triturado (400 g exactos, de miércoles a viernes) · claras (250 de 300) · champiñones (la bandeja entera, de martes a viernes) · brotes (100 g)',
+    'Semana 3 · queso fresco (250 g exactos) · noodles (200 g exactos) · brotes (100 g de una vez el lunes)',
+    'Semana 4 · tomate triturado (400 g exactos) · claras (250 de 300) · noodles (150 de 200)'
+  ],
+  aviso: 'Lo que no cierra del todo son las claras (sobran 50-80 ml) y la leche evaporada (25 ml en la semana 1). Las dos se congelan, así que no se tira nada.',
+  semanas: [
+    {alm:['Ñoquis cremosos con pollo y champiñones 🥫','Pollo en salsa de cebolla con arroz 🥫','Estofado de ternera con patata','Boloñesa con macarrones integrales 🍝','Dorada con pisto','Cuscús con gambas y calamar','Potaje de garbanzos con calabaza y pollo ⏰🥫'],
+     cena:['Queso fresco con tomate y pollo','Bol de pollo, tomate y parmesano','Ensalada de brotes con gambas y queso fresco','Tortilla de calabacín con claras 🥚','Crema de calabaza con tortilla de atún 🥫🥚','Pescado a la plancha con puerro','Cuscús con pescado y limón']},
+    {alm:['Lomo de cerdo con tomate','Pollo al curry con arroz 🥫','Lomo de cerdo en salsa de cebolla 🥫','Ñoquis con boloñesa de ternera','Salmón con champiñones y nueces ⚠️','Cerdo a la plancha con arroz y verdura','Lentejas estofadas con pollo 🥫'],
+     cena:['Tortilla de patata ligera 🥚','Revuelto de gambas y calabacín 🥚','Hamburguesa de ternera con ensalada','Queso fresco con tomate y pollo','Bol de pollo, tomate y parmesano','Pescado a la plancha con puerro','Ñoquis con pescado y tomate']},
+    {alm:['Pollo asado con boniato','Cuscús con ternera y berenjena','Wok de pollo con noodles','Pollo en salsa de cebolla con arroz 🥫','Guiso de cerdo con patata 🥫','Ensalada fría de fideos de arroz con salmón','Ensalada de garbanzos con atún, puerro y huevo'],
+     cena:['Ensalada de brotes con gambas y queso fresco','Queso fresco con tomate y pollo','Bol de pollo, tomate y parmesano','Crema de verduras con pollo','Tortilla de calabacín con claras 🥚','Pescado a la plancha con puerro','Sopa de picadillo 🥚']},
+    {alm:['Pasta de lentejas cremosa con pollo 🥫🔴','Salteado asiático de ternera con arroz','Ñoquis gratinados con pollo','Cerdo a la plancha con patata y pimientos','Rosada en salsa verde con patata','Arroz caldoso de rosada y gambas','Lentejas estofadas con pollo 🥫'],
+     cena:['Tortilla de patata ligera 🥚','Queso fresco con tomate y pollo','Hamburguesa de ternera con ensalada','Revuelto de gambas y calabacín 🥚','Bol de pollo, tomate y parmesano','Pescado a la plancha con puerro','Ñoquis con pescado y tomate']}
+  ]
+};
+
+// Bloques: lunes/miércoles, martes/jueves, viernes/sábado y domingo suelto.
+const BLOQUES_DIAS = [['Lunes y miércoles',0,2], ['Martes y jueves',1,3],
+                      ['Viernes y sábado',4,5], ['Domingo',6,null]];
+
+function menuDesdeTitulos(rot){
+  const busca = (slot, t) => {
+    const r = (slot === 'alm' ? recetario.alm : recetario.cena).find(x => x.title === t);
+    if(!r) throw new Error('No está en el recetario: ' + t);
+    return {t:r.title, m:r.macros, i:r.ing, p:(r.tip||[]).slice()};
+  };
+  return rot.semanas.map((w, n) => ({
+    n: n + 1,
+    bloques: BLOQUES_DIAS.map(([dias, d1, d2]) => {
+      const b = {dias};
+      for(const slot of ['alm','cena']){
+        b[slot] = d2 === null ? busca(slot, w[slot][d1])
+                              : [busca(slot, w[slot][d1]), busca(slot, w[slot][d2])];
+      }
+      return b;
+    })
+  }));
+}
+
+async function activarRotacionNueva(){
+  const caja = document.getElementById('rotMsg');
+  const di = (t, ok) => { if(caja){ caja.textContent = t; caja.className = 'plan-msg show ' + (ok ? 'ok' : 'err'); caja.style.display = ''; } };
+  if(settings.rotacion === 'nueva'){ di('La rotación nueva ya está activa.', true); return; }
+  let semanas;
+  try{ semanas = menuDesdeTitulos(ROTACION_NUEVA); }
+  catch(e){ di('No se pudo activar: ' + e.message, false); return; }
+
+  menuVitasane.semanas = semanas;
+  _resumenCache = null;
+  menuVitasane.intro = 'Tu menú de 4 semanas en la rotación que agrupa los envases: de lunes a viernes los platos que abren algo, agrupados para cerrarlo, y el fin de semana solo congelador y despensa.';
+  settings.rotacion = 'nueva';
+  try{
+    await saveSettings();
+    const actual = Object.assign({}, DEFAULT_PLAN, planActual());
+    await store.set('plan', JSON.stringify(actual));
+  }catch(e){
+    renderAll(); renderRot();
+    di('La rotación se ha aplicado, pero no se pudo guardar: ' + e.message, false);
+    return;
+  }
+  renderAll(); renderRot();
+  di('Rotación nueva activada. Las 4 semanas del menú y la lista de la compra ya son las nuevas.', true);
+}
+
+function renderRot(){
+  const el = document.getElementById('rotBox');
+  if(!el) return;
+  const activa = settings.rotacion === 'nueva';
+  el.innerHTML = activa
+    ? `<b>Ya está activa.</b> El menú que ves es el que agrupa los envases: de lunes a viernes los platos que abren algo, el fin de semana solo congelador y despensa.`
+    : `${esc(ROTACION_NUEVA.intro)}<br><br><b>Qué cierra cada semana</b><br>${ROTACION_NUEVA.cierra.map(c=>esc(c)).join('<br>')}<br><br>${esc(ROTACION_NUEVA.aviso)}<br><br><b>Actívala el día que hagas la compra del mes</b>, no antes: cambia los 28 almuerzos y las 28 cenas de golpe, y lo que tengas comprado para esta semana deja de cuadrar.`;
+}
+
 // Tipos de sesión y rutina de cinta posterior
 const TIPOS_SESION = {
-  push:  {lbl:'Empuje',    desc:'pecho, hombro, tríceps'},
-  pull:  {lbl:'Tracción',  desc:'espalda, bíceps'},
-  legs:  {lbl:'Pierna',    desc:'tren inferior'},
-  full:  {lbl:'Full body', desc:'cuerpo completo'},
+  legs:     {lbl:'Tren inferior', desc:'sentadilla, prensa, femoral, aducción, gemelo'},
+  push:     {lbl:'Pecho y hombro', desc:'press banca, press militar, aperturas, laterales, fondos'},
+  pull:     {lbl:'Espalda y brazo', desc:'jalón, remo, curl, extensión de tríceps'},
+  refuerzo: {lbl:'Refuerzo',      desc:'glúteo, hombro posterior, tríceps y abdomen'},
+  caminata: {lbl:'Caminata',      desc:'zona 2, sin pesas'},
+  full:     {lbl:'Full body',     desc:'cuerpo completo'},
 };
 
 const cintaPorTipo = {
-  push: {
-    titulo:'Cinta después de empuje',
-    fases:[
-      {f:'Bajar pulso', t:'5 min', d:'Caminar rápido a 5,5-6 km/h'},
-      {f:'Cardio principal', t:'15-20 min', d:'Bici o remo al 60-70% de la FC máxima'},
-      {f:'Estiramiento', t:'5 min', d:'Tren superior'},
-    ],
-    nota:'La inclinación se introduce aquí, en el tramo de caminata: empieza en 1-2% y sube si el pulso se mantiene controlado.'
-  },
-  pull: {
-    titulo:'Cinta después de tracción',
-    fases:[
-      {f:'Calentamiento', t:'3 min', d:'Caminar suave'},
-      {f:'Intervalos', t:'16-20 min', d:'8-10 rondas de 1 min trote a 7-8 km/h + 1 min caminar a 5,5 km/h'},
-      {f:'Enfriamiento', t:'3 min', d:'Caminar suave'},
-    ],
-    nota:'Cada 2 semanas sube 0,3-0,5 km/h en los tramos de trote, si la sesión se completa sin fatiga excesiva.'
-  },
   legs: {
-    titulo:'Cinta después de pierna',
+    titulo:'Cinta después del tren inferior',
     fases:[
-      {f:'Activación suave', t:'10-12 min', d:'Caminar plano a 4,5-5 km/h'},
+      {f:'Suave', t:'15 min', d:'Elíptica, o cinta a 4-4,5 km/h con 1-2% de inclinación'},
       {f:'Respiración', t:'—', d:'Respiración diafragmática al terminar'},
     ],
-    nota:'Sin impacto y sin inclinación: las piernas ya están fatigadas. Aquí solo se busca activar la circulación y ayudar a la recuperación.'
+    nota:'Sin impacto y casi sin inclinación: las piernas ya están fatigadas. Aquí solo se busca activar la circulación y ayudar a la recuperación.'
+  },
+  push: {
+    titulo:'Cinta después de pecho y hombro',
+    fases:[
+      {f:'Caminata inclinada', t:'15 min', d:'5,5 km/h al 12% de inclinación'},
+    ],
+    nota:'La inclinación fuerte solo en los días de tren superior, que es cuando las piernas están descansadas. Si el pulso se dispara, baja la velocidad antes que la inclinación.'
+  },
+  pull: {
+    titulo:'Cinta después de espalda y brazo',
+    fases:[
+      {f:'Caminata inclinada', t:'15 min', d:'5,5 km/h al 12% de inclinación'},
+    ],
+    nota:'Igual que el día de pecho: las piernas están descansadas y aguantan el 12%.'
+  },
+  refuerzo: {
+    titulo:'Cinta después del refuerzo',
+    fases:[
+      {f:'Suave', t:'15 min', d:'Cinta a 4-4,5 km/h con 1-2% de inclinación'},
+    ],
+    nota:'El refuerzo lleva zancada búlgara y empuje de cadera, así que el día tiene pierna: cinta suave, como el lunes.'
+  },
+  caminata: {
+    titulo:'Caminata larga del sábado',
+    fases:[
+      {f:'Zona 2', t:'90-120 min', d:'5,5-6 km/h en llano, o con 3-5% de inclinación'},
+    ],
+    nota:'Sin pesas. Suma unas 400 kcal a la semana, pero NO se compensan comiendo más: están contadas en el déficit. Ritmo de poder hablar sin quedarte sin aire.'
   },
   full: {
     titulo:'Cinta después de full body',
@@ -1858,14 +2051,24 @@ const cintaPorTipo = {
 };
 
 const entrenoNotas = [
-  'Rutina estable hasta octubre: empezaste en septiembre y mantenerla un mes completo da datos limpios y comparables. En octubre se revisa el reparto muscular con cuatro semanas de datos.',
-  'SUBIR CARGA YA — Press militar: 20 kg clavado desde marzo con 10 repeticiones limpias. Sube a 22,5 kg aunque bajes a 6-8 reps.',
-  'SUBIR CARGA YA — Curl de bíceps: 10 kg desde marzo, mismo caso. Sube el siguiente escalón y baja el rango de reps si hace falta.',
-  'ARREGLAR EN HEVY — Seated Cable Row y Lat Pulldown: el peso registrado parece ser el número de placas, no los kilos. Mientras no se corrija no se puede saber si el volumen de tirón compensa el de empuje.',
-  'Solapamiento: press banca, press inclinado y chest fly son el mismo patrón de empuje horizontal. Deja dos por sesión en vez de tres y usa las series liberadas para tirón.',
-  'Falta pierna: aparecía 1 de cada 6 sesiones y debería ser al menos 1 de cada 3. Es el grupo con más masa muscular y el que más protege el metabolismo basal en déficit.',
-  'Falta tirón horizontal: un remo con barra o a una mano progresa de forma más fiable que el cable row y compensa el exceso de empuje de pecho.',
-  'Progresando bien: press banca 30→40 kg, chest fly 30→43, press inclinado 20→28, elevaciones laterales 5→18.',
+  'CALENDARIO NUEVO (noviembre 2026): lunes tren inferior · martes pecho y hombro · miércoles espalda, bíceps y tríceps · jueves REFUERZO · viernes descanso · sábado caminata de 90-120 min · domingo descanso. Sesión de pesas de unos 45 min, entre semana de 18:00 a 19:00.',
+  'Por qué el descanso pasó del miércoles al viernes: llegas fresco a la caminata larga del sábado, y el refuerzo (que lleva zancada búlgara y empuje de cadera) queda a 72 h del tren inferior del lunes en vez de a 48.',
+  'Lo que cuesta del reparto nuevo: cuatro días seguidos de pesas, de lunes a jueves. Con tu recuperación actual es asumible, pero si un jueves llegas con las piernas cargadas, haz el refuerzo ligero o recórtalo.',
+  'OJO CON LOS CODOS: el tríceps cae tres días seguidos — martes el fondo en máquina, miércoles el jalón con cuerda y jueves la extensión del refuerzo. Si notas molestia, deja la del jueves en 2 series o quítala.',
+  'EL DÍA DE REFUERZO cubre lo que las otras tres rutinas no tocaban: glúteo en empuje (hip thrust), glúteo medio, cuádriceps en aislamiento, deltoide posterior, manguito rotador, tríceps de cabeza larga y abdominales, que no entrenabas desde abril.',
+  'Los ejercicios del refuerzo van SIN PESO los primeros días: ajústalos dejando 2-3 repeticiones de margen antes del límite, y apunta lo que uses.',
+  'REVISIÓN QUINCENAL, los viernes: 27 de noviembre, 11 de diciembre, 24 de diciembre (jueves, porque el 25 es Navidad) y 8 de enero. Llevas el CSV de Hevy, el JSON de Garmin y la media de peso de la semana.',
+  'La revisión pasa a quincenal, el pesaje NO. Sigue pesándote cada mañana, o al menos 3-4 mañanas por semana, con el mismo protocolo. Para la revisión se compara la media de los últimos 7 días con la de la quincena anterior; una pesada suelta cada 15 días varía más que los 0,5 kg que esperas perder.',
+  'El Fitdays de composición (grasa y masa magra) sí puede quedarse solo para el viernes de revisión: es el dato más ruidoso.',
+  'Los pesos no esperan a la revisión: si completas todas las series en el tope de repeticiones, sube al siguiente escalón tú mismo. La revisión sirve para ajustar el conjunto, no para darte permiso.',
+  'PERO SUBE UNO O DOS EJERCICIOS POR SESIÓN, no todos a la vez. El 12 de noviembre subiste peso en seis ejercicios de pierna el mismo día (peso muerto 30→35, prensa 15→17,5, aducción 45→50, patada trasera 20→22,5, gemelo 12,5→15 y curl femoral 47→50) después de 10 días sin tren inferior, y las agujetas fueron de las gordas. Repartiéndolo notas cuál te cuesta de verdad y la fatiga no se junta.',
+  'Si tras una subida no llegaste al tope de repeticiones en la última serie, mantén el peso nuevo hasta conseguirlo, no sigas subiendo. Si se te hizo claramente pesado o se fue la técnica, baja un escalón y vuelve a intentarlo en unas semanas. Unas agujetas fuertes por sí solas no son motivo para deshacer una subida.',
+  'Las caminatas y las carreras NO se apuntan en Hevy, van solo en el Garmin. Regla del cruce en la revisión: si una actividad del Garmin cae dentro del horario de un entreno de Hevy, es la misma sesión y la cinta se cuenta una sola vez; si cae fuera, es una salida independiente.',
+  'La caminata del sábado suma unas 400 kcal por semana, unas 55 al día. NO la compenses comiendo más: ya está contada en el déficit.',
+  'DÓNDE PARA LA BAJADA: en unos 71,5 kg y 19-20% de grasa, que a 0,26 kg/semana caen a finales de diciembre o principios de enero. A partir de ahí, mantenimiento de unas 2.100 kcal planas, +300 sobre las de ahora, y casi todas a hidrato del almuerzo y la cena. La recomposición necesita comer en mantenimiento.',
+  'Señales para tocar las calorías antes de tiempo: tres semanas sin que baje la media del peso (recortar 30-40 g de arroz), pérdida de fuerza en las pesas (subir proteína antes que nada), o pulso en reposo 4 pulsaciones por encima de tu media o menos de 7 h de sueño tres semanas seguidas (parar el déficit). Valen entre revisiones, no hace falta esperar al viernes.',
+  'Para rotar el refuerzo dentro de un mes, si quieres cambiar de estímulo: Back Extension (lumbar), Shrug (trapecio), Hanging Knee Raise (abdominales), Bulgarian Split Squat (pierna a una pierna) y Seated Calf Raise (sóleo).',
+  'Desde marzo, con los rodajes largos de cara a la media maratón, habrá que meter hidrato extra antes de las tiradas de más de 75 minutos. Eso se decide cuando empieces a correr.',
 ];
 
 const salsasWok = {
@@ -1873,25 +2076,24 @@ const salsasWok = {
   lista:[
     {n:'Picante de soja y sriracha', k:'+20 kcal', i:'15 g de salsa de soja · 12 g de sriracha · 10 g de vinagre de arroz · 1 diente de ajo (5 g)', p:'La de menos calorías. La sriracha lleva azúcar, pero en 12 g son apenas 2 g.'},
     {n:'Teriyaki ligera', k:'+38 kcal', i:'15 g de salsa de soja · 10 g de vinagre de arroz · 5 g de azúcar moreno · 3 g de maicena · 1 diente de ajo (5 g)', p:'Mezcla en frío y échala al final con el fuego aún encendido: la maicena necesita calor para espesar, pero solo 30-40 segundos. La teriyaki comercial lleva el triple de azúcar.'},
-    {n:'Miso y sésamo', k:'+45 kcal', i:'15 g de miso · 8 g de salsa de soja · 10 g de vinagre de arroz · 2 g de aceite de sésamo', p:'Mucho umami por poca cosa. El miso no debe hervir: pierde sabor y fermentos. Disuélvelo en agua templada y échalo con el fuego apagado.'},
+    {n:'Limón y cilantro', k:'+45 kcal', i:'15 g de salsa de soja · 20 g de zumo de limón · 1 diente de ajo (5 g) · 5 g de AOVE · cilantro fresco abundante', p:'Se monta en frío y se echa con el fuego ya apagado: si la cueces, el limón amarga y el cilantro se vuelve hierba mojada. Va especialmente bien con los woks de pescado y gambas.'},
     {n:'Curry cremoso', k:'+66 kcal', i:'50 ml de leche evaporada · 4 g de curry en polvo · 8 g de salsa de soja · 1 diente de ajo (5 g)', p:'Tuesta el curry 30 segundos en el wok seco antes de añadir la leche evaporada. Que no hierva, o se corta.'},
-    {n:'Cremosa de sésamo (tahini)', k:'+78 kcal', i:'12 g de tahini · 12 g de salsa de soja · 10 g de vinagre de arroz · 1 diente de ajo (5 g)', p:'Aflójala con dos cucharadas de agua antes de echarla: el tahini solo se agarra y queda pastoso.'},
     {n:'Satay de cacahuete', k:'+96 kcal', i:'15 g de crema de cacahuete · 12 g de salsa de soja · 10 g de zumo de lima · 5 g de sriracha', p:'La más sabrosa y la más cara en calorías. Solo para woks magros: el de pollo con noodles o el de gambas la admiten; el de salmón no.'},
   ],
   pares:[
-    {w:'Pescado blanco con noodles', s:'Teriyaki, picante, miso'},
+    {w:'Pescado blanco con noodles', s:'Limón y cilantro, teriyaki, picante'},
     {w:'Gambas con arroz', s:'Satay, picante, teriyaki'},
-    {w:'Salmón con noodles', s:'Picante o teriyaki — nada con grasa'},
+    {w:'Salmón con noodles', s:'Picante, teriyaki o limón y cilantro — nada con grasa'},
     {w:'Pollo con noodles', s:'Satay, curry cremoso, teriyaki'},
-    {w:'Ternera con noodles', s:'Teriyaki, miso, picante'},
-    {w:'Cena ligera de pescado', s:'Picante o miso, las más ligeras'},
+    {w:'Ternera con noodles', s:'Teriyaki, picante, curry cremoso'},
+    {w:'Cena ligera de pescado', s:'Picante o limón y cilantro, las más ligeras'},
   ],
   regla:'Si el plato lleva salmón o ya va justo de grasa, usa las de base soja. Las cremosas, para los woks de pollo, gambas o pescado blanco.'
 };
 
 let cardioPlan = {
   titulo: 'Cinta después de cada sesión, según el tipo de día',
-  detalle: 'Tracción: intervalos de trote, subiendo 0,3-0,5 km/h cada dos semanas. Empuje: caminata rápida con inclinación progresiva desde el 1-2%. Pierna: solo caminata suave en plano, sin impacto ni inclinación. La rutina de cada día aparece en Hoy según el tipo de sesión que tengas asignado en Ajustes.',
+  detalle: '15 minutos después de cada sesión de pesas, y el tipo manda: los días de tren superior (martes de pecho y miércoles de espalda) van a 5,5 km/h con 12% de inclinación, porque las piernas están descansadas; los días que llevan pierna (lunes de tren inferior y jueves de refuerzo) van suaves, a 4-4,5 km/h con 1-2%, o elíptica. El sábado no hay pesas: caminata de 90-120 min en zona 2. La rutina de cada día aparece en Hoy según el tipo de sesión que tengas asignado en Ajustes.',
   nota: 'Alargar la cinta rinde poco: pasar de 20 a 30 minutos sumaría unas 50 kcal diarias de media, menos que quitar la barrita. Lo que protege el músculo en déficit es el trabajo de fuerza, no el cardio.'
 };
 
@@ -1910,14 +2112,14 @@ let notasPlan = [
   'Si te sobra comida en el plato, no fuerces: deja el hidrato, nunca la proteína. Dejarte 30 g de arroz son 8 kcal; dejarte 40 g de pollo son 9 g de proteína que te hacen falta.',
   'Aunque el alta esté dada y las analíticas salgan bien, lo habitual es mantener la suplementación y repetir analítica una vez al año de forma indefinida: los déficits de B12, hierro, calcio y vitamina D pueden aparecer años después sin dar síntomas. Si en el alta te pautaron algo, mantenlo. Eso es pauta médica, no dieta.',
   'Conviene que Vitasane tenga el contexto completo si no lo tiene ya, porque cambia cómo se interpreta la evolución del peso: la fase de pérdida rápida ya terminó, y lo que venga ahora sale de la dieta y el entrenamiento. El 1,2 kg al mes es resultado de este plan, no de arrastre.',
-  'Medición semanal, no quincenal: aunque una pesada aislada a 15 días parezca más limpia, al promediar cuatro pesadas al mes el error baja a ±0,25 kg frente a ±0,35 kg con dos. Y no compares una semana con la anterior, sino la media de las últimas tres o cuatro.',
+  'PESAJE DIARIO, REVISIÓN QUINCENAL: desde noviembre de 2026 la revisión de dieta y entreno es cada dos viernes, pero el pesaje sigue siendo de cada mañana (o 3-4 mañanas por semana) con el mismo protocolo. Son cosas distintas: una pesada aislada cada 15 días varía por agua y comida más que los 0,5 kg que esperas perder, así que lo que se compara es la media de los últimos 7 días contra la de la quincena anterior, nunca dos pesadas sueltas.',
   'No hace falta ciclar hidratos los días de gimnasio: repartir las mismas calorías de otra forma no cambia la pérdida de grasa, que depende del balance semanal. Lo único útil es COLOCAR el hidrato cerca de la sesión (la manzana post-entreno y el almuerzo con arroz).',
   'Lechuga, canónigos y rúcula son intercambiables: por 40 g la diferencia es de 4-6 kcal. Alterna según lo que vayas a gastar en dos o tres días, porque canónigos y rúcula se ponen mustios antes.',
   'Proteína a 1,8 g/kg. Si notas que pierdes fuerza en el gimnasio, es lo primero que subiría.',
   'Siguiente fase: el marcador para plantearse volumen no es una fecha sino el porcentaje de grasa. La referencia es bajar al 15-18% antes de un superávit. Conservando los 57,6 kg de masa magra, eso son 70 kg (18%) y 68 kg (15%). Vigila el peso, que es el dato fiable, más que el porcentaje de la bioimpedancia.',
   'En volumen cambiarían las calorías (~2300-2400) y sobre todo el hidrato (~280 g); la proteína apenas se mueve. El recetario vale entero subiendo las raciones de arroz, patata y pasta. Lo que pasa a mandar es el entrenamiento: sin progresión de cargas, el superávit se va a grasa.',
   'Pesa las primeras 2-3 semanas siguiendo la regla de peso de compra (proteína y verdura en crudo, hidratos y legumbres en seco, patata cruda pelada); después puedes guiarte por las referencias de palma y puño de Vitasane.',
-  'Seguimiento: pésate en Fitdays una vez por semana, mismo día y hora. Con 313 kcal/día de déficit deberías ver unos 0,28 kg/semana. Si en 3 semanas no se mueve nada, recorta 30-40 g de arroz del almuerzo antes de tocar la proteína.',
+  'Seguimiento: el peso, cada mañana en ayunas; el Fitdays de composición, el viernes de revisión, que es el dato más ruidoso. Con el déficit actual deberías ver unos 0,26 kg/semana. Si en 3 semanas no se mueve nada, recorta 30-40 g de arroz del almuerzo antes de tocar la proteína.',
   'Creatina: a diario, también los días que no entrenas — el momento del día da igual y no aporta calorías.',
   'En 28 días de Garmin solo salían 6 picos de actividad claros de 12 esperados: probablemente faltan sesiones por registrar con el reloj. Si el gasto real es mayor, el déficit ya es mejor que el calculado.',
   'Consejos de Vitasane que se mantienen: verdura cruda y cocida en cada comida principal, AOVE con moderación, agua suficiente, evitar pan con las comidas, y si una cena va a ser copiosa, aligerar el almuerzo.',
@@ -1928,47 +2130,47 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-11-07c';
+const PLAN_VERSION_DEFAULT = '2026-11-15';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 let envases = {
-  intro: 'Dos reglas, una por sitio. En el CONGELADOR, lo que se compra a granel se parte al llegar en bolsas de un peso fijo, de modo que cada plato se lleva un número entero de bolsas y nunca descongelas de más. En la NEVERA, la ración es una fracción exacta del envase y los platos que comparten producto caen en la misma semana, así se abre, se gasta y no queda medio bote. La verdura va aparte: casi toda se congela SUELTA, en placa, en una bolsa grande por verdura, y se pesa al cocinar. Las cifras de abajo son las del ciclo de 4 semanas completo. Pesos de Mercadona; comprueba el envase al comprar, que los formatos cambian.',
+  intro: 'Dos reglas, una por sitio. En el CONGELADOR todo va en SIETE MEDIDAS ESTÁNDAR —175, 170, 140, 125, 120, 90 y 70 g— en vez de un peso por receta: pesas una vez, escribes el peso en la bolsa y no vuelves a mirar la receta para embolsar. Cada plato se lleva bolsas enteras y nunca descongelas de más. En la NEVERA, la ración es una fracción exacta del envase y los platos que comparten producto caen en la misma semana, así se abre, se gasta y no queda medio bote. La verdura va aparte: casi toda se congela SUELTA, en placa, en una bolsa grande por verdura, y se pesa al cocinar. Los champiñones no: esos van frescos y entran en la compra de la semana. Las cifras de abajo son las del ciclo de 4 semanas completo. Pesos de Mercadona; comprueba el envase al comprar, que los formatos cambian.',
   bolsas: [
-    {p:'Lomo de cerdo',     b:'175 g', r:'5 bolsas en el ciclo (875 g): 1 la semana 1, 2 la 2, 1 la 3 y 1 la 4', d:'Pide 875 g y lo partes en cinco. En filetes para plancha, en medallones para la salsa de cebolla, en dados para el guiso. Lomo o cinta de lomo: nada de panceta, secreto, presa ni aguja, que triplican la grasa. Lo que se vende como magro sale de la aguja.'},
-    {p:'Cadera de ternera en pieza', b:'175 g', r:'3 bolsas en el ciclo (525 g): 2 la semana 1 y 1 la 3', d:'En filetes, tiras o dados. Una bolsa es exactamente una comida.'},
-    {p:'Ternera picada',    b:'60 g',  r:'10 bolsas en el ciclo (600 g): raciones de 2 bolsas (120 g) o 3 (180 g)', d:'Del mismo trozo que los filetes. Compra una pieza de cadera de 1,125 kg y pide que te saquen 525 g en filetes y te piquen los otros 600: así la picada es de cadera limpia y no la mezcla de recortes de bandeja, que es donde se cuelan la grasa y los nervios.'},
-    {p:'Pescado blanco',    b:'175 g', r:'9 bolsas en el ciclo (1,575 kg): 2 la semana 1, 1 la 2, 2 la 3 y 4 la 4', d:'Merluza, rosada o lenguado, indistintos. Una bolsa por plato.'},
-    {p:'Gambas',            b:'70 g',  r:'13 bolsas en el ciclo (910 g): 3 la semana 1, 4 la 2, 3 la 3 y 3 la 4. Raciones de 1 bolsa (70 g) o 2 (140)', d:'Se compran enteras y frescas por kilos: el kilo da unos 420 g pelados, un 42%. Pélalas el mismo día y congélalas en placa —extendidas sin tocarse, 2 h— antes de embolsar. Guarda las cabezas: con ellas sale el caldo de los dos arroces caldosos.'},
-    {p:'Choco o sepia',     b:'150 g (medio paquete de 300)', r:'2 bolsas, las dos en la semana 4', d:'El paquete de 300 g hay que partirlo en dos mitades ANTES de congelar: congelado no se puede. Las dos raciones caen en la misma semana, así que se abre y se gasta. Congelarlo rompe la fibra y lo ablanda, así que no pierdes nada.'},
-    {p:'Salmón',            b:'110 g', r:'2 bolsas: una la semana 2 y otra la 3', d:'Cuadra exacto sin tocar ninguna receta.'},
-    {p:'Atún fresco',       b:'110 g', r:'1 bolsa, en la semana 3', d:'Solo para el marmitako, en dados.'},
-    {p:'Pechuga de pollo',  b:'la pieza entera', r:'22 platos en el ciclo, entre comidas y cenas: 8 almuerzos y 14 cenas', d:'Esta no se divide: se congela entera y, descongelada, se gasta en el día. Una pechuga de unos 300 g da una comida y una cena. Nunca volver a congelar una pechuga descongelada.'},
-    {p:'Leche evaporada',   b:'cubitos de 25 ml', r:'390 ml en el ciclo; raciones de 25, 50, 75 y 90 ml', d:'El brick son 300 ml y la semana 2 se lleva 240 de golpe. Congela lo que sobre en cubitera, 25 ml por hueco: todas las raciones son múltiplo de 25, así que sacas los cubitos justos y no se pone mala.'},
-    {p:'Tomate triturado',  b:'porciones de 100 g', r:'990 g en el ciclo: 230 g la semana 1, 370 la 2, 200 la 3 y 190 la 4', d:'Las raciones van de 50 a 200 g y casi nunca cuadran con el brick de 400. Congela el resto en porciones de 100 g: el triturado congela perfectamente y así no hay medio brick muriéndose en la nevera.'},
-    {p:'Caldo',             b:'250 y 500 ml', r:'3,350 l en el ciclo: 1,050 la semana 1, 1,150 la 2, nada la 3 y 1,150 la 4', d:'Es lo que más sube con los platos de cuchara. Parte no hace falta comprarla: con las cabezas y cáscaras del kilo de gambas sale casi un litro de caldo de pescado. Sofríelas 2 min aplastándolas, cubre con agua, 20 min a fuego suave y cuela apretando. Lo que sobre, a cubitera o a bolsa plana en el congelador.'},
-    {p:'Ñoquis frescos',    b:'porciones de 50 g', r:'250 g en el ciclo: 100 g la semana 2, 50 la 3 y 100 la 4', d:'El paquete son 500 g y el ciclo entero gasta la mitad. Congela el resto en porciones de 50 g, que es la unidad de todas las raciones.'}
+    {p:'Carne en pieza y picada grande', b:'175 g', r:'Cadera de ternera {n:Cadera en pieza} bolsas ({tot:Cadera en pieza}) · lomo de cerdo {n:Lomo de cerdo} ({tot:Lomo de cerdo}) · picada grande 2 (350 g)', d:'La medida madre: toda la carne en pieza y la picada de las boloñesas van a 175 g. En filetes, medallones, tacos o tiras según el plato, pero el peso siempre el mismo, así que embolsas sin mirar la receta. En la carnicería pide una pieza de cadera de 1,115 kg y que te saquen 525 g en filetes o taco y te piquen los otros 590; el cerdo, 875 g de cinta de lomo en una pieza, que los filetes los cortas en casa.'},
+    {p:'Pescado blanco',    b:'170 g', r:'{n:Pescado blanco} bolsas en el ciclo ({tot:Pescado blanco}) · por semana: {sem:Pescado blanco}', d:'Rosada, merluza o lenguado, indistintos, y da igual que sea comida o cena: una bolsa por plato. Un lomo entero por bolsa siempre que el tamaño cuadre; si hay que partir uno, los dos trozos juntos en la misma bolsa.'},
+    {p:'Pollo, talla grande', b:'175 g', r:'7 raciones de las {n:Pollo} de pollo del ciclo ({tot:Pollo} en total)', d:'Para los almuerzos. Entera para asar, en taquitos para guisos y caldosos, o fileteada para plancha.'},
+    {p:'Pollo, talla media', b:'140 g', r:'6 raciones en el ciclo', d:'Para las cenas con más carga y para los guisos de legumbre.'},
+    {p:'Pollo, talla pequeña', b:'90 g',  r:'6 raciones en el ciclo', d:'Para las cenas ligeras: bol, ensalada templada, sopa de picadillo. Una pechuga de unos 315 g da una bolsa de 175 y una de 140.'},
+    {p:'Ternera picada, bolsa pequeña', b:'120 g', r:'2 bolsas en el ciclo (240 g) · la picada total del ciclo son {tot:Ternera picada}', d:'Para la hamburguesa y la lasaña. Aplanada en bolsa de 1 cm, no en bola: descongela en la mitad de tiempo y ocupa menos.'},
+    {p:'Salmón',            b:'125 g', r:'{n:Salmón} bolsas ({tot:Salmón}) · por semana: {sem:Salmón}', d:'Lomo entero por bolsa.'},
+    {p:'Atún fresco',       b:'110 g', r:'{n:Atún fresco} bolsa ({tot:Atún fresco}) · por semana: {sem:Atún fresco}', d:'Solo para el marmitako, en dados.'},
+    {p:'Gambas',            b:'70 g',  r:'{tot:Gambas} en el ciclo, 13 bolsas repartidas en {n:Gambas} platos · por semana: {sem:Gambas}', d:'Se compran enteras y frescas por kilos: el kilo da unos 420 g pelados, un 42%. Pélalas el mismo día y congélalas en placa —extendidas sin tocarse, 2 h— antes de embolsar. Guarda las cabezas: con ellas sale el caldo de los dos arroces caldosos.'},
+    {p:'Choco o sepia',     b:'150 g (medio paquete de 300)', r:'{n:Choco} bolsas ({tot:Choco}) · por semana: {sem:Choco}', d:'El paquete de 300 g hay que partirlo en dos mitades ANTES de congelar: congelado no se puede. Congelarlo rompe la fibra y lo ablanda, así que no pierdes nada.'},
+    {p:'Leche evaporada',   b:'cubitos de 25 ml', r:'{tot:Leche evaporada} en el ciclo · por semana: {sem:Leche evaporada}', d:'El brick son 300 ml y la semana 2 se lleva 240 de golpe. Congela lo que sobre en cubitera, 25 ml por hueco: todas las raciones son múltiplo de 25, así que sacas los cubitos justos y no se pone mala.'},
+    {p:'Tomate triturado',  b:'porciones de 100 g', r:'{tot:Tomate triturado} en el ciclo · por semana: {sem:Tomate triturado}', d:'Las raciones van de 50 a 200 g y casi nunca cuadran con el brick de 400. Congela el resto en porciones de 100 g: el triturado congela perfectamente y así no hay medio brick muriéndose en la nevera.'},
+    {p:'Caldo',             b:'250 y 500 ml', r:'{tot:Caldo} en el ciclo · por semana: {sem:Caldo}', d:'Es lo que más sube con los platos de cuchara. Parte no hace falta comprarla: con las cabezas y cáscaras del kilo de gambas sale casi un litro de caldo de pescado. Sofríelas 2 min aplastándolas, cubre con agua, 20 min a fuego suave y cuela apretando. SIN SAL: lo vas a usar en guisos que ya llevan la suya y además reduce.'},
+    {p:'Ñoquis frescos',    b:'porciones de 50 g', r:'{tot:Ñoquis} en el ciclo · por semana: {sem:Ñoquis}', d:'El paquete son 500 g y el ciclo entero gasta la mitad. Congela el resto en porciones de 50 g, que es la unidad de todas las raciones.'}
   ],
   verduras: [
-    {p:'Cebolla',            b:'suelta, en bolsa grande', r:'1,4 kg en el ciclo · raciones de 30 a 50 g, y 150 en la salsa de cebolla', d:'Es la verdura que más se usa, en 34 platos. Pícala toda de golpe el día de la compra y congélala EN PLACA: extendida en una bandeja sin que los trozos se toquen, 2 h, y luego a una bolsa grande. Así queda suelta y pesas lo que necesites.'},
-    {p:'Pimiento rojo y verde', b:'suelto, en bolsa grande', r:'1,09 kg en el ciclo · raciones de 50 a 80 g, y 150 en el cerdo con pimientos', d:'En tiras o en dados, congelado en placa como la cebolla. Si lo asas antes de congelarlo gana mucho y ocupa la mitad.'},
-    {p:'Zanahoria',         b:'suelta, en bolsa grande', r:'920 g en el ciclo · raciones de 30 a 80 g', d:'En dados para guisos y en bastones para los salteados. Conviene tener las dos formas en bolsas separadas: cortarla congelada no se puede.'},
-    {p:'Champiñones',       b:'sueltos, en bolsa grande', r:'770 g en el ciclo · raciones de 60 a 120 g', d:'Laminados y congelados en placa. Van directos a la sartén caliente: si los descongelas sueltan toda el agua y se quedan grises y correosos.'},
-    {p:'Calabaza',          b:'en dados, suelta', r:'780 g en el ciclo · raciones de 120 a 200 g', d:'En dados grandes, congelada en placa. Es de las que mejor aguanta: en el potaje y en las cremas parte se deshace y espesa el caldo, que es justo lo que se busca.'},
-    {p:'Puerro',            b:'en rodajas, suelto', r:'440 g en el ciclo · raciones de 50 a 80 g', d:'Lava bien entre las capas antes de cortarlo: la tierra se queda dentro y congelada ya no la quitas.'},
-    {p:'Calabacín en dados', b:'porciones de 50 g', r:'1,05 kg en el ciclo · raciones de 2, 3, 4 o 5 porciones', d:'Este sí va en porción fija: lleva mucha agua y se congela en bloque, no suelto. Vale para pisto, guiso, tortilla y salteado. Para los ROLLITOS hay que comprarlo fresco: en láminas finas, congelado y descongelado, queda flácido y no se puede enrollar.'},
-    {p:'Berenjena en dados', b:'porciones de 50 g', r:'100 g en el ciclo, en el cuscús con ternera', d:'Igual que el calabacín, en bloque. Sálala 20 min y sécala antes de congelar: suelta el amargor y parte del agua.'},
-    {p:'Guisantes',         b:'la bolsa comercial', r:'290 g en el ciclo · raciones de 50 y 60 g', d:'Ya vienen sueltos, no hay que hacer nada. Del congelador a la sartén; en el wok, escáldalos 30 segundos primero para que el hielo no enfríe la sartén.'},
+    {p:'Cebolla',            b:'suelta, en bolsa grande', r:'{tot:Cebolla} en el ciclo, en {n:Cebolla} platos · raciones de 30 a 50 g, y 120-150 en las salsas de cebolla', d:'Es la verdura que más se usa, en 34 platos. Pícala toda de golpe el día de la compra y congélala EN PLACA: extendida en una bandeja sin que los trozos se toquen, 2 h, y luego a una bolsa grande. Así queda suelta y pesas lo que necesites.'},
+    {p:'Pimiento rojo y verde', b:'suelto, en bolsa grande', r:'{tot:Pimiento} en el ciclo, en {n:Pimiento} platos · raciones de 50 a 80 g, y 150 en el cerdo con pimientos', d:'En tiras o en dados, congelado en placa como la cebolla. Si lo asas antes de congelarlo gana mucho y ocupa la mitad.'},
+    {p:'Zanahoria',         b:'suelta, en bolsa grande', r:'{tot:Zanahoria} en el ciclo, en {n:Zanahoria} platos · raciones de 30 a 80 g', d:'En dados para guisos y en bastones para los salteados. Conviene tener las dos formas en bolsas separadas: cortarla congelada no se puede.'},
+    {p:'Calabaza',          b:'en dados, suelta', r:'{tot:Calabaza} en el ciclo · por semana: {sem:Calabaza}', d:'En dados grandes, congelada en placa. Es de las que mejor aguanta: en el potaje y en las cremas parte se deshace y espesa el caldo, que es justo lo que se busca.'},
+    {p:'Puerro',            b:'en rodajas, suelto', r:'{tot:Puerro} en el ciclo · raciones de 50 a 80 g', d:'Lava bien entre las capas antes de cortarlo: la tierra se queda dentro y congelada ya no la quitas.'},
+    {p:'Calabacín en dados', b:'porciones de 50 g', r:'{tot:Calabacín} en el ciclo · por semana: {sem:Calabacín} · raciones de 2, 3, 4 o 5 porciones', d:'Este va en porción fija: lleva mucha agua y se congela en bloque, no suelto. En dados vale para pisto, guiso, salteado y también para la tortilla, aunque ahí hay que secarlo en la sartén antes de juntarlo con el huevo. Lo que NO aguanta es la lámina: para los ROLLITOS y la LASAÑA hay que comprarlo fresco, porque descongelado queda flácido y ni se enrolla ni aguanta las capas. Esos dos platos salen marcados solos en la lista de la compra.'},
+    {p:'Berenjena en dados', b:'porciones de 50 g', r:'{tot:Berenjena} en el ciclo, en el cuscús con ternera', d:'Igual que el calabacín, en bloque. Sálala 20 min y sécala antes de congelar: suelta el amargor y parte del agua.'},
+    {p:'Guisantes',         b:'la bolsa comercial', r:'{tot:Guisantes} en el ciclo · raciones de 50 y 60 g', d:'Ya vienen sueltos, no hay que hacer nada. Del congelador a la sartén; en el wok, escáldalos 30 segundos primero para que el hielo no enfríe la sartén.'},
     {p:'Lo que NO se congela', b:'fresco', r:'lechuga, brotes y rúcula · tomate de ensalada · patata y boniato crudos · perejil y hierbas frescas', d:'Las hojas se deshacen, el tomate se vuelve puré y la patata cruda congelada coge un sabor dulce y una textura arenosa. Las hierbas sí aguantan picadas en cubitera con aceite, pero para adornar en crudo mejor frescas.'}
   ],
   cuadra: [
-    {p:'Noodles frescos',        f:'Paquete de 200 g', r:'100 g en almuerzo · 50 g en cena', d:'600 g en el ciclo, tres paquetes clavados. Las semanas 1 y 3 gastan 200 g cada una, un paquete entero. El tercero se reparte entre la 2 (50 g) y la 4 (150): congela los 150 g sueltos en porciones de 50.'},
+    {p:'Noodles frescos',        f:'Paquete de 200 g', r:'100 g en almuerzo · 50 g en cena', d:'{tot:Noodles} en el ciclo, tres paquetes clavados. Por semana: {sem:Noodles}. Las semanas de 200 g son un paquete entero; el resto se reparte, así que congela lo suelto en porciones de 50 g.'},
     {p:'Mejillones al natural',  f:'Lata de 111 g netos, 69 escurridos', r:'1 lata en el salpicón', d:'Semana 3: una lata entera, nada abierto a medias.'},
     {p:'Atún al natural',        f:'Lata de ~60 g escurridos', r:'1 o 2 latas por plato', d:'Todas las raciones son múltiplo de 60: latas enteras siempre.'},
-    {p:'Lentejas y garbanzos',   f:'Paquete de 500 g (seco)', r:'30 a 70 g por plato', d:'El ciclo entero gasta 135 g de lentejas y 155 de garbanzos. Un paquete de cada te dura meses y no se pone malo: la ración da igual.'},
+    {p:'Lentejas y garbanzos',   f:'Paquete de 500 g (seco)', r:'30 a 70 g por plato', d:'El ciclo entero gasta {tot:Lentejas} de lentejas y {tot:Garbanzos} de garbanzos. Un paquete de cada te dura meses y no se pone malo: la ración da igual. Ojo, los tirabuzones de lentejas de la pasta son otro producto y van en su propia fila.'},
     {p:'Avena en copos',         f:'Paquete de 500 g', r:'70 g al día', d:'490 g por semana: un paquete por semana, casi clavado.'}
   ],
   sinRiesgo: [
-    {p:'Guisantes',           f:'Bolsa congelada',       d:'Del congelador a la sartén, sin descongelar. 290 g en el ciclo.'},
+    {p:'Guisantes',           f:'Bolsa congelada',       d:'Del congelador a la sartén, sin descongelar. {tot:Guisantes} en el ciclo.'},
     {p:'Pechuga de pollo',    f:'Congelada entera',      d:'Descongelas una pieza y la gastas ese día.'},
     {p:'Cuscús, arroz, pasta, fideos',f:'Paquete seco',  d:'Meses en el armario, la ración da igual.'},
     {p:'Lentejas y garbanzos',f:'Paquete seco',          d:'Igual: años. Los garbanzos sí piden remojo la noche antes; las lentejas no.'},
@@ -1976,18 +2178,19 @@ let envases = {
     {p:'Especias del cuchareo',f:'Bote',                 d:'Pimentón, azafrán, laurel, comino. Los platos de cuchara tiran mucho de pimentón: ten bote de sobra.'}
   ],
   sobra: [
-    {p:'Claras pasteurizadas', f:'Botella de 300 ml', d:'La semana 2 gasta 300 ml exactos, una botella entera. Las semanas 1 y 4 solo piden 70 y 90 ml, así que esa botella se queda a medias: lo que sobre, a las tortillas del desayuno.'},
+    {p:'Claras pasteurizadas', f:'Botella de 300 ml', d:'{tot:Claras} en el ciclo, repartidas así: {sem:Claras}. La semana de 300 ml es una botella exacta; en las demás se queda a medias, así que lo que sobre va a las tortillas del desayuno.'},
     {p:'Fiambre de pavo',      f:'Paquete de 225 g',  d:'Solo los rollitos de calabacín, en la semana 2: 100 g de 225.'},
     {p:'Jamón serrano',        f:'Sobre de ~75 g',    d:'Solo la ensalada templada de la semana 4: 20 g.'},
-    {p:'Queso fresco de Burgos', f:'Tarrina de 250 g', d:'Entra en dos cenas, una en la semana 3 y otra en la 4. Si la tarrina se te queda a medias, la burrata es la alternativa: se compra y se gasta en la misma semana.'},
-    {p:'Verdura de una pieza', f:'Pieza entera',      d:'Perejil, lechuga, puerro, calabaza y berenjena entran en algún plato en cantidades de media pieza o menos. La calabaza mejor ahora: el ciclo gasta 780 g entre el potaje y las cremas.'}
+    {p:'Queso fresco de Burgos', f:'Tarrina de 250 g', d:'Entra en dos cenas, una en la semana 3 y otra en la 4. Si la tarrina se te queda a medias, júntalas en días seguidos: es justo lo que hace la rotación del próximo ciclo.'},
+    {p:'Champiñones',          f:'Bandeja de 250-300 g', d:'Estos NO los congelas, así que son compra de la semana: {tot:Champiñones} en el ciclo ({sem:Champiñones}), en raciones de 60 a 120 g. Aguantan 5-6 días en la nevera, mejor en bolsa de papel que en plástico, y conviene juntar en la misma semana los platos que los llevan.'},
+    {p:'Verdura de una pieza', f:'Pieza entera',      d:'Perejil, lechuga, puerro, calabaza y berenjena entran en algún plato en cantidades de media pieza o menos. La calabaza mejor ahora: el ciclo gasta {tot:Calabaza} entre el potaje y las cremas.'}
   ],
   pendiente: [
-    {p:'Pescado blanco y salmón', u:'1,575 kg y 220 g por ciclo', q:'¿Fresco en pescadería o congelado en bolsa? Si es bolsa, cuánto trae.'},
-    {p:'Gambas',               u:'910 g pelados por ciclo', q:'¿Peladas congeladas en bolsa o enteras frescas de la pescadería?'},
-    {p:'Caldo',                u:'3,350 l por ciclo', q:'¿Brick de 1 L, pastilla concentrada o casero? Con los platos de cuchara es ahora el formato que más importa.'},
-    {p:'Tomate triturado',     u:'990 g por ciclo', q:'¿Lata o brick, y de cuánto?'},
-    {p:'Leche evaporada',      u:'390 ml por ciclo', q:'¿Brick de 300 ml o mini brick de 200?'},
+    {p:'Pescado blanco y salmón', u:'{tot:Pescado blanco} y {tot:Salmón} por ciclo', q:'¿Fresco en pescadería o congelado en bolsa? Si es bolsa, cuánto trae.'},
+    {p:'Gambas',               u:'{tot:Gambas} pelados por ciclo', q:'¿Peladas congeladas en bolsa o enteras frescas de la pescadería?'},
+    {p:'Caldo',                u:'{tot:Caldo} por ciclo', q:'¿Brick de 1 L, pastilla concentrada o casero? Con los platos de cuchara es ahora el formato que más importa.'},
+    {p:'Tomate triturado',     u:'{tot:Tomate triturado} por ciclo', q:'¿Lata o brick, y de cuánto?'},
+    {p:'Leche evaporada',      u:'{tot:Leche evaporada} por ciclo', q:'¿Brick de 300 ml o mini brick de 200?'},
     {p:'Yogur natural',        u:'14 por semana', q:'¿Pack de 4, de 6 o de 12?'},
     {p:'Chocolate negro 99%',  u:'140 g por semana', q:'¿Tableta de 100 g o de 50?'}
   ]
@@ -2020,7 +2223,7 @@ function applyPlan(p){
   if(p.excludedFoods)      excludedFoods = p.excludedFoods;
   if(p.recetasRef)         recetasRef = p.recetasRef;
   if(p.recetario)          recetario = p.recetario;
-  if(p.menuVitasane)       menuVitasane = p.menuVitasane;
+  if(p.menuVitasane){      menuVitasane = p.menuVitasane; _resumenCache = null; }
   if(p.pesosNota)          pesosNota = p.pesosNota;
   if(p.ingredientNotes)    ingredientNotes = p.ingredientNotes;
   // Se fusiona por apartados: así un plan guardado de hace semanas no se lleva por delante
@@ -2069,7 +2272,7 @@ function validatePlan(p){
 
 /* ============== ESTADO / STORAGE ============== */
 
-let settings = { trainingDays:[1,3,5], currentWeek:1, tiposSesion:{1:'push',3:'pull',5:'legs'}, semanaMenu:1, anclaMenu:null, modoCocina:'diario' }; // 0=Dom,1=Lun...6=Sab
+let settings = { trainingDays:[1,2,3,4,6], currentWeek:1, tiposSesion:{1:'legs',2:'push',3:'pull',4:'refuerzo',6:'caminata'}, semanaMenu:1, anclaMenu:null, modoCocina:'diario' }; // 0=Dom,1=Lun...6=Sab
 let checklist = {};      // { 'YYYY-MM-DD': {itemId:true} }
 let overrides = {};      // { 'YYYY-MM-DD': 'E'|'D' }
 let shoppingList = [];   // [{id,name,category,qty,qtyRecommended,checked,auto,custom}]
@@ -2080,7 +2283,6 @@ let platos = {};
 let compraDesde = null;   // se fija a hoy al arrancar
 let compraDias = 7;
 let compraModo = 'semana';   // 'semana' = 7 días · 'dias' = los que elijas
-let semanaSelected = 1;
 
 function uid(){ return 'i'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
 function claveFecha(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
@@ -2253,13 +2455,21 @@ async function loadAll(){
     saveSettings();
   }
   if(settings.semanaMenu > menuVitasane.semanas.length) settings.semanaMenu = 1;
+  // Calendario de entreno de noviembre de 2026: cuatro días de pesas de lunes a jueves,
+  // el descanso pasa del miércoles al viernes y el sábado entra la caminata larga.
+  // Se aplica una sola vez; después el reparto se cambia a mano en Ajustes.
+  if(settings.calendario !== 'nov2026'){
+    settings.trainingDays = [1,2,3,4,6];
+    settings.tiposSesion = {1:'legs', 2:'push', 3:'pull', 4:'refuerzo', 6:'caminata'};
+    settings.calendario = 'nov2026';
+    saveSettings();
+  }
   try{ const r = await store.get('checklist:'+todayKey()); if(r) checklist[todayKey()] = JSON.parse(r.value); }catch(e){}
   try{ const r = await store.get('overrides'); if(r) overrides = JSON.parse(r.value); }catch(e){}
   try{ const r = await store.get('shopping-list'); if(r) shoppingList = JSON.parse(r.value); }catch(e){}
   try{ const r = await store.get('progress'); if(r) progreso = JSON.parse(r.value); }catch(e){}
   try{ const r = await store.get('dishes'); if(r) platos = JSON.parse(r.value); }catch(e){}
   try{ const r = await store.get('adherence'); if(r) adherencia = JSON.parse(r.value); }catch(e){}
-  semanaSelected = settings.currentWeek || 1;
   if(!compraDesde) compraDesde = todayKey();
   // Recordar cómo te gusta calcular la compra
   if(settings.compraModo) compraModo = settings.compraModo;
@@ -2556,12 +2766,26 @@ function etiquetaDia(){
   if(diaOffset === -1) return 'Ayer';
   return (diaOffset > 0 ? 'En ' : 'Hace ') + Math.abs(diaOffset) + ' días';
 }
+// Lo que va del congelador a la sartén SIN descongelar. Si se saca la noche antes
+// se estropea: las gambas se vuelven gomosas y sueltan el agua en la sartén, y los
+// guisantes, los noodles y los ñoquis se deshacen. Nunca deben salir en el aviso.
+const NO_DESCONGELAR = ['Gambas peladas','Guisantes (congelados)','Noodles frescos','Ñoquis'];
+
+// Cuánto hay que adelantarse con cada cosa. Todo a la nevera, nunca a la encimera.
+const ANTELACION = [
+  [/picada/i,                         '8 h'],
+  [/caldo/i,                          '12 h'],
+  [/pescado|rosada|merluza|lenguado|salmón|atún|choco|sepia|dorada|corvina/i, '8 h'],
+  [/./,                               '10-12 h'],
+];
+const antelacionDe = n => (ANTELACION.find(([re]) => re.test(n)) || [null,'10-12 h'])[1];
+
 // Verduras que viven en el congelador, con el nombre tal cual lo devuelve INGREDIENTES.
 // Van de la bolsa a la sartén sin descongelar: descongeladas sueltan agua y se cuecen
 // en lugar de dorarse. Las que NO están aquí (lechuga, brotes, tomate de ensalada,
 // patata y boniato crudos) se compran frescas porque congeladas no valen.
 const VERDURAS_CONGELADAS = ['Cebolla','Cebolla morada','Cebolleta','Pimiento rojo','Pimiento verde',
-  'Zanahoria','Puerro','Champiñones','Calabaza','Berenjena','Calabacín','Guisantes (congelados)','Apio'];
+  'Zanahoria','Puerro','Calabaza','Berenjena','Calabacín','Guisantes (congelados)','Apio'];
 
 // Qué hay que sacar del congelador para el día siguiente al que se ve.
 // Solo hace falta si mañana toca cocinar: si no, se come lo de hoy.
@@ -2572,6 +2796,8 @@ function prepManana(){
   const infoMan = {d, idx, key: claveFecha(d), semana: semanaMenuDe(d)};
   const porPieza = {};
   const porVerdura = {};
+  const porCaldo = {};
+  const directos = new Set();
   let remojo = null;
   let hayQueCocinar = false;
 
@@ -2584,6 +2810,12 @@ function prepManana(){
     // Solo se dobla la ración cuando ese plato cubre los dos días del bloque.
     const raciones = p.pareja === null ? 1 : 2;
     parseIngredientes(p.ing).forEach(x=>{
+      // Las gambas van congeladas a la sartén: avisar de ellas sería el error contrario.
+      if(NO_DESCONGELAR.includes(x.n)){ directos.add(x.n.toLowerCase()); return; }
+      if(/caldo/i.test(x.n)){
+        porCaldo[x.n] = (porCaldo[x.n] || 0) + x.cant * raciones;
+        return;
+      }
       if((x.cat === 'Carnes' || x.cat === 'Pescados') && !/lata|fiambre|jamón/i.test(x.n) && x.un === 'g'){
         const [base, corte] = x.n.split(' — ');
         const nombre = base.toLowerCase() + (corte ? ' (' + corte + ')' : '');
@@ -2602,10 +2834,14 @@ function prepManana(){
     if(m) remojo = `${Math.round(+m[1]*raciones)} g de garbanzos (para ${p.title})`;
   });
 
-  if(!hayQueCocinar) return {dia: dayNames[idx], piezas: null, verduras: null, remojo: null, entero: null};
+  if(!hayQueCocinar) return {dia: dayNames[idx], piezas: null, verduras: null, caldo: null,
+                             directos: null, remojo: null, entero: null};
 
   const piezas = Object.entries(porPieza).map(([nombre, v]) =>
-    `${Math.round(v.cant)} g de ${nombre} · ${[...v.platos].join(' y ')}${v.dobles && !v.simples ? ' · 2 raciones' : ''}`);
+    `${Math.round(v.cant)} g de ${nombre} · ${[...v.platos].join(' y ')}${v.dobles && !v.simples ? ' · 2 raciones' : ''} · ${antelacionDe(nombre)} antes`);
+
+  const caldo = Object.entries(porCaldo).map(([nombre, ml]) =>
+    `${Math.round(ml)} ml de ${nombre.toLowerCase()} · ${antelacionDe(nombre)} antes`);
 
   // Las pechugas están congeladas enteras y una vez descongeladas solo aguantan un día,
   // así que la pieza entera se cocina el mismo día: el pollo YA HECHO sí aguanta dos.
@@ -2620,8 +2856,10 @@ function prepManana(){
     .map(([n, g]) => `${Math.round(g)} g de ${n.toLowerCase()}`);
 
   return {dia: dayNames[idx],
-          piezas: piezas.length ? piezas : ['Nada que descongelar: mañana va de huevo, conservas o marisco ya cocido.'],
+          piezas: (piezas.length || caldo.length) ? piezas : ['Nada que descongelar: mañana va de huevo, conservas o marisco ya cocido.'],
           verduras: verduras.length ? verduras : null,
+          caldo: caldo.length ? caldo : null,
+          directos: directos.size ? [...directos] : null,
           remojo, entero};
 }
 
@@ -2749,9 +2987,12 @@ function renderHoy(){
       ${prep.piezas
         ? `<b>Para ${esc(prep.dia.toLowerCase())}, saca del congelador:</b><br>${prep.piezas.map(p=>esc(p)).join('<br>')}`
         : `<b>Mañana no cocinas.</b><br>${esc(prep.dia)} comes lo que dejes hecho hoy, así que no hay que sacar nada del congelador.`}
+      ${prep.caldo ? `<br>${prep.caldo.map(c=>esc(c)).join('<br>')}` : ''}
+      ${prep.piezas ? `<br><span style="font-size:12px;">Todo a la nevera, nunca a la encimera. Si se te pasa el aviso: la bolsa cerrada en un bol de agua fría, cambiando el agua cada 10 min. Una ración de 175 g tarda 25-30 min. Agua caliente nunca.</span>` : ''}
+      ${prep.directos ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--accent);"><b>❄️ Esto NO lo saques:</b><br>${prep.directos.map(d=>esc(d)).join(' · ')}<br><span style="font-size:12px;">Va del congelador a la sartén tal cual. Descongelado se estropea: las gambas se quedan gomosas y sueltan toda el agua, y los noodles y los ñoquis se deshacen.</span></div>` : ''}
       ${prep.verduras ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--accent);"><b>🥕 Verdura, al ponerte a cocinar:</b><br>${prep.verduras.map(v=>esc(v)).join(' · ')}<br><span style="font-size:12px;">Esta no se descongela: va de la bolsa a la sartén tal cual. Descongelada suelta agua y se cuece en vez de dorarse. Sácala justo antes de cocinar, no esta noche.</span></div>` : ''}
       ${prep.entero ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--accent);"><b>🍗 Pechuga entera:</b><br>${esc(prep.entero)}</div>` : ''}
-      ${prep.remojo ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--accent);"><b>⏳ Pon en remojo esta noche:</b><br>${esc(prep.remojo)}<br><span style="font-size:12px;">Agua abundante, 8-12 h. Sin remojo no se hacen ni en olla express.</span></div>` : ''}
+      ${prep.remojo ? `<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--accent);"><b>⏳ Pon en remojo esta noche:</b><br>${esc(prep.remojo)}<br><span style="font-size:12px;">Agua fría abundante con un poco de sal, 8-12 h. Sin remojo no se hacen ni en olla express. Si se te olvida, cambia a las lentejas, que van sin remojo.</span></div>` : ''}
     </div>
 
     <div class="section-title">Extras</div>
@@ -2965,11 +3206,13 @@ function renderEnvases(){
   const fila = (a, b, c) => `<tr><td><b>${esc(a)}</b></td><td>${esc(b)}</td><td>${esc(c)}</td></tr>`;
   // Las explicaciones son largas y en una tabla de tres columnas no caben en el móvil:
   // cada producto va en su ficha, con el dato corto arriba y el texto debajo.
+  // Las cifras del ciclo van como {tot:...} / {sem:...} / {n:...} y se resuelven
+  // aquí contra el menú de verdad, para que no puedan quedarse desfasadas.
   const ficha = (p, dato, r, d) => `
     <div class="env-card">
-      <div class="env-card-head"><b>${esc(p)}</b><span>${esc(dato)}</span></div>
-      ${r ? `<div class="env-card-r">${esc(r)}</div>` : ''}
-      ${d ? `<div class="env-card-d">${esc(d)}</div>` : ''}
+      <div class="env-card-head"><b>${esc(p)}</b><span>${esc(cifrasCiclo(dato))}</span></div>
+      ${r ? `<div class="env-card-r">${esc(cifrasCiclo(r))}</div>` : ''}
+      ${d ? `<div class="env-card-d">${esc(cifrasCiclo(d))}</div>` : ''}
     </div>`;
   const fichas = (titulo, items) => items && items.length ? `
     <h3 class="section-title">${esc(titulo)}</h3>
@@ -3075,53 +3318,12 @@ function renderMenu(){
 
 /* ============== RENDER: SEMANA ============== */
 
-function selectSemana(w){
-  semanaSelected = w;
-}
 function useAsCurrentWeek(w){
   settings.currentWeek = w;
   saveSettings();
   renderAll();
 }
 
-function renderSemana(){
-  const el = document.getElementById('screen-semana');
-  const todayInfo = getTodayInfo();
-  const w = rotation[semanaSelected];
-  el.innerHTML = `
-    <div class="week-tabs">
-      ${[1,2,3,4].map(n=>`<div class="week-tab ${n===semanaSelected?'active':''}" onclick="selectSemana(${n})">Semana ${n}</div>`).join('')}
-    </div>
-    <div class="rot-scroll">
-      <table class="rot">
-        <thead><tr><th>Día</th><th>Almuerzo</th><th>Cena</th></tr></thead>
-        <tbody>
-          ${w.map((d,i)=>{
-            const isToday = semanaSelected===settings.currentWeek && i===todayInfo.idx;
-            const cls = isToday?'today':'';
-            return `<tr>
-              <td class="${cls}">${dayNames[i]}</td>
-              <td class="${cls}">${esc(d.alm)}</td>
-              <td class="${cls}">${esc(d.cena)}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>
-    <div class="info-note" style="margin-top:14px;">La rotación es solo para variar, no una restricción: con la plantilla única cualquier plato vale cualquier día.</div>
-    ${semanaSelected!==settings.currentWeek
-      ? `<button class="gen-btn" onclick="useAsCurrentWeek(${semanaSelected})">Usar Semana ${semanaSelected} como semana actual</button>`
-      : `<div class="info-note">Esta es tu semana actual de rotación.</div>`}
-  `;
-}
-
-
-/* ============== PROGRESO: DATOS SEMANALES Y GRÁFICAS ============== */
-
-// Cada entrada es una semana. Todos los campos son opcionales salvo la fecha:
-// si una semana no tiene sueño o pasos, esa gráfica simplemente se salta el punto.
-let progreso = [];
-let progPeriodo = 12;   // semanas mostradas en las gráficas (0 = todas)
 function setProgPeriodo(v){ progPeriodo = parseInt(v,10); renderProgreso(); }
 
 const PROG_CAMPOS = [
@@ -3144,6 +3346,13 @@ const OBJ_GRASA = [
 ];
 
 async function savePlatos(){ try{ await store.set('dishes', JSON.stringify(platos)); }catch(e){} }
+
+/* ============== PROGRESO: DATOS SEMANALES Y GRÁFICAS ============== */
+
+// Cada entrada es una semana. Todos los campos son opcionales salvo la fecha:
+// si una semana no tiene sueño o pasos, esa gráfica simplemente se salta el punto.
+let progreso = [];
+let progPeriodo = 12;   // semanas mostradas en las gráficas (0 = todas)
 
 async function saveProgreso(){ try{ await store.set('progress', JSON.stringify(progreso)); }catch(e){} }
 
@@ -3621,7 +3830,7 @@ function formSemana(){
     <div class="card card-pad">
       <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">
         Pega aquí el <b>CSV de Hevy</b> tal cual lo exportas (rellena sesiones y volumen de todas las semanas de golpe)
-        o el <b>bloque de datos</b> que te paso los lunes con lo de Garmin y la báscula.
+        o el <b>bloque de datos</b> de la revisión quincenal, con lo de Garmin y la báscula.
       </div>
       <textarea id="pg-import" placeholder="Pega aquí el CSV de Hevy o el bloque JSON..." style="width:100%;min-height:110px;border:1px solid var(--border);border-radius:12px;padding:11px;font-family:ui-monospace,monospace;font-size:12px;background:var(--bg);color:var(--ink);resize:vertical;"></textarea>
       <div class="plan-btn-row">
@@ -3811,9 +4020,7 @@ const INGREDIENTES = [
   [/canónigos|brotes/i,                  'Canónigos o brotes',           'Verduras y fruta'],
   [/rúcula/i,                            'Rúcula',                       'Verduras y fruta'],
   [/sriracha/i,                          'Sriracha',                     'Otros / despensa'],
-  [/tahini/i,                            'Tahini',                       'Otros / despensa'],
   [/crema de cacahuete/i,                'Crema de cacahuete',           'Otros / despensa'],
-  [/miso/i,                              'Miso',                         'Otros / despensa'],
   [/vinagre de arroz/i,                  'Vinagre de arroz',             'Otros / despensa'],
   [/perejil/i,                           'Perejil fresco',               'Verduras y fruta'],
   [/albahaca/i,                          'Albahaca fresca',              'Verduras y fruta'],
@@ -3827,7 +4034,6 @@ const INGREDIENTES = [
   // Despensa
   [/aove|aceite/i,                       'AOVE',                         'Otros / despensa'],
   [/salsa de soja/i,                     'Salsa de soja baja en sodio',  'Otros / despensa'],
-  [/mostaza/i,                           'Mostaza',                      'Otros / despensa'],
   [/vinagre/i,                           'Vinagre',                      'Otros / despensa'],
   [/zumo de limón/i,                     'Limón',                        'Verduras y fruta'],
   [/vino/i,                              'Vino blanco o tinto',          'Otros / despensa'],
@@ -3897,6 +4103,7 @@ const SOLO_FRESCO = {
   'Tomate cherry':      'congelado se vuelve puré',
   'Patatas':            'cruda y congelada coge sabor dulce y textura arenosa',
   'Boniato':            'crudo y congelado coge sabor dulce y textura arenosa',
+  'Champiñones':        'no los congelas, así que hay que comprarlos esa semana',
   'Perejil fresco':     'para adornar en crudo tiene que ser fresco',
   'Albahaca fresca':    'para adornar en crudo tiene que ser fresca',
   'Cilantro fresco':    'para adornar en crudo tiene que ser fresco'
@@ -3904,7 +4111,11 @@ const SOLO_FRESCO = {
 // El calabacín sí se congela en dados, pero no para los rollitos: en láminas finas,
 // descongelado, queda flácido y no se enrolla. Solo se marca si ese plato cae en la ventana.
 const FRESCO_POR_PLATO = {
-  'Calabacín': [[/rollitos de calabacín/i, 'para los rollitos tiene que ser fresco: en láminas, descongelado, no se enrolla']]
+  // El calabacín se congela en dados y vale para pisto, guiso, tortilla y salteado.
+  // Lo que no aguanta es la lámina: descongelada queda flácida y suelta agua, así que
+  // ni se enrolla ni se puede montar por capas.
+  'Calabacín': [[/rollitos de calabacín|lasaña de calabacín/i,
+                 'en láminas tiene que ser fresco: descongelado queda flácido, no se enrolla ni aguanta las capas']]
 };
 
 function generarLista(desde, n){
@@ -4197,8 +4408,8 @@ async function importPlan(){
   document.getElementById('planInput').value = '';
 }
 
-function exportPlan(){
-  const actual = {
+function planActual(){
+  return {
     version: planVersion,
     dailyTarget, fixedMeals, fixedSubtotal, mealMargin, mealTemplate, cookingMethod,
     planchaTimes, pescadoTabla, rotation, coreGarnishes, weeklyGarnish, garnishNote,
@@ -4206,6 +4417,10 @@ function exportPlan(){
     ingredientNotes, trucosAirFryer, trucosPlancha, secuenciaAlmuerzo, secuenciaCena,
     dejarHechoAntes, cardioPlan, notasPlan, envases
   };
+}
+
+function exportPlan(){
+  const actual = planActual();
   const txt = JSON.stringify(actual, null, 2);
   const box = document.getElementById('planInput');
   box.value = txt;
@@ -4251,6 +4466,7 @@ async function fijarCiclo(){
 }
 
 function refreshCiclo(){
+  renderRot();
   // Las opciones salen del propio menú: si cambia el número de semanas, el selector cambia solo.
   const sel = document.getElementById('cicloSemana');
   if(sel && (sel.options ? sel.options.length : 0) !== menuVitasane.semanas.length){
