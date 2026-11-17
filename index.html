@@ -654,9 +654,9 @@ let recetario = {
     {title:'Carbonara con tirabuzones de lentejas 🥫🔴', macros:'P 48 · C 47 · G 11 · 477 kcal',
      ing:'65 g tirabuzones de lentejas (seco) · 90 ml leche evaporada · 90 g pollo · 1 yema · 40 g cebolla · 60 g champiñones',
      tip:['Cuece los tirabuzones de lentejas el tiempo del paquete, 7-9 min. Se pasan antes que la pasta de trigo: pruébalos un minuto antes.','El pollo a la plancha hasta dorarlo, 4-5 min por lado, y pásalo a la sartén con la cebolla y los champiñones, 5-6 min.','Incorpora la leche evaporada y deja reducir 2-3 min.','Retira del fuego ANTES de echar la yema y remueve rápido, o se cuaja y se corta la salsa.','Lleva menos carne que la de macarrones porque la pasta de lenteja ya aporta 25 g de proteína por 100 g.']},
-    {title:'Pollo al curry con arroz 🥫', macros:'P 50 · C 48 · G 6 · 446 kcal',
-     ing:'175 g pollo en dados · 90 ml leche evaporada · 40 g arroz en seco · 50 g cebolla · 60 g pimiento rojo · 5 g de curry en polvo · 1 diente de ajo (5 g) · comino al gusto',
-     tip:['Tritura el tomate pelado, el vino y la leche evaporada: esa es la base de la salsa.','Rehoga la cebolla 4 min, añade el pollo troceado y séllalo 4-5 min.','Añade el calabacín en dados, 4 min más.','Echa el curry, el comino y la canela y remueve 30 segundos en seco: así sueltan el aroma.','Moja con la crema de tomate y deja 8-10 min a fuego medio hasta que espese, sin que llegue a hervir fuerte o la leche evaporada se corta.','El arroz, en olla express 4 min, y se añade al final o se sirve al lado.']},
+    {title:'Pollo al curry con arroz 🥫', macros:'P 51 · C 49 · G 7 · 464 kcal',
+     ing:'175 g de pollo en dados · 100 ml de leche evaporada · 40 g de arroz en seco · 50 g de cebolla · 60 g de pimiento rojo · 5 g de curry en polvo · 1 diente de ajo (5 g) · comino al gusto',
+     tip:['Sella el pollo en la plancha y resérvalo.','Sofríe la cebolla y el pimiento.','Devuelve el pollo y añade el curry, el comino y el ajo. Tuéstalos 30 segundos EN SECO, antes de echar ningún líquido: es lo que separa un curry plano de uno con fondo.','La leche evaporada y reduce 5-6 minutos. Que no hierva fuerte o se corta.','El arroz en olla express, 4 minutos, al lado.']},
     {title:'Boloñesa con macarrones integrales 🍝', macros:'P 45 · C 43 · G 14 · 478 kcal',
      ing:'50 g macarrones integrales (seco) · 175 g ternera picada de cadera · 120 g tomate triturado · 40 g cebolla · 40 g zanahoria rallada · 3 g AOVE · orégano y laurel al gusto',
      tip:['Sofríe la cebolla y la zanahoria rallada con el aceite, 6-8 min. La zanahoria aporta dulzor natural sin añadir azúcar.','Añade la ternera picada y deshazla con la cuchara, 6-8 min, hasta que pierda el color rosado.','Echa el tomate triturado, el orégano y el laurel, y deja reducir al menos 15 min a fuego lento.','Cuece los macarrones al dente, 9-11 min, y mézclalos con la salsa.','Quita el laurel antes de servir.']},
@@ -1204,15 +1204,14 @@ let menuVitasane = {
      "alm": [
       {
        "t": "Pollo al curry con arroz 🥫",
-       "m": "P 50 · C 48 · G 6 · 446 kcal",
-       "i": "175 g pollo en dados · 90 ml leche evaporada · 40 g arroz en seco · 50 g cebolla · 60 g pimiento rojo · 5 g de curry en polvo · 1 diente de ajo (5 g) · comino al gusto",
+       "m": "P 51 · C 49 · G 7 · 464 kcal",
+       "i": "175 g de pollo en dados · 100 ml de leche evaporada · 40 g de arroz en seco · 50 g de cebolla · 60 g de pimiento rojo · 5 g de curry en polvo · 1 diente de ajo (5 g) · comino al gusto",
        "p": [
-        "Tritura el tomate pelado, el vino y la leche evaporada: esa es la base de la salsa.",
-        "Rehoga la cebolla 4 min, añade el pollo troceado y séllalo 4-5 min.",
-        "Añade el calabacín en dados, 4 min más.",
-        "Echa el curry, el comino y la canela y remueve 30 segundos en seco: así sueltan el aroma.",
-        "Moja con la crema de tomate y deja 8-10 min a fuego medio hasta que espese, sin que llegue a hervir fuerte o la leche evaporada se corta.",
-        "El arroz, en olla express 4 min, y se añade al final o se sirve al lado."
+        "Sella el pollo en la plancha y resérvalo.",
+        "Sofríe la cebolla y el pimiento.",
+        "Devuelve el pollo y añade el curry, el comino y el ajo. Tuéstalos 30 segundos EN SECO, antes de echar ningún líquido: es lo que separa un curry plano de uno con fondo.",
+        "La leche evaporada y reduce 5-6 minutos. Que no hierva fuerte o se corta.",
+        "El arroz en olla express, 4 minutos, al lado."
        ]
       },
       {
@@ -2143,7 +2142,7 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-11-17';
+const PLAN_VERSION_DEFAULT = '2026-11-17c';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 let envases = {
@@ -2159,7 +2158,7 @@ let envases = {
     {p:'Atún fresco',       b:'110 g', r:'{n:Atún fresco} bolsa ({tot:Atún fresco}) · por semana: {sem:Atún fresco}', d:'Solo para el marmitako, en dados.'},
     {p:'Gambas',            b:'70 g',  r:'{tot:Gambas} en el ciclo, {pz:Gambas:70} bolsas repartidas en {n:Gambas} platos · por semana: {sem:Gambas}', d:'Se compran enteras y frescas por kilos: el kilo da unos 420 g pelados, un 42%. Pélalas el mismo día y congélalas en placa —extendidas sin tocarse, 2 h— antes de embolsar. Guarda las cabezas: con ellas sale el caldo de los dos arroces caldosos.'},
     {p:'Choco o sepia',     b:'150 g (medio paquete de 300)', r:'{n:Choco} bolsas ({tot:Choco}) · por semana: {sem:Choco}', d:'El paquete de 300 g hay que partirlo en dos mitades ANTES de congelar: congelado no se puede. Congelarlo rompe la fibra y lo ablanda, así que no pierdes nada.'},
-    {p:'Leche evaporada',   b:'cubitos de 25 ml', r:'{tot:Leche evaporada} en el ciclo · por semana: {sem:Leche evaporada}', d:'El brick son 300 ml y la semana 2 se lleva 240 de golpe. Congela lo que sobre en cubitera, 25 ml por hueco: todas las raciones son múltiplo de 25, así que sacas los cubitos justos y no se pone mala.'},
+    {p:'Leche evaporada',   b:'cubitos de 25 ml', r:'{tot:Leche evaporada} en el ciclo · por semana: {sem:Leche evaporada}', d:'El envase son 200 ml y el ciclo gasta {tot:Leche evaporada}, o sea {pz:Leche evaporada:200} envases justos. Congela lo que sobre en cubitera, 25 ml por hueco: todas las raciones son múltiplo de 25, así que sacas los cubitos justos y no se pone mala.'},
     {p:'Tomate triturado',  b:'porciones de 100 g', r:'{tot:Tomate triturado} en el ciclo · por semana: {sem:Tomate triturado}', d:'Las raciones van de 50 a 200 g y casi nunca cuadran con el brick de 400. Congela el resto en porciones de 100 g: el triturado congela perfectamente y así no hay medio brick muriéndose en la nevera.'},
     {p:'Caldo',             b:'250 y 500 ml', r:'{tot:Caldo} en el ciclo · por semana: {sem:Caldo}', d:'Es lo que más sube con los platos de cuchara. Parte no hace falta comprarla: con las cabezas y cáscaras del kilo de gambas sale casi un litro de caldo de pescado. Sofríelas 2 min aplastándolas, cubre con agua, 20 min a fuego suave y cuela apretando. SIN SAL: lo vas a usar en guisos que ya llevan la suya y además reduce.'},
     {p:'Ñoquis frescos',    b:'porciones de 50 g', r:'{tot:Ñoquis} en el ciclo · por semana: {sem:Ñoquis}', d:'El paquete son 500 g y el ciclo entero gasta {tot:Ñoquis}. Congela el resto en porciones de 50 g, que es la unidad de todas las raciones.'}
