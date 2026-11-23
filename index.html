@@ -504,7 +504,7 @@ table.rot .rtag.D{background:var(--descanso-soft); color:var(--descanso);}
 let dailyTarget = {
   kcal: 1800, P: 133, C: 191, G: 57,
   totalLine: '133 g P · 191 g C · 57 g G · ~1807 kcal',
-  deficit: 'Déficit 313 kcal/día (15%) → unos 1,2 kg al mes'
+  deficit: 'Diseñado con 313 kcal/día de déficit (15%). Lo medido de septiembre a noviembre es 0,2 kg de grasa por semana, unos 0,85 kg al mes: algo menos de lo proyectado, y es el dato que manda.'
 };
 
 let fixedMeals = [
@@ -675,7 +675,7 @@ let recetario = {
     {title:'Pollo en salsa de cebolla con arroz 🥫', macros:'P 47 · C 41 · G 10 · 442 kcal',
      ing:'35 g de arroz en seco · 175 g pollo · 120 g cebolla en juliana · 50 ml leche evaporada · 5 g AOVE · 2 g de pimentón dulce · laurel, pimienta',
      tip:['Cuece el arroz en olla express, 4 min, y resérvalo.','Sella el pollo 2-3 min, solo para que coja color por fuera, y resérvalo. No lo hagas del todo aquí: termina en la salsa.','La cebolla, muy despacio: en la misma sartén, con el jugo que ha soltado el pollo, fuego medio-bajo y 10 min. Tiene que quedar dorada y dulce, no transparente. Este paso es el plato entero; si lo haces en tres minutos, la salsa no sabe a nada.','Si ves que se seca, una cucharada de agua y sigues.','El pimentón, con el fuego apagado: remueve 15 segundos con el calor residual y vuelve al fuego. Si cae sobre aceite caliente, amarga.','Devuelve el pollo con la leche evaporada y el laurel, fuego al mínimo, 5 min. QUE NO HIERVA: la leche evaporada se corta y se queda con grumos.','Fuera la mostaza: se quitó porque comprar un bote para 15 g no merecía la pena. La cebolla pochada despacio hace el mismo papel.']},
-    {title:'Salpicón de mejillones, gambas y patata', macros:'P 42 · C 40 · G 11 · 427 kcal',
+    {title:'Salpicón de mejillones, gambas y patata', macros:'P 42 · C 40 · G 11 · 427 kcal', conserva:'Se come frío, nunca recalentado. Aguanta 2 días en la nevera y el segundo está mejor. Pásalo a un bol de cristal o plástico, no lo dejes en la lata abierta.',
      ing:'2 latas de mejillones al natural (138 g escurridos) · 70 g gambas peladas cocidas · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 135 g patata cruda pelada en dados · 8 g AOVE · 10 g de vinagre · perejil al gusto',
      tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','Escurre bien las dos latas de mejillones. Pica el pimiento, la cebolla y el tomate en dados del mismo tamaño que la patata.','Mezcla todo con las gambas, el aceite, el vinagre y el perejil.','Un rato de nevera hace que la cebolla y el pimiento suelten sabor, pero no es obligatorio.','Cero cocina más allá de la patata.']},
     {title:'Paella de pollo y gambas', macros:'P 53 · C 45 · G 9 · 473 kcal',
@@ -848,7 +848,7 @@ let recetario = {
     {title:'Cuscús templado de tomate y atún', macros:'P 35 · C 34 · G 5 · 321 kcal',
      ing:'120 g de atún al natural escurrido (2 latas) · 35 g de cuscús en seco · 200 g de tomate muy maduro en dados · 40 g de cebolleta picada fina · 3 g de AOVE · 1 diente de ajo pequeño (3 g) rallado · 10 g de vinagre de Jerez · sal, albahaca o hierbabuena',
      tip:['Hidrata el cuscús con 40 ml de agua hirviendo, tapado 5 min, y ahuécalo con un tenedor.','Mientras, trocea el tomate y pica la cebolleta fina. Sala el tomate nada más partirlo: suelta jugo durante esos 5 min y el cuscús lo absorbe.','Mézclalo todo con el ajo rallado, el aceite y el vinagre.','El atún desmigado por encima y la albahaca o la hierbabuena al final.','Se come al momento, templado o a temperatura ambiente: de la encimera a la mesa en 10 minutos.','El tomate es el plato, así que cuanto más maduro mejor. Con tomate de invierno insípido no funciona.','Entró en lugar del salmorejo, que pedía dos horas de nevera como mínimo.']},
-    {title:'Salpicón de mejillones y gambas', macros:'P 30 · C 31 · G 7 · 307 kcal',
+    {title:'Salpicón de mejillones y gambas', macros:'P 30 · C 32 · G 7 · 311 kcal', conserva:'Se come frío, nunca recalentado. Aguanta 2 días en la nevera y el segundo está mejor: la cebolla y el pimiento han soltado. Pásalo a un bol de cristal o plástico, no lo dejes en la lata abierta.',
      ing:'1 lata de mejillones al natural (69 g escurridos) · 70 g gambas peladas · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 95 g patata cruda pelada · 3 g AOVE · 10 g de vinagre de Jerez · perejil al gusto',
      tip:['Cuece la patata en dados, 5 min en olla express, y enfríala del todo.','Escurre bien la lata de mejillones. Pica el pimiento, la cebolla y el tomate en dados del mismo tamaño que la patata.','Mezcla con los mejillones y las gambas, el aceite, el vinagre de Jerez y el perejil.','Un rato de nevera hace que la cebolla y el pimiento suelten sabor, pero se puede comer al momento.','De un día para otro, mejor.']},
     {title:'Crema de calabaza con tortilla de atún 🥫🥚', macros:'P 34 · C 25 · G 8 · 308 kcal',
@@ -1187,7 +1187,8 @@ let menuVitasane = {
       },
       {
        "t": "Salpicón de mejillones y gambas",
-       "m": "P 30 · C 31 · G 7 · 307 kcal",
+       "m": "P 30 · C 32 · G 7 · 311 kcal",
+       "conserva": "Se come frío, nunca recalentado. Aguanta 2 días en la nevera y el segundo está mejor: la cebolla y el pimiento han soltado. Pásalo a un bol de cristal o plástico, no lo dejes en la lata abierta.",
        "i": "1 lata de mejillones al natural (69 g escurridos) · 70 g gambas peladas · 80 g pimiento rojo · 40 g cebolla · 80 g tomate · 95 g patata cruda pelada · 3 g AOVE · 10 g de vinagre de Jerez · perejil al gusto",
        "p": [
         "Cuece la patata en dados, 5 min en olla express, y enfríala del todo.",
@@ -2142,7 +2143,7 @@ let notasPlan = [
 // Todo lo de arriba es el plan "de fábrica". Si hay un plan guardado en Firestore,
 // se aplica encima al arrancar: así la dieta se actualiza como dato, no como código.
 
-const PLAN_VERSION_DEFAULT = '2026-11-17c';
+const PLAN_VERSION_DEFAULT = '2026-11-23';
 let planVersion = PLAN_VERSION_DEFAULT;
 
 let envases = {
@@ -2165,12 +2166,12 @@ let envases = {
   ],
   verduras: [
     {p:'Cebolla',            b:'suelta, en bolsa grande', r:'{tot:Cebolla} en el ciclo, en {n:Cebolla} platos · raciones de 30 a 50 g, y 120-150 en las salsas de cebolla', d:'Es la verdura que más se usa, en 34 platos. Pícala toda de golpe el día de la compra y congélala EN PLACA: extendida en una bandeja sin que los trozos se toquen, 2 h, y luego a una bolsa grande. Así queda suelta y pesas lo que necesites.'},
-    {p:'Pimiento rojo y verde', b:'suelto, en bolsa grande', r:'{tot:Pimiento} en el ciclo, en {n:Pimiento} platos · raciones de 50 a 80 g, y 150 en el cerdo con pimientos', d:'En tiras o en dados, congelado en placa como la cebolla. Si lo asas antes de congelarlo gana mucho y ocupa la mitad.'},
+    {p:'Pimiento rojo y verde', b:'dados de 1 cm, suelto', r:'{tot:Pimiento} en el ciclo, en {n:Pimiento} platos · raciones de 50 a 80 g, y 150 en el cerdo con pimientos', d:'Dados de 1 cm, que es la medida que vale para todo: en sofritos y cremas da igual el tamaño, y en guisos y woks es donde quieres ver el trozo. Congelado en placa como la cebolla. Si lo asas antes de congelarlo gana mucho y ocupa la mitad. NO vale en los platos fríos: en salpicones, ensaladas y tabulé tiene que ser fresco, porque descongelado queda blando y aguado. Esos platos salen marcados solos en la lista.'},
     {p:'Zanahoria',         b:'suelta, en bolsa grande', r:'{tot:Zanahoria} en el ciclo, en {n:Zanahoria} platos · raciones de 30 a 80 g', d:'En dados para guisos y en bastones para los salteados. Conviene tener las dos formas en bolsas separadas: cortarla congelada no se puede.'},
-    {p:'Calabaza',          b:'en dados, suelta', r:'{tot:Calabaza} en el ciclo · por semana: {sem:Calabaza}', d:'En dados grandes, congelada en placa. Es de las que mejor aguanta: en el potaje y en las cremas parte se deshace y espesa el caldo, que es justo lo que se busca.'},
-    {p:'Puerro',            b:'en rodajas, suelto', r:'{tot:Puerro} en el ciclo · raciones de 50 a 80 g', d:'Lava bien entre las capas antes de cortarlo: la tierra se queda dentro y congelada ya no la quitas.'},
-    {p:'Calabacín en dados', b:'porciones de 50 g', r:'{tot:Calabacín} en el ciclo · por semana: {sem:Calabacín} · raciones de 2, 3, 4 o 5 porciones', d:'Este va en porción fija: lleva mucha agua y se congela en bloque, no suelto. En dados vale para pisto, guiso, salteado y también para la tortilla, aunque ahí hay que secarlo en la sartén antes de juntarlo con el huevo. Lo que NO aguanta es la lámina: para los ROLLITOS y la LASAÑA hay que comprarlo fresco, porque descongelado queda flácido y ni se enrolla ni aguanta las capas. Esos dos platos salen marcados solos en la lista de la compra.'},
-    {p:'Berenjena en dados', b:'porciones de 50 g', r:'{tot:Berenjena} en el ciclo, en el cuscús con ternera', d:'Igual que el calabacín, en bloque. Sálala 20 min y sécala antes de congelar: suelta el amargor y parte del agua.'},
+    {p:'Calabaza',          b:'dados de 2 cm, suelta', r:'{tot:Calabaza} en el ciclo · por semana: {sem:Calabaza}', d:'En dados grandes, congelada en placa. Es de las que mejor aguanta: en el potaje y en las cremas parte se deshace y espesa el caldo, que es justo lo que se busca.'},
+    {p:'Puerro',            b:'rodajas de 5 mm, suelto', r:'{tot:Puerro} en el ciclo · raciones de 50 a 80 g', d:'Lava bien entre las capas antes de cortarlo: la tierra se queda dentro y congelada ya no la quitas.'},
+    {p:'Calabacín', b:'medias lunas de 5 mm, suelto · SALTEADO ANTES', r:'{tot:Calabacín} en el ciclo · por semana: {sem:Calabacín}', d:'CRUDO NO SE CONGELA: es casi todo agua y sale baboso. Saltéalo primero en medias lunas de 5 mm, déjalo enfriar y congélalo EN PLACA —extendido sin que los trozos se toquen, 2 h— antes de pasarlo a la bolsa. Así queda suelto y pesas lo que diga la receta. OJO CON EL PESO: al saltearlo pierde agua, así que pesa 70 g de bolsa por cada 100 g que pida la receta. Apunta el 70% en la bolsa con rotulador. Lo que NO aguanta es la lámina: para los ROLLITOS y la LASAÑA hay que comprarlo fresco, porque queda flácido y ni se enrolla ni aguanta las capas. Esos dos platos salen marcados solos en la lista de la compra.'},
+    {p:'Berenjena', b:'dados de 2 cm, suelta · ASADA ANTES', r:'{tot:Berenjena} en el ciclo, en el cuscús con ternera', d:'Igual que el calabacín: cruda no se congela. Sálala 20 min para que suelte el amargor, sécala, ásala en dados de 2 cm y congélala en placa cuando esté FRÍA. Pesa 62 g de bolsa por cada 100 g que pida la receta, y apunta el 62% en la bolsa.'},
     {p:'Guisantes',         b:'la bolsa comercial', r:'{tot:Guisantes} en el ciclo · raciones de 50 y 60 g', d:'Ya vienen sueltos, no hay que hacer nada. Del congelador a la sartén; en el wok, escáldalos 30 segundos primero para que el hielo no enfríe la sartén.'},
     {p:'Lo que NO se congela', b:'fresco', r:'lechuga, brotes y rúcula · tomate de ensalada · patata y boniato crudos · perejil y hierbas frescas', d:'Las hojas se deshacen, el tomate se vuelve puré y la patata cruda congelada coge un sabor dulce y una textura arenosa. Las hierbas sí aguantan picadas en cubitera con aceite, pero para adornar en crudo mejor frescas.'}
   ],
@@ -2921,7 +2922,9 @@ function renderHoy(){
         ${plato && plato.prueba
           ? `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">Se cocina en el momento: es una ración de prueba, no la tanda de otro día.</div>`
           : cocinaEsto
-            ? (plato && plato.partido
+            ? (plato && plato.conserva
+                ? `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">${esc(plato.conserva)}</div>`
+                : plato && plato.partido
                 ? `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">Al momento, solo para hoy: este plato no aguanta recalentado, por eso cada día del bloque lleva uno distinto.</div>`
                 : parejaEsto === null
                   ? `<div style="font-size:12.5px;color:var(--muted);margin-top:10px;">${cocinaDiaria() ? 'Se cocina al momento, solo para hoy.' : 'Hoy se cocina solo para hoy.'}</div>`
@@ -4123,6 +4126,12 @@ const SOLO_FRESCO = {
 // El calabacín sí se congela en dados, pero no para los rollitos: en láminas finas,
 // descongelado, queda flácido y no se enrolla. Solo se marca si ese plato cae en la ventana.
 const FRESCO_POR_PLATO = {
+  // El pimiento congelado vale para todo lo que se cocina. En los platos fríos no:
+  // descongelado queda blando y aguado, y ahí se nota porque va crudo en el plato.
+  'Pimiento rojo':  [[/salpicón|ensalada|tabulé|campera|brotes|templada/i,
+                 'en los platos fríos tiene que ser fresco: descongelado queda blando y aguado']],
+  'Pimiento verde': [[/salpicón|ensalada|tabulé|campera|brotes|templada/i,
+                 'en los platos fríos tiene que ser fresco: descongelado queda blando y aguado']],
   // El calabacín se congela en dados y vale para pisto, guiso, tortilla y salteado.
   // Lo que no aguanta es la lámina: descongelada queda flácida y suelta agua, así que
   // ni se enrolla ni se puede montar por capas.
